@@ -12,7 +12,7 @@ Knowledge lives in plain files with YAML frontmatter at the top, which you can c
 ---
 type: concept
 title: Diffusion Models
-tags: [ml/generative]
+tags: [diffusion, model, ml/generative]
 modified: { by: human:fsmith, at: 2026-08-01T10:00:00Z }
 sources:
   - resource: https://arxiv.org/abs/2006.11239
