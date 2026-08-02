@@ -25,7 +25,7 @@ Two roles are referenced throughout:
 - **Slug**: A Concept's filename without its directory path or `.md` extension (e.g. `diffusion-models` for `wiki/concepts/diffusion-models.md`).
 - **Concept Type** (or **Type**): The value of a Concept's `type` field — a short string naming the kind of Concept (e.g. `task`, `note`, `lab-result`). An open vocabulary; consumers tolerate unknown types.
 - **Type Definition**: A Concept (with `type: type-definition`) that declares a type's contract — its fields, their obligations, and their field types (§10).
-- **Field type**: The shape of a field's value (e.g. `text`, `number`, `concept-link`), declared in a Type Definition (§10.2). Distinct from a Concept's `type`.
+- **Field type**: The shape of a field's value (e.g. `text`, `number`, `wikilink`), declared in a Type Definition (§10.2). Distinct from a Concept's `type`.
 - **Frontmatter**: A YAML metadata block delimited by `---` at the top of a markdown file.
 - **Body**: Everything in the file after the frontmatter.
 - **Link**: A markdown link from one Concept to another, expressing a relationship between them.
@@ -70,9 +70,9 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
 | `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
 | `lifecycle_status` | optional | enum | `draft \| provisional \| stable \| archived`. §6. |
-| `created` | optional | actor-event | Original author + creation time. **Immutable.** §7.1. |
-| `modified` | recommended | actor-event | Last editor + last meaningful change. **Advances on edit.** §7.1. |
-| `verified` | optional | list of actor-event | Independent confirmation events. §7.2. |
+| `created` | optional | actor_event | Original author + creation time. **Immutable.** §7.1. |
+| `modified` | recommended | actor_event | Last editor + last meaningful change. **Advances on edit.** §7.1. |
+| `verified` | optional | list of actor_event | Independent confirmation events. §7.2. |
 | `sources` | optional | list | Materials the content derives from (bespoke shape). §7.3. |
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
 
@@ -102,7 +102,7 @@ modified: { by: agent:gemini-2.5-pro, at: 2026-06-20T22:53:05Z } # last editor; 
 
 - `created.by` is the original-author record. It is more reliable than git for authorship: a git commit's author is whoever committed (often the human running an agent), and history can be squashed or exported.
 - `modified.at` is the "last meaningful change" — the freshness signal a consumer uses to tell a recent edit from a stale fact.
-- `by` values follow the actor convention (§7.4). Both fields have field type `actor-event` (§10.2).
+- `by` values follow the actor convention (§7.4). Both fields have field type `actor_event` (§10.2).
 
 ### 7.2 `verified` and trust tiers
 
@@ -158,7 +158,7 @@ The uniform `<kind>:<value>` shape means a consumer parses any actor by splittin
 All links are by human-readable **slug/path** (LKF v0.0.1 has no id-links):
 
 - **Body prose** — slug wikilinks: `[[diffusion-models]]`, `[[diffusion-models|DDPM]]`, `[[note#Heading]]`, `[[note#^block-id]]` (block ids MUST be human-readable, not generated hashes).
-- **Frontmatter typed edges** — named keys holding quoted slug/path wikilinks; the key names the relationship. Such a field has field type `concept-link` (§10.2):
+- **Frontmatter typed edges** — named keys holding quoted slug/path wikilinks; the key names the relationship. Such a field has field type `wikilink` (§10.2):
   ```yaml
   depends_on: ["[[diffusion-models]]"]
   relates_to: ["[[gut-brain-axis]]"]
@@ -193,8 +193,8 @@ fields:
   test_name: { obligation: mandatory,   field_type: text,   desc: "e.g. LDL cholesterol" }
   value:     { obligation: mandatory,   field_type: number }
   unit:      { obligation: mandatory,   field_type: text }
-  patient:   { obligation: mandatory,   field_type: concept-link, desc: "→ the person Concept" }
-  panel:     { obligation: recommended, field_type: list of concept-link }
+  patient:   { obligation: mandatory,   field_type: wikilink, desc: "→ the person Concept" }
+  panel:     { obligation: recommended, field_type: list of wikilink }
   status:    { obligation: optional,    field_type: enum, values: [pending, final, corrected] }
 ---
 
@@ -230,13 +230,13 @@ The key is **`field_type`**, not `type`, so it never collides with a Concept's `
 | `date` | a date, `YYYY-MM-DD` |
 | `datetime` | a full timestamp (ISO 8601 / RFC 3339) |
 | `enum` | one of the strings listed in `values` |
-| `concept-link` | an internal wiki-style link to another Concept (`[[…]]`) |
+| `wikilink` | an internal `[[…]]` link to another Concept in the bundle (of any `type`) |
 | `uri` | an external address (URL/URI) |
 | `actor` | an actor string (§7.4) |
-| `actor-event` | `{ by: actor, at: datetime }` |
-| `list of <type>` | a list whose items are any of the above (e.g. `list of concept-link`) |
+| `actor_event` | `{ by: actor, at: datetime }` |
+| `list of <type>` | a list whose items are any of the above (e.g. `list of wikilink`) |
 
-A **relationship** (a typed edge in the Concept graph) is simply a field whose `field_type` is `concept-link` or `list of concept-link` — the field's *key* names the relationship (`depends_on`, `parent`, `patient`).
+A **relationship** (a typed edge in the Concept graph) is simply a field whose `field_type` is `wikilink` or `list of wikilink` — the field's *key* names the relationship (`depends_on`, `parent`, `patient`).
 
 ### 10.3 Inheritance
 
