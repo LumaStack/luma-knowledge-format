@@ -23,8 +23,8 @@ Two roles are referenced throughout:
 - **Concept**: A single unit of knowledge within a Bundle, represented as one markdown document. It may describe a tangible asset (a table, an API), an abstract idea (a metric, a business process), or anything in between.
 - **Concept ID**: The path of the Concept's file within the Bundle, with the `.md` suffix removed.
 - **Slug**: A Concept's filename without its directory path or `.md` extension (e.g. `diffusion-models` for `wiki/concepts/diffusion-models.md`).
-- **Concept Type** (or **Type**): The value of a Concept's `type` field — a short string naming the kind of Concept (e.g. `task`, `note`, `lab-result`). An open vocabulary; consumers tolerate unknown types.
-- **Type Definition**: A Concept (with `type: type-definition`) that declares a type's contract — its fields, their obligations, and their field types (§10).
+- **Concept Type** (or **Type**): The value of a Concept's `type` field — a short string naming the kind of Concept (e.g. `task`, `note`, `lab_result`). An open vocabulary; consumers tolerate unknown types.
+- **Type Definition**: A Concept (with `type: type_definition`) that declares a type's contract — its fields, their obligations, and their field types (§10).
 - **Field type**: The shape of a field's value (e.g. `text`, `number`, `wikilink`), declared in a Type Definition (§10.2). Distinct from a Concept's `type`.
 - **Frontmatter**: A YAML metadata block delimited by `---` at the top of a markdown file.
 - **Body**: Everything in the file after the frontmatter.
@@ -45,6 +45,7 @@ Core fields defined by this specification appear at the **top level** of the fro
 
 - The field names defined in §5–§7 are **reserved**; producers MUST NOT reuse them for unrelated domain data. The prefix `lkf_` is reserved for future core fields.
 - Consumers MUST preserve unrecognized keys when rewriting a file, and MUST NOT reject a file for containing them.
+- **Identifier casing (a recommendation).** Field names, `type` names, and `field_type` values prefer snake_case (lowercase words joined by `_`); Concept slugs and IDs prefer kebab-case (`-`), since they are path- and URI-like. Like nearly everything here, this is a strong recommendation, not a hard rule — the only hard requirement is a non-empty `type` (Conformance, below).
 
 **Conformance.** A file is a conformant Concept if it has a parseable YAML frontmatter block containing a non-empty `type`. **This is the only hard requirement.** Consumers **MUST NOT** reject a Concept for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Everything a type declares (§10) is *published intent*, not an enforced rule — validation is a **suggested framework** (§10.5), never a conformance gate, and it never rejects by default.
 
@@ -176,18 +177,18 @@ The body is CommonMark. Producers SHOULD favor structural markdown (headings, li
 
 ## 10. Type extensions
 
-Any `type` MAY declare a **contract** for its Concepts — which fields they carry and what shape those fields take — so producers and consumers can discover exactly what, say, a `lab-result` expects, and tools MAY validate against it. This is how LKF stays a small core with an open, extensible edge.
+Any `type` MAY declare a **contract** for its Concepts — which fields they carry and what shape those fields take — so producers and consumers can discover exactly what, say, a `lab_result` expects, and tools MAY validate against it. This is how LKF stays a small core with an open, extensible edge.
 
 Nothing in this section is a conformance requirement. A Type Definition publishes *intent*; §10.5 describes a suggested way to check it; §4 remains the only hard rule.
 
 ### 10.1 Type Definitions
 
-A `type` is declared by a **Type Definition** — an ordinary Concept with `type: type-definition`, living in the bundle's reserved `_types/` directory. Because a Type Definition is itself a Concept, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
+A `type` is declared by a **Type Definition** — an ordinary Concept with `type: type_definition`, living in the bundle's reserved `_types/` directory. Because a Type Definition is itself a Concept, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
 
 ```yaml
 ---
-type: type-definition
-defines: lab-result
+type: type_definition
+defines: lab_result
 extends: source
 fields:
   test_name: { obligation: mandatory,   field_type: text,   desc: "e.g. LDL cholesterol" }
@@ -241,14 +242,14 @@ A **relationship** (a typed edge in the Concept graph) is simply a field whose `
 ### 10.3 Inheritance
 
 - **`extends`** names a single parent type (single inheritance). A type inherits all of its parent's fields and adds its own.
-- Every type implicitly extends the built-in **`concept`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields. This is self-hosting: `type-definition` is itself a type that extends `concept`.
+- Every type implicitly extends the built-in **`concept`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields. This is self-hosting: `type_definition` is itself a type that extends `concept`.
 - **Add-only.** A type may only *add* fields. It MUST NOT redefine or remove an inherited field — core or domain. This keeps every inherited field's meaning stable everywhere the type is used.
 
 ### 10.4 Resolution and namespacing
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`concept`, `type-definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
-- **Reserved built-ins.** The names `concept` and `type-definition` belong to the format; a bundle MUST NOT redefine them.
-- **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab-result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`concept`, `type_definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Reserved built-ins.** The names `concept` and `type_definition` belong to the format; a bundle MUST NOT redefine them.
+- **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
 ### 10.5 Validation — a suggested framework, not a contract
 
