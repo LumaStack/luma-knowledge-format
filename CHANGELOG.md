@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.2] — 2026-08-02
+
 ### Changed
 - **Field type `concept-link` → `wikilink`** *(breaking).* The internal-link field type is now type-agnostic — it links to any Concept, not only `concept`-typed ones — and named by form to pair with `uri`.
   - *Migration:* replace `field_type: concept-link` with `field_type: wikilink` in Type Definitions.
