@@ -1,7 +1,7 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.1-draft`
-- **Status:** Draft — not yet ratified; breaking changes expected.
+- **Version:** `v0.0.1`
+- **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
 
@@ -279,7 +279,7 @@ Because Type Definitions are just files, humans and agents discover a type's con
 - **`log.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
 - **`_types/`** — Type Definitions (§10).
 
-> **Not yet fully specified in this draft:** the exact structure of `index.md` and `log.md`.
+> **Not yet fully specified in v0.0.1:** the exact structure of `index.md` and `log.md`.
 
 ## 12. Versioning
 

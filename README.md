@@ -4,7 +4,7 @@ LKF is a format for representing knowledge, designed to be equally friendly to h
 
 Knowledge lives in plain files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, systems, or organizations, and it is designed to require minimal tooling.
 
-> **Status:** Draft — `v0.0.1-draft`. Not yet ratified; breaking changes expected. Versions are published as git tags (`v0.0.1`).
+> **Status:** Released — `v0.0.1`. Pre-1.0 (`0.0.z`), still unstable; breaking changes may ship until `1.0.0`. Versions are published as git tags.
 
 ## Example
 
