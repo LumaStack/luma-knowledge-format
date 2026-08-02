@@ -156,7 +156,7 @@ The uniform `<kind>:<value>` shape means a consumer parses any actor by splittin
 
 ## 8. Links
 
-All links are by human-readable **slug/path** (LKF v0.0.1 has no id-links):
+All links are by human-readable **slug/path** (LKF has no id-links):
 
 - **Body prose** — slug wikilinks: `[[diffusion-models]]`, `[[diffusion-models|DDPM]]`, `[[note#Heading]]`, `[[note#^block-id]]` (block ids MUST be human-readable, not generated hashes).
 - **Frontmatter typed edges** — named keys holding quoted slug/path wikilinks; the key names the relationship. Such a field has field type `wikilink` (§10.2):
@@ -280,12 +280,12 @@ Because Type Definitions are just files, humans and agents discover a type's con
 - **`log.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
 - **`_types/`** — Type Definitions (§10).
 
-> **Not yet fully specified in v0.0.1:** the exact structure of `index.md` and `log.md`.
+> **Not yet fully specified:** the exact structure of `index.md` and `log.md`.
 
 ## 12. Versioning
 
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
-- Published versions are **git tags** (`v0.0.1`); the spec at `HEAD` is the current version.
-- A Bundle MAY declare `lkf_version: "0.0.1"` on its root `index.md`; a Concept MAY override with its own `lkf_version` (file-level wins). This is the *format-grammar* version — not content version (git's job) and not a Type Definition's own `version`.
+- Published versions are **git tags**; the newest tag is the current version.
+- A Bundle MAY declare an `lkf_version` on its root `index.md`; a Concept MAY override with its own (file-level wins). This is the *format-grammar* version — not content version (git's job) and not a Type Definition's own `version`.
 
 > Known gaps and deferred features are tracked in [`ROADMAP.md`](ROADMAP.md).
