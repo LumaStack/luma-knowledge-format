@@ -248,7 +248,7 @@ A **relationship** (a typed edge in the Concept graph) is simply a field whose `
 
 - **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`concept`, `type-definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
 - **Reserved built-ins.** The names `concept` and `type-definition` belong to the format; a bundle MUST NOT redefine them.
-- **Namespacing (recommended, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab-result`, `finance/invoice`). At larger scale a team or department dimension MAY be added to disambiguate (e.g. two departments defining `health` differently). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
+- **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab-result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
 ### 10.5 Validation — a suggested framework, not a contract
 
