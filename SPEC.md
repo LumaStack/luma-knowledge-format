@@ -23,12 +23,13 @@ Two roles are referenced throughout:
 - **Concept**: A single unit of knowledge within a Bundle, represented as one markdown document. It may describe a tangible asset (a table, an API), an abstract idea (a metric, a business process), or anything in between.
 - **Concept ID**: The path of the Concept's file within the Bundle, with the `.md` suffix removed.
 - **Slug**: A Concept's filename without its directory path or `.md` extension (e.g. `diffusion-models` for `wiki/concepts/diffusion-models.md`).
-- **Concept Type** (or **Type**): The value of a Concept's required `type` field — a short string naming the kind of concept (e.g. `task`, `note`, `lab-result`). An open vocabulary; consumers tolerate unknown types. 
+- **Concept Type** (or **Type**): The value of a Concept's `type` field — a short string naming the kind of Concept (e.g. `task`, `note`, `lab-result`). An open vocabulary; consumers tolerate unknown types.
+- **Type Definition**: A Concept (with `type: type-definition`) that declares a type's contract — its fields, their obligations, and their field types (§10).
+- **Field type**: The shape of a field's value (e.g. `text`, `number`, `concept-link`), declared in a Type Definition (§10.2). Distinct from a Concept's `type`.
 - **Frontmatter**: A YAML metadata block delimited by `---` at the top of a markdown file.
 - **Body**: Everything in the file after the frontmatter.
 - **Link**: A markdown link from one Concept to another, expressing a relationship between them.
 - **Source**: A material a Concept derives from, external or internal to the Bundle, recorded in the `sources` frontmatter field.
-- **Extension**: A set of rules that specifies how a given `type` extends the base format with its own required, recommended, or optional fields — declared in a Type Definition (§10). 
 
 ## 3. Concept ID
 
@@ -45,63 +46,63 @@ Core fields defined by this specification appear at the **top level** of the fro
 - The field names defined in §5–§7 are **reserved**; producers MUST NOT reuse them for unrelated domain data. The prefix `lkf_` is reserved for future core fields.
 - Consumers MUST preserve unrecognized keys when rewriting a file, and MUST NOT reject a file for containing them.
 
-**Conformance.** A file is a conformant Concept if it has a parseable YAML frontmatter block containing a non-empty `type`. This is the only hard requirement. Consumers **MUST NOT** reject a Concept for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Validation is advisory (§5.1); a validator MAY offer a `--strict` mode that treats missing `required` fields as errors.
+**Conformance.** A file is a conformant Concept if it has a parseable YAML frontmatter block containing a non-empty `type`. **This is the only hard requirement.** Consumers **MUST NOT** reject a Concept for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Everything a type declares (§10) is *published intent*, not an enforced rule — validation is a **suggested framework** (§10.5), never a conformance gate, and it never rejects by default.
 
-## 5. Field requirement levels
+## 5. Field obligation
 
-Every field — a core field here, or a domain field declared by a Type Definition (§10) — carries exactly one **level**:
+Every field — a core field here, or a domain field declared by a Type Definition (§10) — carries an **`obligation`**: how strongly it should be present. Values are stored as full lowercase words:
 
-| Level | Meaning |
+| Obligation | Meaning |
 |---|---|
-| `required` | MUST be present (in canonical form). A validator reports absence as an error under `--strict`, a warning otherwise. |
-| `recommended` | SHOULD be present. Reported as info. |
-| `optional` | MAY be present. Not reported. |
-| `deprecated` | Still accepted and read, but slated for removal. A validator warns: migrate off it. |
+| `mandatory` | Expected on every Concept of this type. |
+| `recommended` | Not mandatory, but include it whenever the information is available; omit only when it genuinely doesn't apply or isn't known. |
+| `optional` | May be present; its absence is unremarkable. |
+| `deprecated` | Still accepted and read, but on its way out; migrate off it. |
 
-Field-level `deprecated` parallels document-level `lifecycle_status: deprecated` (§6): the same graceful-evolution idea at both scales.
+Obligation describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule (§10.5), and nothing about obligations changes whether a file is conformant (§4). The sole hard requirement remains a non-empty `type`.
 
 ### 5.1 Core fields
 
-| Field | Level | Type | Meaning |
+| Field | Obligation | Field type | Meaning |
 |---|---|---|---|
-| `type` | required | string (open vocabulary) | What kind of Concept this is. **The one always-required field.** Consumers tolerate unknown types. |
+| `type` | mandatory | text | What kind of Concept this is. **The one hard conformance requirement (§4).** Consumers tolerate unknown types. |
 | `title` | recommended | text | Human label; may fall back to the filename. |
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
-| `tags` | optional | list of text | Categorization; nested via `/` (e.g. `ml/generative`). |
+| `tags` | optional | list of text | Categorization; nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
 | `lifecycle_status` | optional | enum | `draft \| provisional \| stable \| deprecated`. §6. |
-| `created` | optional | `{by, at}` | Original author + creation time. **Immutable.** §7.1. |
-| `modified` | recommended | `{by, at}` | Last editor + last meaningful change. **Advances on edit.** §7.1. |
-| `verified` | optional | list of `{by, at}` | Independent confirmation events. §7.2. |
-| `sources` | optional | list | Materials the content derives from. §7.3. |
+| `created` | optional | actor-event | Original author + creation time. **Immutable.** §7.1. |
+| `modified` | recommended | actor-event | Last editor + last meaningful change. **Advances on edit.** §7.1. |
+| `verified` | optional | list of actor-event | Independent confirmation events. §7.2. |
+| `sources` | optional | list | Materials the content derives from (bespoke shape). §7.3. |
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
 
-> Some levels above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
+> Some obligations above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
 
 ## 6. Lifecycle: `lifecycle_status`
 
-Ordered least → most trusted. Default (when absent): `stable`.
+Ordered least → most trusted. Default (when absent): `provisional`.
 
 | Value | Meaning |
 |---|---|
 | `draft` | Work in progress; not ready to rely on. |
-| `provisional` | Usable and reviewed, but not yet ratified — may still change. |
-| `stable` | Ratified and trusted. (Default.) |
+| `provisional` | Usable but not yet ratified — may still change. (Default.) |
+| `stable` | Ratified and trusted. |
 | `deprecated` | Superseded or retired; kept for history. |
 
-The field is named `lifecycle_status` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is a separate, tool-defined field.
+The field is named `lifecycle_status` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field.
 
 ## 7. Provenance and trust
 
 ### 7.1 `created` and `modified`
 
 ```yaml
-created:  { by: human:fsmith, at: 2026-06-14T10:00:00Z }   # original author; fixed forever
-modified: { by: gemini-2.5, at: 2026-06-20T22:53:05Z }  # last editor; advances on each change
+created:  { by: human:fsmith, at: 2026-06-14T10:00:00Z }        # original author; fixed forever
+modified: { by: agent:gemini-2.5-pro, at: 2026-06-20T22:53:05Z } # last editor; advances on each change
 ```
 
 - `created.by` is the original-author record. It is more reliable than git for authorship: a git commit's author is whoever committed (often the human running an agent), and history can be squashed or exported.
 - `modified.at` is the "last meaningful change" — the freshness signal a consumer uses to tell a recent edit from a stale fact.
-- `by` values follow the actor convention (§7.4).
+- `by` values follow the actor convention (§7.4). Both fields have field type `actor-event` (§10.2).
 
 ### 7.2 `verified` and trust tiers
 
@@ -118,7 +119,7 @@ verified:
 - verified only by non-`human:` actors ⇒ **machine-confirmed**
 - verified by any `human:<id>` ⇒ **human-reviewed**
 
-Trust tier is **orthogonal** to `lifecycle_status`: a concept can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
+Trust tier is **orthogonal** to `lifecycle_status`: a Concept can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
 
 ### 7.3 `sources`
 
@@ -137,14 +138,16 @@ sources:
 
 ### 7.4 Actor convention
 
-Every `by:` and `author:` value uses one convention:
+Every `by:` and `author:` value follows one grammar — **`<kind>:<producer>/<version>`**, where `/<version>` is optional:
 
-| Form | Example | For |
+| Kind | Example | For |
 |---|---|---|
-| `human:<id>` | `human:fsmith` | a person |
-| `<producer>/<version>` | `gemini-2.5-pro`, `opus-4.8/luma-wiki` | an agent or tool |
-| `process:<id>` | `process:cron-nightly` | an automated process |
-| `team:<id>` | `team:foobar` | a team or organization |
+| `human:` | `human:fsmith` | a person |
+| `agent:` | `agent:gemini-2.5-pro`, `agent:opus-4.8/luma-wiki` | an AI agent or tool (optional `/version` names the tool or wrapper) |
+| `process:` | `process:cron-nightly` | an automated process |
+| `team:` | `team:foobar` | a team or organization |
+
+The uniform `<kind>:<value>` shape means a consumer parses any actor by splitting on the first `:`.
 
 ### 7.5 Date granularity
 
@@ -155,7 +158,7 @@ Every `by:` and `author:` value uses one convention:
 All links are by human-readable **slug/path** (LKF v0.0.1 has no id-links):
 
 - **Body prose** — slug wikilinks: `[[diffusion-models]]`, `[[diffusion-models|DDPM]]`, `[[note#Heading]]`, `[[note#^block-id]]` (block ids MUST be human-readable, not generated hashes).
-- **Frontmatter typed edges** — named keys holding quoted slug/path wikilinks; the key names the relationship:
+- **Frontmatter typed edges** — named keys holding quoted slug/path wikilinks; the key names the relationship. Such a field has field type `concept-link` (§10.2):
   ```yaml
   depends_on: ["[[diffusion-models]]"]
   relates_to: ["[[gut-brain-axis]]"]
@@ -173,26 +176,107 @@ The body is CommonMark. Producers SHOULD favor structural markdown (headings, li
 
 ## 10. Type extensions
 
-Any `type` MAY declare its own frontmatter contract, so producers and consumers can discover exactly which fields a `lab-result` (or `task`, `recipe`, …) requires, and validators can check it.
+Any `type` MAY declare a **contract** for its Concepts — which fields they carry and what shape those fields take — so producers and consumers can discover exactly what, say, a `lab-result` expects, and tools MAY validate against it. This is how LKF stays a small core with an open, extensible edge.
 
-- A type is declared by a **Type Definition** — an ordinary Concept with `type: type-definition`, in the reserved `_types/` directory.
-- Illustrative shape:
-  ```yaml
-  defines: lab-result
-  extends: source
-  fields:
-    test_name: { req: required, type: text, desc: "e.g. LDL cholesterol" }
-    value:     { req: required, type: number }
-  edges:
-    patient:   { req: required, type: link, desc: "→ the person entity" }
-  ```
+Nothing in this section is a conformance requirement. A Type Definition publishes *intent*; §10.5 describes a suggested way to check it; §4 remains the only hard rule.
 
-> **Not yet fully specified in this draft:** the property-type vocabulary, `extends`/inheritance and conflict rules, tool-default vs. bundle precedence, and exact validator severities. See open items.
+### 10.1 Type Definitions
+
+A `type` is declared by a **Type Definition** — an ordinary Concept with `type: type-definition`, living in the bundle's reserved `_types/` directory. Because a Type Definition is itself a Concept, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
+
+```yaml
+---
+type: type-definition
+defines: lab-result
+extends: source
+fields:
+  test_name: { obligation: mandatory,   field_type: text,   desc: "e.g. LDL cholesterol" }
+  value:     { obligation: mandatory,   field_type: number }
+  unit:      { obligation: mandatory,   field_type: text }
+  patient:   { obligation: mandatory,   field_type: concept-link, desc: "→ the person Concept" }
+  panel:     { obligation: recommended, field_type: list of concept-link }
+  status:    { obligation: optional,    field_type: enum, values: [pending, final, corrected] }
+---
+
+# Lab Result
+
+A single quantitative lab measurement. One file per result.
+```
+
+- `defines` — the `type` name this document governs.
+- `extends` — a single parent type to inherit from (§10.3).
+- `fields` — the field declarations (§10.2).
+
+### 10.2 Field declarations
+
+Each entry under `fields` declares one field with up to four keys:
+
+| Key | Meaning |
+|---|---|
+| `obligation` | how strongly the field should be present — `mandatory` / `recommended` / `optional` / `deprecated` (§5) |
+| `field_type` | the shape of the field's value (below) |
+| `desc` | a one-line human/agent description (surfaced by discovery tooling, §10.6) |
+| `values` | the allowed values — **required when `field_type` is `enum`**, ignored otherwise |
+
+The key is **`field_type`**, not `type`, so it never collides with a Concept's `type`.
+
+**Field types:**
+
+| `field_type` | Value is |
+|---|---|
+| `text` | a string |
+| `number` | a number |
+| `boolean` | `true` / `false` |
+| `date` | a date, `YYYY-MM-DD` |
+| `datetime` | a full timestamp (ISO 8601 / RFC 3339) |
+| `enum` | one of the strings listed in `values` |
+| `concept-link` | an internal wiki-style link to another Concept (`[[…]]`) |
+| `uri` | an external address (URL/URI) |
+| `actor` | an actor string (§7.4) |
+| `actor-event` | `{ by: actor, at: datetime }` |
+| `list of <type>` | a list whose items are any of the above (e.g. `list of concept-link`) |
+
+A **relationship** (a typed edge in the Concept graph) is simply a field whose `field_type` is `concept-link` or `list of concept-link` — the field's *key* names the relationship (`depends_on`, `parent`, `patient`).
+
+### 10.3 Inheritance
+
+- **`extends`** names a single parent type (single inheritance). A type inherits all of its parent's fields and adds its own.
+- Every type implicitly extends the built-in **`concept`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields. This is self-hosting: `type-definition` is itself a type that extends `concept`.
+- **Add-only.** A type may only *add* fields. It MUST NOT redefine or remove an inherited field — core or domain. This keeps every inherited field's meaning stable everywhere the type is used.
+
+### 10.4 Resolution and namespacing
+
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`concept`, `type-definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Reserved built-ins.** The names `concept` and `type-definition` belong to the format; a bundle MUST NOT redefine them.
+- **Namespacing (recommended, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab-result`, `finance/invoice`). At larger scale a team or department dimension MAY be added to disambiguate (e.g. two departments defining `health` differently). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
+
+### 10.5 Validation — a suggested framework, not a contract
+
+Validation is **entirely optional.** LKF never requires a validator, and no validator's opinion changes whether a file conforms (§4). The rules below are a **recommended, consistent behavior** for tools that choose to offer validation — nothing more. By default, validation **never rejects**; a `--strict` mode is an opt-in that escalates real violations to errors.
+
+| What a validator finds | Default | `--strict` |
+|---|---|---|
+| Missing `mandatory` field | warning | error |
+| A value whose shape ≠ its declared `field_type` | warning | error |
+| An `enum` value not listed in `values` | warning | error |
+| `extends` naming a type that doesn't exist (broken definition) | warning | error |
+| Missing `recommended` field | info | info |
+| A `deprecated` field is present | warning | warning |
+| An unknown field (not declared by the type) | none¹ | none¹ |
+| A `type` with no Type Definition at all | none¹ | none¹ |
+
+¹ Never an error — the permissive-conformance law (§4). A tool MAY surface these as info in a verbose mode.
+
+Two deliberate choices: a `deprecated` field stays a *warning* even under `--strict` (it is still valid, just discouraged), and unknown fields / undefined types are *never* errors (open vocabulary, never reject).
+
+### 10.6 Discovery
+
+Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`, or use tooling such as `luma type list` / `luma type show <type>`.
 
 ## 11. Reserved files
 
 - **`index.md`** — derived navigation for a directory; a rebuildable cache, not a source of truth. Optional.
-- **`log.md`** — append-only history for a directory, newest first. Creating is optional, MUST append when it exists.
+- **`log.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
 - **`_types/`** — Type Definitions (§10).
 
 > **Not yet fully specified in this draft:** the exact structure of `index.md` and `log.md`.

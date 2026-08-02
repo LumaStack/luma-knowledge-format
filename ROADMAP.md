@@ -11,6 +11,11 @@ Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` de
 
 ## Deferred features — postponed, may return in a later version
 
+- **`obligation: conditional`** — a field that is mandatory *only when* a stated condition holds, carrying a `when:` predicate (ISO 19115-style). Deferred from v0.0.1; `obligation` was chosen as the field-declaration key partly so this can be added later without a rename.
+- **User-defined composite field types** — v0.0.1 ships two built-in composites (`actor`, `actor-event`); arbitrary/user-defined nested object shapes are deferred.
+- **Hierarchical slug/path field type** — a validated `field_type` for `/`-separated slug hierarchies (tags, categories, taxonomies). For now `tags` is `list of text`, kept loose; the type — and a good name (`path`/`breadcrumb`/`slug-path` all had drawbacks) — can come later.
+- **Multiple inheritance for types** — v0.0.1 allows a single `extends` parent; multiple parents (with conflict-resolution rules) are deferred — wanted eventually, not needed now.
+- **Domain-field override in inheritance** — v0.0.1 is add-only (a type may only *add* fields, never redefine inherited ones); letting a child override an inherited domain field is deferred, and may never be needed.
 - **Stable identifiers** — opaque ids decoupled from path; additive when added (links stay name-based).
 - **`aliases`** — ships together with link resolution (above).
 - **`confidence`** and **`volatility`** — trust/freshness fields considered but held.
