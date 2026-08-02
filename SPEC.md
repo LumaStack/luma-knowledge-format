@@ -68,8 +68,8 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 | `type` | mandatory | text | What kind of Concept this is. **The one hard conformance requirement (§4).** Consumers tolerate unknown types. |
 | `title` | recommended | text | Human label; may fall back to the filename. |
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
-| `tags` | optional | list of text | Categorization; nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
-| `lifecycle_status` | optional | enum | `draft \| provisional \| stable \| deprecated`. §6. |
+| `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
+| `lifecycle_status` | optional | enum | `draft \| provisional \| stable \| archived`. §6. |
 | `created` | optional | actor-event | Original author + creation time. **Immutable.** §7.1. |
 | `modified` | recommended | actor-event | Last editor + last meaningful change. **Advances on edit.** §7.1. |
 | `verified` | optional | list of actor-event | Independent confirmation events. §7.2. |
@@ -80,14 +80,14 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 
 ## 6. Lifecycle: `lifecycle_status`
 
-Ordered least → most trusted. Default (when absent): `provisional`.
+A Concept's lifecycle stage — nascent to active, with `archived` as the retired terminal. Default (when absent): `provisional`.
 
 | Value | Meaning |
 |---|---|
 | `draft` | Work in progress; not ready to rely on. |
 | `provisional` | Usable but not yet ratified — may still change. (Default.) |
 | `stable` | Ratified and trusted. |
-| `deprecated` | Superseded or retired; kept for history. |
+| `archived` | Retired from active use; kept for the record. (Supersession — "replaced by X" — is a relationship, not this status.) |
 
 The field is named `lifecycle_status` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field.
 
