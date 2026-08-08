@@ -31,3 +31,7 @@ See [[score-based-models]] for the continuous-time formulation.
 - [`PRINCIPLES.md`](PRINCIPLES.md) — the design principles behind LKF.
 - [`GUIDELINES.md`](GUIDELINES.md) — how the project is run.
 - [`ROADMAP.md`](ROADMAP.md) — open questions and deferred features.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
