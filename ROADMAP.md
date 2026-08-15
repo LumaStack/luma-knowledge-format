@@ -2,6 +2,36 @@
 
 Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` describes only what is settled; this file tracks what is not.
 
+## What `v0.1.0` would mean
+
+Not a promise that the format is finished, or safe to lean on. Only that it has stopped being a guess.
+
+`v0.0.z` says the format has been reasoned about and barely used. `v0.1.0` says it has been run for real in more than one place and held up there. That is a smaller claim than it sounds, and it is the honest one — all of this was designed before it met any data.
+
+Three things would have to be true.
+
+### It has been exercised, more than once
+
+Two or three separate codebases writing and reading real Concepts — not examples, and not a corner chosen to avoid the awkward parts — reporting back that it worked for what they were doing.
+
+The signal is not that nobody complained. It is that newcomers stop hitting the wall the first one hit. One consumer's opening review turned up four holes, three of them the same missing capability and one closed in `v0.0.3`. That rate is ordinary for a format meeting real data. The bump asserts the rate has come down, and only later consumers can show that.
+
+### Type lookup has been run, not just written down
+
+How a Type Definition gets found — the chain, where it ends, which copy wins when two disagree, what a vendored copy remembers about its origin — is open on several fronts (see *Undecided*). Writing the rule is the easy half. **Resolution fails quietly, because the wrong definition is still a definition**, so a rule nobody has run against two bundles that disagree has not been tested at all.
+
+### The shape has stopped moving
+
+Bundle layout, how types get copied between bundles, and which names the format claims for itself.
+
+These cost the most to revisit, because they live in every consumer's files rather than in a document. A field can be deprecated for a version and then dropped — the format already allows for that. A reserved name gets no such courtesy: claim one at `v0.2` and anyone already using it as an ordinary name breaks without warning. Changing the layout is a migration for every bundle in existence.
+
+### What wouldn't count
+
+Reading without writing. Using a fraction of it. Elapsed time.
+
+**Who decides:** the maintainer, weighing what consumers report. Nothing here trips on its own.
+
 ## Undecided — needs a decision before it can be specified
 
 - **Field-level ratification** — confirm the working-default levels in `SPEC.md` §5.1 (`title`, `description`, `tags`, `verified`, `sources`).
