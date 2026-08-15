@@ -147,6 +147,15 @@ Every `by:` and `author:` value follows one grammar — **`<kind>:<producer>/<ve
 | `agent:` | `agent:gemini-2.5-pro`, `agent:opus-4.8/luma-wiki` | an AI agent or tool (optional `/version` names the tool or wrapper) |
 | `process:` | `process:cron-nightly` | an automated process |
 | `team:` | `team:foobar` | a team or organization |
+| `unknown:` | `unknown:unknown` | the actor was not recorded |
+
+**`unknown` is permitted as either half.** `agent:unknown` records that an agent wrote something without naming which; `human:unknown` records that a person did; `unknown:unknown` records that neither is known.
+
+A tool that cannot tell who invoked it should write the honest value rather than guessing a plausible one. The alternative — omitting `by` — is worse, because it discards the `at` timestamp sharing the same `actor_event`, and because a missing author reads as an oversight where `unknown:unknown` reads as a fact.
+
+**Supported, and an anti-pattern.** A tool that *can* identify its actor should. `unknown:unknown` exists for genuine ignorance — a command invoked through one interface by both people and agents, with nothing to tell them apart — not as a default for tools that never asked. A body of Concepts where most authors are `unknown:unknown` has thrown away provenance it could have kept, and no reader can tell which of those were unavoidable and which were laziness.
+
+Prefer the most specific value available: `agent:opus-5` over `agent:unknown` over `unknown:unknown`. Where a tool has a way for the caller to say who is acting, the honest default is `unknown:unknown` and the expected practice is to pass the real one.
 
 The uniform `<kind>:<value>` shape means a consumer parses any actor by splitting on the first `:`.
 
