@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.2`
+- **Version:** `v0.0.3`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
