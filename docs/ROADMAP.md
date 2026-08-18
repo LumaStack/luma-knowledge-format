@@ -84,6 +84,25 @@ Reading without writing. Using a fraction of it. Elapsed time.
   meaning. Decide whether that is the intent or whether it should carry fields
   a knowledge-base entry always has.
 - **Reserved-file formats** — the exact structure of `index.md` and `log.md` (§11).
+- **How many names the format claims at a Bundle root.** §11 reserves four — `bundle.md`, `index.md`, `log.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
+
+  The alternative is to claim **one** name and nest everything reserved beneath it:
+
+  ```
+  _lkf/
+    types/
+    index.md
+    log.md
+  bundle.md        ← arguably stays at root, since it names the thing itself
+  ```
+
+  One namespace to defend rather than four, and future reserved names cost nothing to add. It is the same move made twice elsewhere for the same reason — a catalog's content under one subtree, a project's store under `.hq/`.
+
+  **What blocks it is the name.** `_lkf/` stamps the format's own initials into every Bundle's directory structure, which bets the format will always be the thing reading them; a format meant to outlive its origin should not announce whose idea it was in every path. No generic single word has survived: `_meta/` names a category rather than a job, `_reserved/` is honest and ugly. That is the open part.
+
+  **Timing:** this is a Bundle-layout change, which the `v0.1.0` criteria above name specifically as something that must have stopped moving — and it is a migration for every Bundle in existence once any exist. Cheap now.
+
+  *Settled in passing, recorded so it is not re-argued:* `_types/` keeps its name if consolidation does not happen. `.types/` was rejected because hidden directories are skipped by `ls`, default-ignored by search tools, and read as "tooling artifact" — all of which fight §10.6, where discovery is the entire point. `lkf-types/` and `luma-types/` were rejected on the vendor-name argument above. `_schema/` was rejected because *schema* means validate-or-reject, which is precisely what §10.5 refuses. The leading underscore stays because it has real prior art for framework-reserved directories, sorts ahead of letters, remains visible, and avoids colliding with the `types/` that TypeScript projects genuinely use.
 - **Where `_types/` resolves.** §10.4 looks in exactly two places: the built-ins, and *a Bundle's* `_types/`. That ties type resolution to Bundles, and the first real consumer has already outgrown it — `luma-catalog` publishes a `type: catalog` document at the root of a directory that is deliberately not a Bundle (no version, never copied wholesale, and it contains Bundles), and that type needs somewhere to live.
 
   Working around it means either declaring the directory a Bundle, which makes Bundles-inside-Bundles a concept the format then owes an answer for, or letting the consumer invent its own lookup — which is how two tools end up disagreeing about where a type lives, and resolution fails quietly.
