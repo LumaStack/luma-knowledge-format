@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Added
+- **`preload` as a core field** (§5.1, §5.2) — `optional`, an enum of `mandatory | recommended | optional`, saying how strongly a Document should be loaded before working with its Bundle. A Bundle is usually larger than any one task needs, and nothing let a Document say it was the spine rather than reference material.
+  It sits on the root rather than on `bundle` because any Document may carry it. **`mandatory` is a hard requirement**: a consumer that cannot load such a Document fails and names it, rather than starting diminished — a level that degrades quietly is a hint, and hints are ignored. The cost falls on authors, which is what keeps the level meaning anything.
+  Absent means `optional`, and §5.2 states why that is a genuine default here while absence of `consumers` means nothing: the weakest value is also the safe one.
+- **`entry_point` on the built-in `bundle` type** (§11.1) — `optional`, a Document ID (§3) naming where a reader should start. Without it every consumer invents its own answer — first alphabetically, longest file, name matching the directory. It is deliberately distinct from `preload: mandatory`: entry point is reading order, `preload` is context presence, and a Bundle may need several Documents loaded while still having one place to begin.
+  Both are additive and non-breaking; existing Bundles remain valid unchanged.
+
 ## [0.0.7] — 2026-08-18
 
 ### Changed
