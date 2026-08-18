@@ -8,11 +8,29 @@ The three questions to answer next, in no particular order. Two are detailed
 under *Undecided* below; the third is new.
 
 1. **`extends: source`** — needs a ruling. §10.1's example Type Definition
-   inherits from `source`, which is not a built-in and is defined nowhere. Is
-   the built-ins list incomplete, or is the example showing a bundle-local
-   parent? Creating a `source` type to make the example work was declined
-   deliberately: that would be inventing specification to resolve errata, and
-   the two readings commit the format to different things.
+   inherits from `source`, which is not a built-in and is defined nowhere.
+
+   *Reading of the evidence, not yet a decision.* A third possibility beats the
+   two originally recorded: the example is **vestigial**. `source` looks like a
+   parent type from an earlier design that carried provenance — `author`,
+   `last_modified`, where a thing came from — which is exactly what a
+   `lab_result` would have wanted to inherit. Those fields are now **core**
+   (§5.1 `created`, `modified`, `verified`, `sources`) and arrive through the
+   root, so a `source` parent has nothing left to supply.
+
+   Note also that §7.3's `sources` is a *field* — a list of `{id, resource,
+   title, author, last_modified}` — not a type. Semantically a lab result is not
+   a source: it is a measurement, and the thing it derives from is the source.
+   So `extends: source` reads backwards even on its own terms.
+
+   If that holds, the fix is to **delete `extends: source` from the example**
+   rather than define a `source` type to justify it — the example would then
+   show a type extending the root implicitly, which is the ordinary case and a
+   better teaching example anyway. Creating the type to make the example work
+   was declined deliberately: that is inventing specification to resolve errata.
+
+   What would settle it: whether `source` was ever intended as a type, or only
+   ever the `sources` field. Check the v0.0.1 history before deciding.
 2. **Type Definition `version`** — §12 refers to "a Type Definition's own
    `version`", which §10.1 never declares. The `semver` field type now exists to
    hold it, so the remaining questions are whether a Type Definition carries one
