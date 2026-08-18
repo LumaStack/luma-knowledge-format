@@ -313,7 +313,7 @@ A Bundle SHOULD describe itself in a `bundle.md` at its root — an ordinary Doc
 type: bundle
 version: 1.2.0
 published: 2026-08-17
-applies_to: [patient, clinic]
+consumers: [patient, clinic]
 description: Health knowledge — lab results, medications, and conditions.
 ---
 ```
@@ -323,16 +323,18 @@ description: Health knowledge — lab results, medications, and conditions.
 | `type` | mandatory | text | `bundle` |
 | `version` | mandatory | semver | this Bundle's version (§10.2) |
 | `published` | recommended | date | when this version was published |
-| `applies_to` | optional | list of text | the kinds of consumer that may adopt this Bundle |
+| `consumers` | optional | list of text | the kinds of consumer that may adopt this Bundle |
 | `description` | *inherited* | text | one line on what the Bundle holds — a core field (§5.1), so `optional`; a Bundle SHOULD still carry one |
 
 `version` is mandatory because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` (§12), which is the format-grammar version.
 
-**`applies_to` is an open vocabulary, and LKF defines no values for it.** Where a distribution model has more than one kind of consumer — a repository and an organization, a workstation and a server, a patient and a clinic — a Bundle may say which of them it is for. LKF does not know what those kinds are and does not enumerate them; the values belong to whoever is distributing, exactly as `tags` (§5.1) is `list of text` and left loose.
+**`consumers` is an open vocabulary, and LKF defines no values for it.** Where a distribution model has more than one kind of consumer — a repository and an organization, a workstation and a server, a patient and a clinic — a Bundle may say which of them it is for. LKF does not know what those kinds are and does not enumerate them; the values belong to whoever is distributing, exactly as `tags` (§5.1) is `list of text` and left loose.
 
-It is a list because a Bundle may legitimately apply at more than one, and that is the whole reason it is a field. A distributor sorting Bundles into directories by consumer kind can express only one, which forces the *publisher* to answer a question that often belongs to the *adopter*. Omitting `applies_to` says nothing — not "applies to none" and not "applies to all" — and consumers MUST NOT reject a Bundle for its absence (§4).
+**The values are kinds, never instances.** `consumers` names what may adopt this Bundle, not what has. It is a permission the publisher grants, and no consumer writes itself into a Bundle it adopts.
 
-`description` is inherited rather than declared: it is already a core field, and inheritance is add-only (§10.3), so a type may not restate an inherited field to strengthen its obligation. The built-in `bundle` Type Definition therefore declares only `version`, `published` and `applies_to`.
+It is a list because a Bundle may legitimately apply to more than one kind, and that is the whole reason it is a field. A distributor sorting Bundles into directories by consumer kind can express only one, which forces the *publisher* to answer a question that often belongs to the *adopter*. Omitting `consumers` says nothing — not "no consumers" and not "all consumers" — and consumers MUST NOT reject a Bundle for its absence (§4).
+
+`description` is inherited rather than declared: it is already a core field, and inheritance is add-only (§10.3), so a type may not restate an inherited field to strengthen its obligation. The built-in `bundle` Type Definition therefore declares only `version`, `published` and `consumers`.
 
 Consistent with §4, a Bundle missing `bundle.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
