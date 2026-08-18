@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.5] — 2026-08-17
+
 ### Changed
 - **The built-in types moved to a `bundle/` directory** (§10.4). They previously sat at the repository root, which made the repository itself the Bundle — and therefore made the "unit of distribution" include the changelog, the guidelines and the roadmap. Project apparatus is not knowledge, and a Bundle that drags its own governance along is not self-contained in any useful sense. `bundle/` is now exactly the unit: `bundle.md` and `_types/`.
   `SPEC.md` deliberately stays at the repository root. It is the primary artifact and the first thing a reader looks for, and burying it to tidy the secondary files would be the wrong trade. This Bundle is the built-in types; a Bundle carrying the specification as loadable knowledge would be a different one.
