@@ -96,7 +96,7 @@ Reading without writing. Using a fraction of it. Elapsed time.
   bundle.md        ← arguably stays at root, since it names the thing itself
   ```
 
-  One namespace to defend rather than four, and future reserved names cost nothing to add. It is the same move made twice elsewhere for the same reason — a catalog's content under one subtree, a project's store under `.hq/`.
+  One namespace to defend rather than four, and future reserved names cost nothing to add. It is the same move made twice elsewhere for the same reason — a catalog's content under one subtree, a project's store under `.luma/`.
 
   **What blocks it is the name.** `_lkf/` stamps the format's own initials into every Bundle's directory structure, which bets the format will always be the thing reading them; a format meant to outlive its origin should not announce whose idea it was in every path. No generic single word has survived: `_meta/` names a category rather than a job, `_reserved/` is honest and ugly. That is the open part.
 
