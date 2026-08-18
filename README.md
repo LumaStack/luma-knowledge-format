@@ -29,8 +29,8 @@ See [[score-based-models]] for the continuous-time formulation.
 
 **Using the format**
 
-- [`SPEC.md`](SPEC.md) — the specification.
-- [`bundle/_types/`](bundle/_types/) — the built-in types, written in the format itself. The shortest way to see real LKF files.
+- [`EXPLANATION.md`](docs/EXPLANATION.md) — **start here.** What LKF is, the problems it solves, worked examples, and what each built-in type is for.
+- [`SPEC.md`](SPEC.md) — the specification. Short by design.
 - [`CHANGELOG.md`](CHANGELOG.md) — what changed between versions, and why.
 
 **Working on the format**
