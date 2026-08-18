@@ -99,7 +99,9 @@ A Bundle is usually larger than any one task needs. `preload` lets a Document sa
 
 **It says nothing about importance.** All three values are about *timing*. An `optional` Document may be the most valuable thing in a Bundle and simply not be needed until something asks for it. Retirement is `lifecycle_status` (§6), not this.
 
-**Scope is the Bundle.** `preload` answers *given that I am working with this Bundle, what do I need first* — not *should I be working with this Bundle at all*, which is a question about applicability that this field does not address.
+**Preload is always relative to what contains the thing.** A Document's `preload` is relative to its Bundle — *of this Bundle's Documents, which do I need ahead of the work* — and says nothing about whether the Bundle should be in play at all. That is a question for whoever adopted it, and this field does not answer it.
+
+*Ahead of the work* is deliberately not pinned to a moment. In current practice it means what a consumer loads at the start of a session, and that is the clearest way to explain it — but the loading model is a property of the consumer, and a field carried by every Document that uses it has to outlive whatever the current one turns out to be.
 
 ## 6. Lifecycle: `lifecycle_status`
 
