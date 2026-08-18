@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.7] — 2026-08-18
+
 ### Changed
 - **`applies_to` on the built-in `bundle` type is renamed `consumers`** (§11.1). Same obligation, same field type, same open vocabulary — only the name changes. Two reasons, both structural rather than stylistic. Every other field on `bundle` states a *property* of the Bundle (`version`, `published`, `description`) while `applies_to` stated a *relation*, and in policy languages `applies_to` conventionally means enforcement scope — "this rule applies to these targets" — whereas this field is about eligibility. `consumers` also matches how the format names every other collection: `tags` holds tags, `sources` holds sources.
   The spec now says outright that the values are **kinds, never instances** — the one ambiguity a plural noun introduces, and cheaper to close in a sentence than to name around.
