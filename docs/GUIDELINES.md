@@ -26,12 +26,38 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 ## Branching
 
-`main` always reflects the **latest released version** — it advances only when a release is cut, so `main` and the newest tag stay in lockstep. Checking out `main` always gives a coherent release, never half-finished work.
+`main` always reflects the **latest released specification**. Checking out `main` gives a coherent release, never half-finished normative work.
 
 - **All changes are made on a branch off `main`**, never committed directly to `main`. Unreleased work accumulates on a **`develop`** branch (feature branches may fork off it and merge back).
-- **`main` advances only at release time**, by merging the release-ready work in and tagging it.
+- **Normative work reaches `main` only at release time**, by merging the release-ready work in and tagging it.
 - **Merge, never squash or rebase.** Every merge is a merge commit. This project requires the rationale for a change to live in its commit message, and squashing collapses a branch's messages into one — losing exactly what the rule exists to preserve. Rebasing rewrites them. Squash and rebase merging are disabled on the repository, so the buttons are absent rather than merely discouraged.
 - **Exception — critical hotfix:** a fix that genuinely can't wait for the next release may go straight to `main` and ship as a patch; `develop` then picks it up.
+
+### Non-normative documentation may land on `main` between releases
+
+**The test: can this change make a reader wrong about what the format requires?** If not, it does not need a release.
+
+| Gated — release only | May land between releases |
+|---|---|
+| `SPEC.md` | `docs/EXPLANATION.md` |
+| `PRINCIPLES.md` | `docs/ROADMAP.md` |
+| `CHANGELOG.md` | `docs/GUIDELINES.md` |
+| `bundle/**` | `README.md`, except the version in its Status line |
+| the version in `README.md`'s Status line | |
+
+`PRINCIPLES.md` is gated despite being prose: the specification bends to honor it, so a principle on `main` that the released spec does not yet reflect describes a format nobody can use. `bundle/**` is gated because the built-in types are a rendering of what the specification says, and the two must agree at every commit on `main`.
+
+**Why this exception exists.** The roadmap is the file that says what is open, the explanation is the file a newcomer reads first, and GitHub shows `main`. Gating them on the release cycle guarantees the two most-read documents in the repository are the two most likely to be stale — and neither can mislead anyone about a rule, because neither states one.
+
+**The rules are unchanged otherwise.** Still a branch and a pull request, never a direct commit to `main`. Still a merge commit. **And `develop` must be fast-forwarded to `main` immediately afterward** — the same trap as step 10 of a release, reached by a different route: skip it and the next release pull request shows the documentation as a change.
+
+**The invariant, restated precisely.** `main` and the newest tag are in lockstep **at the moment a release is cut**, and between releases `main` may be ahead by non-normative documentation only. That is checkable rather than a matter of trust:
+
+```sh
+git diff --name-only "$(git describe --tags --abbrev=0)"..main
+```
+
+Anything from the gated column in that output is unreleased normative work sitting on `main`, and is a mistake to fix rather than a state to leave.
 
 ## Changelog
 
