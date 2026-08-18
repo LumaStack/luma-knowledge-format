@@ -30,6 +30,7 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 - **All changes are made on a branch off `main`**, never committed directly to `main`. Unreleased work accumulates on a **`develop`** branch (feature branches may fork off it and merge back).
 - **`main` advances only at release time**, by merging the release-ready work in and tagging it.
+- **Merge, never squash or rebase.** Every merge is a merge commit. This project requires the rationale for a change to live in its commit message, and squashing collapses a branch's messages into one — losing exactly what the rule exists to preserve. Rebasing rewrites them. Squash and rebase merging are disabled on the repository, so the buttons are absent rather than merely discouraged.
 - **Exception — critical hotfix:** a fix that genuinely can't wait for the next release may go straight to `main` and ship as a patch; `develop` then picks it up.
 
 ## Changelog
@@ -53,9 +54,9 @@ steps that get skipped are marked.
    shipping as a patch under the pre-1.0 clause, say so in the release commit —
    it otherwise reads as a miscategorisation later.
 3. **Open a pull request** from `develop` to `main`.
-4. **Merge it with a merge commit — never a squash.** ⚠️ The rationale for each
-   change lives in its own commit message, and this project requires that
-   rationale be preserved. Squashing destroys it.
+4. **Merge it with a merge commit.** Squash and rebase merging are disabled on
+   the repository (see [Branching](#branching)), so this should be the only
+   option offered.
 5. **Bump both versions.** ⚠️ Two files, and the second is the easy miss:
    - `SPEC.md` — the `Version` header. The specification's version.
    - `bundle/bundle.md` — the `version` field. The version of the Bundle that
@@ -97,6 +98,7 @@ An agent working in this repository MUST:
 - **Not change `SPEC.md` normatively without a ratified decision.** Drafting a proposal is fine; merging it into the spec as settled is not.
 - **Record the rationale in the commit message** for every accepted change, so the "why" is never lost. (When commit-log spelunking gets painful, graduate to an append-only `DECISIONS.md`.)
 - **Work on a branch off `main`, never commit directly to `main`** (except a ratified critical hotfix) — `main` stays equal to the latest release.
+- **Merge, never squash or rebase.** Squashing collapses the per-commit rationale this project requires be preserved.
 - **Add a `CHANGELOG.md` entry** under `## [Unreleased]` for behavior-affecting changes; omit non-behavioral edits.
 - **Keep changes additive within a minor version;** anything breaking requires a major bump and maintainer sign-off.
 - **Honor the principles** in `PRINCIPLES.md`; if a change appears to violate one, stop and surface the conflict rather than proceeding.
