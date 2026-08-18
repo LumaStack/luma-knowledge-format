@@ -12,6 +12,7 @@ fields:
   verified:         { obligation: optional,    field_type: list of actor_event, desc: "Independent confirmation events. §7.2." }
   sources:          { obligation: optional,    field_type: list,               desc: "Materials the content derives from (bespoke shape). §7.3." }
   stale_after:      { obligation: optional,    field_type: date,               desc: "The content SHOULD be re-checked after this date." }
+  preload:          { obligation: optional,    field_type: enum,               values: [mandatory, recommended, optional], desc: "How strongly this Document should be loaded before working with its Bundle. Absent means optional. §5.2." }
 ---
 
 # document
@@ -24,3 +25,8 @@ fields, because it is where the core fields come from.
 
 `document` is a real type as well as the root: a file with nothing more specific
 to say may declare `type: document` rather than inventing a name for it.
+
+`preload` is the one field here that describes how a Document should be
+*consumed* rather than what it is or where it came from. It lives on the root
+because any Document may carry it, not only a Bundle's manifest — see §5.2 for
+what each level obliges a consumer to do.
