@@ -81,6 +81,20 @@ steps that get skipped are marked.
 11. **Verify the invariant:** `main` and the newest tag point at the same commit.
     `git rev-parse --short main` and `git rev-parse --short vX.Y.Z^{commit}`
     must agree.
+12. **Publish the GitHub Release** against the tag. ⚠️ A pushed tag is not a
+    release — the tag is the mechanism, the Release is what people read, and the
+    repository has no other release notes. It carries:
+    - the changes, grouped **Added** / **Changed** / **Deprecated** / **Removed**,
+      each with the reasoning rather than only the outcome;
+    - an **Upgrading from vX.Y.Z** section saying what a bundle or type author
+      must actually do — and saying so plainly when the answer is *nothing*,
+      which is usually the most useful sentence in the notes;
+    - the version-category note, if a breaking change shipped as a patch;
+    - a pointer to `CHANGELOG.md` for the full history.
+
+    The upgrade section is not a duplicate of the changelog's *Migration:* notes.
+    Those are per-change and written as the change lands; this is the whole
+    upgrade in one place, written once the release is known.
 
 ## Versioning & release policy
 
