@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.4] — 2026-08-17
+
 ### Added
 - **The built-in types ship as real Type Definitions** in this repository's `_types/` — `document`, `concept`, `bundle` and `type_definition`. They were previously prose tables only, which meant the format claimed to be self-hosting while its own types were the one thing not expressed in it. The repository is now itself a Bundle: the Type Definitions are its Documents, and the specification, readme, licence and `docs/` are its Assets — legal only since Assets exist. A tool MAY supply the built-ins itself rather than requiring every bundle to vendor them.
 - **Assets** (§2, §8). A Bundle's files are now partitioned: every file is either a Document (frontmatter with a `type`) or an **Asset** (no frontmatter, no type, outside Type Definition validation). An **Attachment** is an Asset a Document links to — a relationship rather than a category, so the same Asset may be an Attachment of several Documents, and one nothing links to is nobody's Attachment. Scripts, templates and binaries previously had no standing in a Bundle at all.
