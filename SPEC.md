@@ -37,7 +37,7 @@ A Concept's **ID** is its file path within the Bundle, with the `.md` suffix rem
 
 LKF does not define a separate identifier field; the ID is path-based. Renaming or moving a Concept changes its ID, so producers SHOULD perform renames through tooling that rewrites inbound links (§8). Consumers MUST tolerate links whose target does not resolve (§8).
 
-> Stable opaque identifiers were considered and deferred; see `PRINCIPLES.md` and the project rationale. Because links are name-based, introducing ids later is additive and optional.
+> Stable opaque identifiers were considered and deferred; see [`PRINCIPLES.md`](docs/PRINCIPLES.md) and the project rationale. Because links are name-based, introducing ids later is additive and optional.
 
 ## 4. Frontmatter layout and conformance
 
@@ -175,7 +175,7 @@ All links are by human-readable **slug/path** (LKF has no id-links):
   parent:     "[[topic-ml]]"
   ```
 
-Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Concept ID — and how ties between same-slug Concepts are broken — is governed by the link-resolution rules, which are not yet specified (see `ROADMAP.md`). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling (§3).
+Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Concept ID — and how ties between same-slug Concepts are broken — is governed by the link-resolution rules, which are not yet specified (see [`ROADMAP.md`](docs/ROADMAP.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling (§3).
 
 ## 9. Body conventions
 
@@ -297,4 +297,4 @@ Because Type Definitions are just files, humans and agents discover a type's con
 - Published versions are **git tags**; the newest tag is the current version.
 - A Bundle MAY declare an `lkf_version` on its root `index.md`; a Concept MAY override with its own (file-level wins). This is the *format-grammar* version — not content version (git's job) and not a Type Definition's own `version`.
 
-> Known gaps and deferred features are tracked in [`ROADMAP.md`](ROADMAP.md).
+> Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).
