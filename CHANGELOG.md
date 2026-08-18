@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.8] — 2026-08-18
+
 ### Added
 - **`preload` as a core field** (§5.1, §5.2) — `optional`, an enum of `mandatory | recommended | optional`, saying how strongly a Document should be loaded before working with its Bundle. A Bundle is usually larger than any one task needs, and nothing let a Document say it was the spine rather than reference material.
   It sits on the root rather than on `bundle` because any Document may carry it. **`mandatory` is a hard requirement**: a consumer that cannot load such a Document fails and names it, rather than starting diminished — a level that degrades quietly is a hint, and hints are ignored. The cost falls on authors, which is what keeps the level meaning anything.
