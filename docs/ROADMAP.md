@@ -2,6 +2,27 @@
 
 Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` describes only what is settled; this file tracks what is not.
 
+## Next steps
+
+The three questions to answer next, in no particular order. Two are detailed
+under *Undecided* below; the third is new.
+
+1. **`extends: source`** — needs a ruling. §10.1's example Type Definition
+   inherits from `source`, which is not a built-in and is defined nowhere. Is
+   the built-ins list incomplete, or is the example showing a bundle-local
+   parent? Creating a `source` type to make the example work was declined
+   deliberately: that would be inventing specification to resolve errata, and
+   the two readings commit the format to different things.
+2. **Type Definition `version`** — §12 refers to "a Type Definition's own
+   `version`", which §10.1 never declares. The `semver` field type now exists to
+   hold it, so the remaining questions are whether a Type Definition carries one
+   at all and what a bump means for copies already vendored elsewhere.
+3. **Whether `concept` should carry fields of its own.** It currently declares
+   none, so `type: concept` and `type: document` are structurally identical and
+   differ only in what the name claims. That may be right — a type whose whole
+   content is its name is worth having when the name is what a reader needs —
+   but it has not been tested against a real knowledge base.
+
 ## What `v0.1.0` would mean
 
 Not a promise that the format is finished, or safe to lean on. Only that it has stopped being a guess.
@@ -40,6 +61,10 @@ Reading without writing. Using a fraction of it. Elapsed time.
 - **Vendored-type provenance** — §10.4 makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, §7.3, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in §10.1** — the example Type Definition inherits from `source`, which is neither a reserved built-in (§10.4) nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
+- **`concept` fields** — the built-in `concept` extends `document` and adds
+  nothing, making it structurally identical to the root and distinct only in
+  meaning. Decide whether that is the intent or whether it should carry fields
+  a knowledge-base entry always has.
 - **Reserved-file formats** — the exact structure of `index.md` and `log.md` (§11).
 
 ## Deferred features — postponed, may return in a later version
