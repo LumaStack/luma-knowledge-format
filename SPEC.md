@@ -239,6 +239,7 @@ The key is **`field_type`**, not `type`, so it never collides with a Concept's `
 | `boolean` | `true` / `false` |
 | `date` | a date, `YYYY-MM-DD` |
 | `datetime` | a full timestamp (ISO 8601 / RFC 3339) |
+| `semver` | a semantic version — `MAJOR.MINOR.PATCH`, optionally with pre-release and build metadata (`1.0.0-alpha.1+build.5`), exactly as [semver.org](https://semver.org) defines it. No `v` prefix: `v1.2.3` is a tag convention, not a version. |
 | `enum` | one of the strings listed in `values` |
 | `wikilink` | an internal `[[…]]` link to another Concept in the bundle (of any `type`) |
 | `uri` | an external address (URL/URI) |
@@ -257,7 +258,7 @@ A **relationship** (a typed edge in the Concept graph) is simply a field whose `
 ### 10.4 Resolution and namespacing
 
 - **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`concept`, `type_definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
-- **Reserved built-ins.** The names `concept` and `type_definition` belong to the format; a bundle MUST NOT redefine them.
+- **Built-in names.** The names `concept` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
 - **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
 ### 10.5 Validation — a suggested framework, not a contract

@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Added
+- **`semver` field type** (§10.2). A version string as [semver.org](https://semver.org) defines it, including pre-release and build metadata (`1.0.0-alpha.1+build.5`). The `v` prefix is excluded deliberately — `v1.2.3` is a tag convention rather than a version, and accepting both spellings would mean two bundles could write the same version two ways and every consumer would have to normalize.
+
+### Changed
+- **Redefining a built-in type is now `SHOULD NOT` rather than `MUST NOT`** (§10.4). The prohibition was the format's only hard "you may not", sitting inside a specification that is otherwise permissive by default and never rejects. It also over-applied: redefining `type_definition` is genuinely dangerous, while redefining the root type to *add* a field is useful and has no other mechanism, since §10.3 lets a type add fields but nothing lets you add to the root. One blanket rule forbade the useful case to prevent the harmful one. It is now discouraged rather than forbidden. Not a migration — this permits strictly more than before. If it later needs teeth, the shape is already in the format: §10.3 is add-only, so the rule would be that a redefinition may *add* to a built-in but never contradict it.
+  The heading changed from "Reserved built-ins" to "Built-in names", freeing *reserved* for a possible future mechanism that reserves type names on behalf of others.
+
 ## [0.0.3] — 2026-08-15
 
 ### Added
