@@ -57,16 +57,38 @@ steps that get skipped are marked.
 4. **Merge it with a merge commit.** Squash and rebase merging are disabled on
    the repository (see [Branching](#branching)), so this should be the only
    option offered.
-5. **Bump both versions.** ⚠️ Two files, and the second is the easy miss:
+5. **Bump the version in all three places.** ⚠️ Three files. Only the first is
+   obvious, and a release that misses one is not detectable by reading any single
+   file:
    - `SPEC.md` — the `Version` header. The specification's version.
    - `bundle/bundle.md` — the `version` field. The version of the Bundle that
      ships the built-in Type Definitions.
+   - `README.md` — the version in the **Status** line.
 
-   They are kept in lockstep deliberately: the built-in types are a rendering of
-   what the specification says, so a Bundle claiming a different version than the
-   spec it renders would be lying about which spec it implements.
-   `bundle/bundle.md` did not exist before `v0.0.4`, which is why releases up to
-   `v0.0.3` touched `SPEC.md` alone.
+   Then verify rather than trust, because all three are one-line edits that look
+   done at a glance:
+
+   ```sh
+   grep -n '^- \*\*Version' SPEC.md
+   grep -n '^version:' bundle/bundle.md
+   grep -n '^> \*\*Status' README.md
+   ```
+
+   They are kept in lockstep deliberately, and each states something different
+   that a stale number makes false. The built-in types are a rendering of what
+   the specification says, so a Bundle claiming a different version than the spec
+   it renders is lying about which spec it implements. The README's Status line
+   is what a reader sees before deciding whether to adopt an unstable format at
+   all, so a stale one understates how much has moved.
+
+   **Resist a fourth.** Three is already more than the design wants — each is a
+   place to forget. A new file needing the version should read it from one of
+   these or go without; a number that exists to be looked at by a human is worth
+   the duplication, and one that exists to be parsed is not.
+
+   *History, so an old release does not read as a missed step:*
+   `bundle/bundle.md` did not exist before `v0.0.4`, and the README carried no
+   version before `v0.0.7`. Releases up to `v0.0.3` touched `SPEC.md` alone.
 6. **Promote the changelog.** Rename `## [Unreleased]` to `## [x.y.z] — YYYY-MM-DD`
    and open a fresh empty `## [Unreleased]` above it. Newest version on top.
 7. **Commit as `Release vX.Y.Z`**, with the rationale — what it contains, and why
