@@ -4,7 +4,7 @@ LKF is a format for representing knowledge, designed to be equally friendly to h
 
 Knowledge lives in plain files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, systems, or organizations, and it is designed to require minimal tooling.
 
-> **Version & status:** authoritative in [`SPEC.md`](SPEC.md). Releases are published as git tags — see [Releases](https://github.com/LumaStack/luma-knowledge-format/releases).
+> **Status: `v0.0.6` — unstable.** Breaking changes may ship in a patch release until `v0.1.0`, which is a claim the format has been run for real in more than one place and has not earned yet. Expect field renames. `SPEC.md` is authoritative for the version; releases are published as git tags — see [Releases](https://github.com/LumaStack/luma-knowledge-format/releases).
 
 ## Example
 
@@ -27,11 +27,17 @@ See [[score-based-models]] for the continuous-time formulation.
 
 ## Contents
 
+**Using the format**
+
 - [`SPEC.md`](SPEC.md) — the specification.
-- [`bundle/`](bundle/) — the built-in types as real Type Definitions, and itself a Bundle. This is what to copy from when vendoring (§10.4).
+- [`bundle/_types/`](bundle/_types/) — the built-in types, written in the format itself. The shortest way to see real LKF files.
+- [`CHANGELOG.md`](CHANGELOG.md) — what changed between versions, and why.
+
+**Working on the format**
+
 - [`PRINCIPLES.md`](docs/PRINCIPLES.md) — the design principles behind LKF.
-- [`GUIDELINES.md`](docs/GUIDELINES.md) — how the project is run.
 - [`ROADMAP.md`](docs/ROADMAP.md) — open questions and deferred features.
+- [`GUIDELINES.md`](docs/GUIDELINES.md) — how the project is run.
 
 ## License
 
