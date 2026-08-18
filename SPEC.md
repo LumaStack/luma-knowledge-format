@@ -79,8 +79,29 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 | `verified` | optional | list of actor_event | Independent confirmation events. §7.2. |
 | `sources` | optional | list | Materials the content derives from (bespoke shape). §7.3. |
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
+| `preload` | optional | enum | `mandatory \| recommended \| optional`. How strongly this Document should be loaded before working with its Bundle. §5.2. |
 
 > Some obligations above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
+
+### 5.2 `preload`
+
+A Bundle is usually larger than any one task needs. `preload` lets a Document say how strongly it should be in front of a reader — human or agent — *before* work with its Bundle begins, so a consumer working to a budget knows what it may leave until later.
+
+| Value | A consumer SHOULD | If it cannot |
+|---|---|---|
+| `mandatory` | load it before working with the Bundle at all | **fail, naming the Document.** Not a diminished start |
+| `recommended` | load it upfront when able | proceed, and report that it did not |
+| `optional` | leave it until something references it or a need arises | nothing — it was never going to be loaded unprompted |
+
+**Absent means `optional`.** A genuine default rather than a meaning assigned to silence: here the weakest value is also the safe one, since failing to load something is recoverable while loading everything by default is not. (Contrast `consumers` in §11.1, where absence says *nothing* — there, both possible defaults would be wrong guesses.)
+
+**`mandatory` is a hard requirement, not a strong preference.** A level that degrades quietly is a hint, and hints are ignored. A consumer that cannot load a `mandatory` Document refuses rather than proceeding without it. The cost of that falls on the author: marking too much `mandatory` makes a Bundle unusable in a constrained context, which is what keeps the level meaning anything. A Bundle's total `mandatory` weight is a requirement it imposes on every consumer, and is better surfaced where the Bundle is published than discovered when something fails.
+
+**It says nothing about importance.** All three values are about *timing*. An `optional` Document may be the most valuable thing in a Bundle and simply not be needed until something asks for it. Retirement is `lifecycle_status` (§6), not this.
+
+**Preload is always relative to what contains the thing.** A Document's `preload` is relative to its Bundle — *of this Bundle's Documents, which do I need ahead of the work* — and says nothing about whether the Bundle should be in play at all. That is a question for whoever adopted it, and this field does not answer it.
+
+*Ahead of the work* is deliberately not pinned to a moment. In current practice it means what a consumer loads at the start of a session, and that is the clearest way to explain it — but the loading model is a property of the consumer, and a field carried by every Document that uses it has to outlive whatever the current one turns out to be.
 
 ## 6. Lifecycle: `lifecycle_status`
 
@@ -178,6 +199,15 @@ All links are by human-readable **slug/path** (LKF has no id-links):
   parent:     "[[topic-ml]]"
   ```
 
+  > **The quotes are load-bearing, and omitting them fails silently.** `[[…]]` is YAML flow-sequence syntax, so an unquoted wikilink parses as a **nested array** rather than a string, with no error from any YAML parser:
+  >
+  > ```yaml
+  > parent: [[topic-ml]]      # → [["topic-ml"]]   a list containing a list
+  > parent: "[[topic-ml]]"    # → "[[topic-ml]]"   a string, as intended
+  > ```
+  >
+  > A validator (§10.5) catches this as a value whose shape does not match its declared `field_type`, but nothing else will — the document stays conformant, and a consumer simply never resolves the link. Producers writing frontmatter wikilinks MUST quote them.
+
 **Assets use ordinary markdown links.** `[[…]]` links a Document; `[…](…)` links anything else — an Asset, or an external address:
 
 ```markdown
@@ -254,7 +284,7 @@ The key is **`field_type`**, not `type`, so it never collides with a Document's 
 | `datetime` | a full timestamp (ISO 8601 / RFC 3339) |
 | `semver` | a semantic version — `MAJOR.MINOR.PATCH`, optionally with pre-release and build metadata (`1.0.0-alpha.1+build.5`), exactly as [semver.org](https://semver.org) defines it. No `v` prefix: `v1.2.3` is a tag convention, not a version. |
 | `enum` | one of the strings listed in `values` |
-| `wikilink` | an internal `[[…]]` link to another Document in the bundle (of any `type`) |
+| `wikilink` | an internal `[[…]]` link to another Document in the bundle (of any `type`). **Quoted in frontmatter** — see the warning in §8 |
 | `uri` | an external address (URL/URI) |
 | `actor` | an actor string (§7.4) |
 | `actor_event` | `{ by: actor, at: datetime }` |
@@ -324,6 +354,7 @@ description: Health knowledge — lab results, medications, and conditions.
 | `version` | mandatory | semver | this Bundle's version (§10.2) |
 | `published` | recommended | date | when this version was published |
 | `consumers` | optional | list of text | the kinds of consumer that may adopt this Bundle |
+| `entry_point` | optional | text | the Document ID (§3) of where a reader should start |
 | `description` | *inherited* | text | one line on what the Bundle holds — a core field (§5.1), so `optional`; a Bundle SHOULD still carry one |
 
 `version` is mandatory because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` (§12), which is the format-grammar version.
@@ -334,7 +365,11 @@ description: Health knowledge — lab results, medications, and conditions.
 
 It is a list because a Bundle may legitimately apply to more than one kind, and that is the whole reason it is a field. A distributor sorting Bundles into directories by consumer kind can express only one, which forces the *publisher* to answer a question that often belongs to the *adopter*. Omitting `consumers` says nothing — not "no consumers" and not "all consumers" — and consumers MUST NOT reject a Bundle for its absence (§4).
 
-`description` is inherited rather than declared: it is already a core field, and inheritance is add-only (§10.3), so a type may not restate an inherited field to strengthen its obligation. The built-in `bundle` Type Definition therefore declares only `version`, `published` and `consumers`.
+**`entry_point` names where to start reading.** A Bundle of any size gives a newcomer no way to tell which Document is the way in, and every consumer otherwise invents its own answer — first alphabetically, the longest one, the one matching the directory name. It carries a **Document ID** (§3), not a link: `entry_point: recording-decisions`.
+
+It is deliberately *not* the same claim as `preload: mandatory` (§5.2), though in a small Bundle the same Document usually carries both. Entry point is reading order — *start here* — while `preload` is context presence — *have this available*. A Bundle may need three Documents loaded and still have one place to begin.
+
+`description` is inherited rather than declared: it is already a core field, and inheritance is add-only (§10.3), so a type may not restate an inherited field to strengthen its obligation. The built-in `bundle` Type Definition therefore declares only `version`, `published`, `consumers` and `entry_point`.
 
 Consistent with §4, a Bundle missing `bundle.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
