@@ -19,7 +19,9 @@ Two roles are referenced throughout:
 
 ## 2. Terminology
 
-- **Knowledge Bundle (or Bundle)**: A self-contained, hierarchical collection of knowledge documents. The unit of distribution.
+- **Knowledge Bundle (or Bundle)**: A self-contained, hierarchical collection of files — the unit of distribution. Every file in a Bundle is either a Document or an Asset. A Bundle is self-contained: it may be moved, archived, or copied whole, and nothing it needs lives outside it.
+- **Asset**: A file in a Bundle that is not a Document — a script, a template, an image, a binary. It carries no frontmatter and no `type`, and Type Definitions (§10) do not apply to it.
+- **Attachment**: An Asset that a Document links to (§8). A relationship, not a category: the same Asset may be an Attachment of several Documents, and an Asset that nothing links to is nobody's Attachment.
 - **Document**: A single unit of knowledge within a Bundle, represented as one markdown file with YAML frontmatter. Every Document declares a `type`; what it describes — a table, an API, a metric, a task, a lab result — is that type's business, not the format's.
 - **`concept`**: A built-in type (§10.4) for knowledge-base entries — the conceptual material LKF was first written for. It extends `document` and adds no fields of its own; declaring it says *this is a unit of knowledge* rather than a task, a record, or a bundle's manifest.
 - **Document ID**: The path of the Document's file within the Bundle, with the `.md` suffix removed.
@@ -176,6 +178,16 @@ All links are by human-readable **slug/path** (LKF has no id-links):
   parent:     "[[topic-ml]]"
   ```
 
+**Assets use ordinary markdown links.** `[[…]]` links a Document; `[…](…)` links anything else — an Asset, or an external address:
+
+```markdown
+Run [the setup script](scripts/setup.sh) before the first import.
+```
+
+An Asset link is a path relative to the linking Document, and MUST point inside the Bundle — a link reaching outside breaks self-containment, which is the property that lets a Bundle be copied whole. Whether the target *exists* is a separate question: as with Document links, an unresolved Asset link is legal (§4), and a consumer MUST NOT reject a Bundle for one.
+
+The two forms are distinguishable on sight and neither needs the other's rules — an Asset has no slug and no ID, only a path.
+
 Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Document ID — and how ties between same-slug Documents are broken — is governed by the link-resolution rules, which are not yet specified (see [`ROADMAP.md`](docs/ROADMAP.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling (§3).
 
 ## 9. Body conventions
@@ -258,8 +270,8 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
 ### 10.4 Resolution and namespacing
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `type_definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
-- **Built-in names.** The names `document`, `concept` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Built-in names.** The names `document`, `concept`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
 - **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
 ### 10.5 Validation — a suggested framework, not a contract
@@ -287,9 +299,34 @@ Because Type Definitions are just files, humans and agents discover a type's con
 
 ## 11. Reserved files
 
+- **`bundle.md`** — the Bundle's own Document, at its root, with `type: bundle`. It is how a Bundle describes itself; see below. Recommended.
 - **`index.md`** — derived navigation for a directory; a rebuildable cache, not a source of truth. Optional.
 - **`log.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
 - **`_types/`** — Type Definitions (§10).
+
+### 11.1 `bundle.md`
+
+A Bundle SHOULD describe itself in a `bundle.md` at its root — an ordinary Document with `type: bundle`, carrying the Bundle's own metadata rather than any file's:
+
+```yaml
+---
+type: bundle
+version: 1.2.0
+published: 2026-08-17
+description: Health knowledge — lab results, medications, and conditions.
+---
+```
+
+| Field | Obligation | Field type | Meaning |
+|---|---|---|---|
+| `type` | mandatory | text | `bundle` |
+| `version` | mandatory | semver | this Bundle's version (§10.2) |
+| `published` | recommended | date | when this version was published |
+| `description` | recommended | text | one line on what the Bundle holds |
+
+`version` is mandatory because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` (§12), which is the format-grammar version.
+
+Consistent with §4, a Bundle missing `bundle.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
 > **Not yet fully specified:** the exact structure of `index.md` and `log.md`.
 
@@ -297,6 +334,6 @@ Because Type Definitions are just files, humans and agents discover a type's con
 
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
 - Published versions are **git tags**; the newest tag is the current version.
-- A Bundle MAY declare an `lkf_version` on its root `index.md`; a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not content version (git's job) and not a Type Definition's own `version`.
+- A Bundle MAY declare an `lkf_version` on its root `bundle.md` (§11.1); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, §11.1), not a file's content version (git's job), and not a Type Definition's own `version`.
 
 > Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).
