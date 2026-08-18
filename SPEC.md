@@ -270,7 +270,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
 ### 10.4 Resolution and namespacing
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's own `_types/`, so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
 - **Built-in names.** The names `document`, `concept`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
 - **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
@@ -322,9 +322,11 @@ description: Health knowledge — lab results, medications, and conditions.
 | `type` | mandatory | text | `bundle` |
 | `version` | mandatory | semver | this Bundle's version (§10.2) |
 | `published` | recommended | date | when this version was published |
-| `description` | recommended | text | one line on what the Bundle holds |
+| `description` | *inherited* | text | one line on what the Bundle holds — a core field (§5.1), so `optional`; a Bundle SHOULD still carry one |
 
 `version` is mandatory because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` (§12), which is the format-grammar version.
+
+`description` is inherited rather than declared: it is already a core field, and inheritance is add-only (§10.3), so a type may not restate an inherited field to strengthen its obligation. The built-in `bundle` Type Definition therefore declares only `version` and `published`.
 
 Consistent with §4, a Bundle missing `bundle.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
