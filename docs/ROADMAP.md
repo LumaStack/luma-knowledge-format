@@ -12,7 +12,7 @@ Three things would have to be true.
 
 ### It has been exercised, more than once
 
-Two or three separate codebases writing and reading real Concepts — not examples, and not a corner chosen to avoid the awkward parts — reporting back that it worked for what they were doing.
+Two or three separate codebases writing and reading real Documents — not examples, and not a corner chosen to avoid the awkward parts — reporting back that it worked for what they were doing.
 
 The signal is not that nobody complained. It is that newcomers stop hitting the wall the first one hit. One consumer's opening review turned up four holes, three of them the same missing capability and one closed in `v0.0.3`. That rate is ordinary for a format meeting real data. The bump asserts the rate has come down, and only later consumers can show that.
 
@@ -40,8 +40,8 @@ Reading without writing. Using a fraction of it. Elapsed time.
 - **Vendored-type provenance** — §10.4 makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, §7.3, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in §10.1** — the example Type Definition inherits from `source`, which is neither a reserved built-in (§10.4) nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
-- **Asset links** — §8 specifies links only between Concepts; a bundle's non-Concept files (PDFs, images, attachments) have no link form at all, and `sources[].resource` (§7.3) covers attribution rather than body-prose linking. Candidate rule, needing no new syntax: `[[…]]` links Concepts, `[…](…)` links everything else.
-- **Built-in types as files** — §10.3 calls the format self-hosting, but `concept` and `type_definition` exist only as prose tables (§5.1, §10.3). Decide whether the format ships them as real `_types/concept.md` and `_types/type_definition.md` — a normative reference rendering and a worked example of the format describing itself — and if so, whether a bundle vendors them or a tool supplies them.
+- **Asset links** — §8 specifies links only between Documents; a bundle's non-Document files (PDFs, images, scripts) have no link form at all, and `sources[].resource` (§7.3) covers attribution rather than body-prose linking. Candidate rule, needing no new syntax: `[[…]]` links Documents, `[…](…)` links everything else.
+- **Built-in types as files** — §10.3 calls the format self-hosting, but `document`, `concept` and `type_definition` exist only as prose tables (§5.1, §10.3). Decide whether the format ships them as real `_types/document.md`, `_types/concept.md` and `_types/type_definition.md` — a normative reference rendering and a worked example of the format describing itself — and if so, whether a bundle vendors them or a tool supplies them.
 - **Reserved-file formats** — the exact structure of `index.md` and `log.md` (§11).
 
 ## Deferred features — postponed, may return in a later version
@@ -54,7 +54,7 @@ Reading without writing. Using a fraction of it. Elapsed time.
 - **Stable identifiers** — opaque ids decoupled from path; additive when added (links stay name-based). See also the hidden-id link idea under [Ideas](#ideas--raised-for-consideration-not-evaluated-and-nothing-here-is-decided).
 - **`aliases`** — ships together with link resolution (above).
 - **`confidence`** and **`volatility`** — trust/freshness fields considered but held.
-- **Concept-level `owner`** — accountability/stewardship, distinct from a source's `author`.
+- **Document-level `owner`** — accountability/stewardship, distinct from a source's `author`.
 - **Attestation** — verifying that a computed value was produced by a sanctioned method (OKF's "Attested Computation"). Out of scope for MVP and adoption is uncertain, but worth revisiting in a later version.
 
 ## Ideas — raised for consideration, not evaluated, and nothing here is decided

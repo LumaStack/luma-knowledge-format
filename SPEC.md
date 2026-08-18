@@ -20,22 +20,23 @@ Two roles are referenced throughout:
 ## 2. Terminology
 
 - **Knowledge Bundle (or Bundle)**: A self-contained, hierarchical collection of knowledge documents. The unit of distribution.
-- **Concept**: A single unit of knowledge within a Bundle, represented as one markdown document. It may describe a tangible asset (a table, an API), an abstract idea (a metric, a business process), or anything in between.
-- **Concept ID**: The path of the Concept's file within the Bundle, with the `.md` suffix removed.
-- **Slug**: A Concept's filename without its directory path or `.md` extension (e.g. `diffusion-models` for `wiki/concepts/diffusion-models.md`).
-- **Concept Type** (or **Type**): The value of a Concept's `type` field — a short string naming the kind of Concept (e.g. `task`, `note`, `lab_result`). An open vocabulary; consumers tolerate unknown types.
-- **Type Definition**: A Concept (with `type: type_definition`) that declares a type's contract — its fields, their obligations, and their field types (§10).
-- **Field type**: The shape of a field's value (e.g. `text`, `number`, `wikilink`), declared in a Type Definition (§10.2). Distinct from a Concept's `type`.
+- **Document**: A single unit of knowledge within a Bundle, represented as one markdown file with YAML frontmatter. Every Document declares a `type`; what it describes — a table, an API, a metric, a task, a lab result — is that type's business, not the format's.
+- **`concept`**: A built-in type (§10.4) for knowledge-base entries — the conceptual material LKF was first written for. It extends `document` and adds no fields of its own; declaring it says *this is a unit of knowledge* rather than a task, a record, or a bundle's manifest.
+- **Document ID**: The path of the Document's file within the Bundle, with the `.md` suffix removed.
+- **Slug**: A Document's filename without its directory path or `.md` extension (e.g. `diffusion-models` for `wiki/concepts/diffusion-models.md`).
+- **Document Type** (or **Type**): The value of a Document's `type` field — a short string naming the kind of Document (e.g. `task`, `note`, `lab_result`). An open vocabulary; consumers tolerate unknown types.
+- **Type Definition**: A Document (with `type: type_definition`) that declares a type's contract — its fields, their obligations, and their field types (§10).
+- **Field type**: The shape of a field's value (e.g. `text`, `number`, `wikilink`), declared in a Type Definition (§10.2). Distinct from a Document's `type`.
 - **Frontmatter**: A YAML metadata block delimited by `---` at the top of a markdown file.
 - **Body**: Everything in the file after the frontmatter.
-- **Link**: A markdown link from one Concept to another, expressing a relationship between them.
-- **Source**: A material a Concept derives from, external or internal to the Bundle, recorded in the `sources` frontmatter field.
+- **Link**: A markdown link from one Document to another, expressing a relationship between them.
+- **Source**: A material a Document derives from, external or internal to the Bundle, recorded in the `sources` frontmatter field.
 
-## 3. Concept ID
+## 3. Document ID
 
-A Concept's **ID** is its file path within the Bundle, with the `.md` suffix removed. For example, `wiki/concepts/diffusion-models.md` has the ID `wiki/concepts/diffusion-models`.
+A Document's **ID** is its file path within the Bundle, with the `.md` suffix removed. For example, `wiki/concepts/diffusion-models.md` has the ID `wiki/concepts/diffusion-models`.
 
-LKF does not define a separate identifier field; the ID is path-based. Renaming or moving a Concept changes its ID, so producers SHOULD perform renames through tooling that rewrites inbound links (§8). Consumers MUST tolerate links whose target does not resolve (§8).
+LKF does not define a separate identifier field; the ID is path-based. Renaming or moving a Document changes its ID, so producers SHOULD perform renames through tooling that rewrites inbound links (§8). Consumers MUST tolerate links whose target does not resolve (§8).
 
 > Stable opaque identifiers were considered and deferred; see [`PRINCIPLES.md`](docs/PRINCIPLES.md) and the project rationale. Because links are name-based, introducing ids later is additive and optional.
 
@@ -45,9 +46,9 @@ Core fields defined by this specification appear at the **top level** of the fro
 
 - The field names defined in §5–§7 are **reserved**; producers MUST NOT reuse them for unrelated domain data. The prefix `lkf_` is reserved for future core fields.
 - Consumers MUST preserve unrecognized keys when rewriting a file, and MUST NOT reject a file for containing them.
-- **Identifier casing (a recommendation).** Field names, `type` names, and `field_type` values prefer snake_case (lowercase words joined by `_`); Concept slugs and IDs prefer kebab-case (`-`), since they are path- and URI-like. Like nearly everything here, this is a strong recommendation, not a hard rule — the only hard requirement is a non-empty `type` (Conformance, below).
+- **Identifier casing (a recommendation).** Field names, `type` names, and `field_type` values prefer snake_case (lowercase words joined by `_`); Document slugs and IDs prefer kebab-case (`-`), since they are path- and URI-like. Like nearly everything here, this is a strong recommendation, not a hard rule — the only hard requirement is a non-empty `type` (Conformance, below).
 
-**Conformance.** A file is a conformant Concept if it has a parseable YAML frontmatter block containing a non-empty `type`. **This is the only hard requirement.** Consumers **MUST NOT** reject a Concept for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Everything a type declares (§10) is *published intent*, not an enforced rule — validation is a **suggested framework** (§10.5), never a conformance gate, and it never rejects by default.
+**Conformance.** A file is a conformant Document if it has a parseable YAML frontmatter block containing a non-empty `type`. **This is the only hard requirement.** Consumers **MUST NOT** reject a Document for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Everything a type declares (§10) is *published intent*, not an enforced rule — validation is a **suggested framework** (§10.5), never a conformance gate, and it never rejects by default.
 
 ## 5. Field obligation
 
@@ -55,7 +56,7 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 | Obligation | Meaning |
 |---|---|
-| `mandatory` | Expected on every Concept of this type. |
+| `mandatory` | Expected on every Document of this type. |
 | `recommended` | Not mandatory, but include it whenever the information is available; omit only when it genuinely doesn't apply or isn't known. |
 | `optional` | May be present; its absence is unremarkable. |
 | `deprecated` | Still accepted and read, but on its way out; migrate off it. |
@@ -66,7 +67,7 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 
 | Field | Obligation | Field type | Meaning |
 |---|---|---|---|
-| `type` | mandatory | text | What kind of Concept this is. **The one hard conformance requirement (§4).** Consumers tolerate unknown types. |
+| `type` | mandatory | text | What kind of Document this is. **The one hard conformance requirement (§4).** Consumers tolerate unknown types. |
 | `title` | recommended | text | Human label; may fall back to the filename. |
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
 | `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
@@ -81,7 +82,7 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 
 ## 6. Lifecycle: `lifecycle_status`
 
-A Concept's lifecycle stage — nascent to active, with `archived` as the retired terminal. Default (when absent): `provisional`.
+A Document's lifecycle stage — nascent to active, with `archived` as the retired terminal. Default (when absent): `provisional`.
 
 | Value | Meaning |
 |---|---|
@@ -120,7 +121,7 @@ verified:
 - verified only by non-`human:` actors ⇒ **machine-confirmed**
 - verified by any `human:<id>` ⇒ **human-reviewed**
 
-Trust tier is **orthogonal** to `lifecycle_status`: a Concept can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
+Trust tier is **orthogonal** to `lifecycle_status`: a Document can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
 
 ### 7.3 `sources`
 
@@ -133,9 +134,9 @@ sources:
     last_modified: 2026-05-30                 # when it last changed — recency signal
 ```
 
-- `resource` — where/what the source is: a URL, file, database export, API response, or a Concept path.
+- `resource` — where/what the source is: a URL, file, database export, API response, or a Document path.
 - `author` and `last_modified` are separate fields — **authority** (who) and **recency** (when) are different trust signals.
-- `id` is a **local** footnote key within this Concept (unrelated to the Concept ID). In the body, `text.[^export-schema]` attributes a claim to that source (keyed, not positional, so rewrites do not misattribute).
+- `id` is a **local** footnote key within this Document (unrelated to the Document ID). In the body, `text.[^export-schema]` attributes a claim to that source (keyed, not positional, so rewrites do not misattribute).
 
 ### 7.4 Actor convention
 
@@ -153,7 +154,7 @@ Every `by:` and `author:` value follows one grammar — **`<kind>:<producer>/<ve
 
 A tool that cannot tell who invoked it should write the honest value rather than guessing a plausible one. The alternative — omitting `by` — is worse, because it discards the `at` timestamp sharing the same `actor_event`, and because a missing author reads as an oversight where `unknown:unknown` reads as a fact.
 
-**Supported, and an anti-pattern.** A tool that *can* identify its actor should. `unknown:unknown` exists for genuine ignorance — a command invoked through one interface by both people and agents, with nothing to tell them apart — not as a default for tools that never asked. A body of Concepts where most authors are `unknown:unknown` has thrown away provenance it could have kept, and no reader can tell which of those were unavoidable and which were laziness.
+**Supported, and an anti-pattern.** A tool that *can* identify its actor should. `unknown:unknown` exists for genuine ignorance — a command invoked through one interface by both people and agents, with nothing to tell them apart — not as a default for tools that never asked. A body of Documents where most authors are `unknown:unknown` has thrown away provenance it could have kept, and no reader can tell which of those were unavoidable and which were laziness.
 
 Prefer the most specific value available: `agent:opus-5` over `agent:unknown` over `unknown:unknown`. Where a tool has a way for the caller to say who is acting, the honest default is `unknown:unknown` and the expected practice is to pass the real one.
 
@@ -175,7 +176,7 @@ All links are by human-readable **slug/path** (LKF has no id-links):
   parent:     "[[topic-ml]]"
   ```
 
-Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Concept ID — and how ties between same-slug Concepts are broken — is governed by the link-resolution rules, which are not yet specified (see [`ROADMAP.md`](docs/ROADMAP.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling (§3).
+Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Document ID — and how ties between same-slug Documents are broken — is governed by the link-resolution rules, which are not yet specified (see [`ROADMAP.md`](docs/ROADMAP.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling (§3).
 
 ## 9. Body conventions
 
@@ -186,13 +187,13 @@ The body is CommonMark. Producers SHOULD favor structural markdown (headings, li
 
 ## 10. Type extensions
 
-Any `type` MAY declare a **contract** for its Concepts — which fields they carry and what shape those fields take — so producers and consumers can discover exactly what, say, a `lab_result` expects, and tools MAY validate against it. This is how LKF stays a small core with an open, extensible edge.
+Any `type` MAY declare a **contract** for its Documents — which fields they carry and what shape those fields take — so producers and consumers can discover exactly what, say, a `lab_result` expects, and tools MAY validate against it. This is how LKF stays a small core with an open, extensible edge.
 
 Nothing in this section is a conformance requirement. A Type Definition publishes *intent*; §10.5 describes a suggested way to check it; §4 remains the only hard rule.
 
 ### 10.1 Type Definitions
 
-A `type` is declared by a **Type Definition** — an ordinary Concept with `type: type_definition`, living in the bundle's reserved `_types/` directory. Because a Type Definition is itself a Concept, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
+A `type` is declared by a **Type Definition** — an ordinary Document with `type: type_definition`, living in the bundle's reserved `_types/` directory. Because a Type Definition is itself a Document, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
 
 ```yaml
 ---
@@ -203,7 +204,7 @@ fields:
   test_name: { obligation: mandatory,   field_type: text,   desc: "e.g. LDL cholesterol" }
   value:     { obligation: mandatory,   field_type: number }
   unit:      { obligation: mandatory,   field_type: text }
-  patient:   { obligation: mandatory,   field_type: wikilink, desc: "→ the person Concept" }
+  patient:   { obligation: mandatory,   field_type: wikilink, desc: "→ the person Document" }
   panel:     { obligation: recommended, field_type: list of wikilink }
   status:    { obligation: optional,    field_type: enum, values: [pending, final, corrected] }
 ---
@@ -228,7 +229,7 @@ Each entry under `fields` declares one field with up to four keys:
 | `desc` | a one-line human/agent description (surfaced by discovery tooling, §10.6) |
 | `values` | the allowed values — **required when `field_type` is `enum`**, ignored otherwise |
 
-The key is **`field_type`**, not `type`, so it never collides with a Concept's `type`.
+The key is **`field_type`**, not `type`, so it never collides with a Document's `type`.
 
 **Field types:**
 
@@ -241,24 +242,24 @@ The key is **`field_type`**, not `type`, so it never collides with a Concept's `
 | `datetime` | a full timestamp (ISO 8601 / RFC 3339) |
 | `semver` | a semantic version — `MAJOR.MINOR.PATCH`, optionally with pre-release and build metadata (`1.0.0-alpha.1+build.5`), exactly as [semver.org](https://semver.org) defines it. No `v` prefix: `v1.2.3` is a tag convention, not a version. |
 | `enum` | one of the strings listed in `values` |
-| `wikilink` | an internal `[[…]]` link to another Concept in the bundle (of any `type`) |
+| `wikilink` | an internal `[[…]]` link to another Document in the bundle (of any `type`) |
 | `uri` | an external address (URL/URI) |
 | `actor` | an actor string (§7.4) |
 | `actor_event` | `{ by: actor, at: datetime }` |
 | `list of <type>` | a list whose items are any of the above (e.g. `list of wikilink`) |
 
-A **relationship** (a typed edge in the Concept graph) is simply a field whose `field_type` is `wikilink` or `list of wikilink` — the field's *key* names the relationship (`depends_on`, `parent`, `patient`).
+A **relationship** (a typed edge in the Document graph) is simply a field whose `field_type` is `wikilink` or `list of wikilink` — the field's *key* names the relationship (`depends_on`, `parent`, `patient`).
 
 ### 10.3 Inheritance
 
 - **`extends`** names a single parent type (single inheritance). A type inherits all of its parent's fields and adds its own.
-- Every type implicitly extends the built-in **`concept`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields. This is self-hosting: `type_definition` is itself a type that extends `concept`.
+- Every type implicitly extends the built-in **`document`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields. This is self-hosting: `type_definition` is itself a type that extends `document`.
 - **Add-only.** A type may only *add* fields. It MUST NOT redefine or remove an inherited field — core or domain. This keeps every inherited field's meaning stable everywhere the type is used.
 
 ### 10.4 Resolution and namespacing
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`concept`, `type_definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
-- **Built-in names.** The names `concept` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `type_definition`) and the bundle's **`_types/`** directory. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Built-in names.** The names `document`, `concept` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
 - **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
 ### 10.5 Validation — a suggested framework, not a contract
@@ -296,6 +297,6 @@ Because Type Definitions are just files, humans and agents discover a type's con
 
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
 - Published versions are **git tags**; the newest tag is the current version.
-- A Bundle MAY declare an `lkf_version` on its root `index.md`; a Concept MAY override with its own (file-level wins). This is the *format-grammar* version — not content version (git's job) and not a Type Definition's own `version`.
+- A Bundle MAY declare an `lkf_version` on its root `index.md`; a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not content version (git's job) and not a Type Definition's own `version`.
 
 > Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).
