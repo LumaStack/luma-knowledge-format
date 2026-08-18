@@ -199,6 +199,15 @@ All links are by human-readable **slug/path** (LKF has no id-links):
   parent:     "[[topic-ml]]"
   ```
 
+  > **The quotes are load-bearing, and omitting them fails silently.** `[[…]]` is YAML flow-sequence syntax, so an unquoted wikilink parses as a **nested array** rather than a string, with no error from any YAML parser:
+  >
+  > ```yaml
+  > parent: [[topic-ml]]      # → [["topic-ml"]]   a list containing a list
+  > parent: "[[topic-ml]]"    # → "[[topic-ml]]"   a string, as intended
+  > ```
+  >
+  > A validator (§10.5) catches this as a value whose shape does not match its declared `field_type`, but nothing else will — the document stays conformant, and a consumer simply never resolves the link. Producers writing frontmatter wikilinks MUST quote them.
+
 **Assets use ordinary markdown links.** `[[…]]` links a Document; `[…](…)` links anything else — an Asset, or an external address:
 
 ```markdown
@@ -275,7 +284,7 @@ The key is **`field_type`**, not `type`, so it never collides with a Document's 
 | `datetime` | a full timestamp (ISO 8601 / RFC 3339) |
 | `semver` | a semantic version — `MAJOR.MINOR.PATCH`, optionally with pre-release and build metadata (`1.0.0-alpha.1+build.5`), exactly as [semver.org](https://semver.org) defines it. No `v` prefix: `v1.2.3` is a tag convention, not a version. |
 | `enum` | one of the strings listed in `values` |
-| `wikilink` | an internal `[[…]]` link to another Document in the bundle (of any `type`) |
+| `wikilink` | an internal `[[…]]` link to another Document in the bundle (of any `type`). **Quoted in frontmatter** — see the warning in §8 |
 | `uri` | an external address (URL/URI) |
 | `actor` | an actor string (§7.4) |
 | `actor_event` | `{ by: actor, at: datetime }` |
