@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.6] — 2026-08-18
+
 ### Added
 - **`applies_to` on the built-in `bundle` type** (§11.1) — `optional`, `list of text`, naming the kinds of consumer that may adopt a Bundle. **The vocabulary is open and LKF defines no values for it.** Where a distribution model has more than one kind of consumer — a repository and an organization, a workstation and a server — a Bundle may say which of them it is for. The format does not know what those kinds are, so the values belong to whoever is distributing, exactly as `tags` is `list of text` and left loose.
   It is a list because a Bundle may legitimately apply at more than one, and that is precisely why it has to be a field. The first consumer had sorted Bundles into directories by consumer kind; a directory can express only one, so it forced the *publisher* to answer a question that often belongs to the *adopter*, permanently and with no override. Absence says nothing — not "none", not "all" — and no consumer rejects a Bundle for it (§4).
