@@ -29,7 +29,7 @@ See [[score-based-models]] for the continuous-time formulation.
 
 **Using the format**
 
-- [`EXPLANATION.md`](docs/EXPLANATION.md) — **start here.** What LKF is, the problems it solves, worked examples, and what each built-in type is for.
+- [`EXPLANATION.md`](docs/EXPLANATION.md) — **start here.** How this works and why it matters.
 - [`SPEC.md`](SPEC.md) — the specification. Short by design.
 - [`CHANGELOG.md`](CHANGELOG.md) — what changed between versions, and why.
 
