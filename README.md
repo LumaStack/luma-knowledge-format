@@ -10,7 +10,7 @@ Knowledge lives in plain files with YAML frontmatter at the top, which you can c
 
 ```markdown
 ---
-type: concept
+type: document
 title: Diffusion Models
 tags: [diffusion, model, ml/generative]
 modified: { by: human:fsmith, at: 2026-08-01T10:00:00Z }
