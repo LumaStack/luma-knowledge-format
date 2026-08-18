@@ -28,9 +28,9 @@ See [[score-based-models]] for the continuous-time formulation.
 ## Contents
 
 - [`SPEC.md`](SPEC.md) — the specification.
-- [`PRINCIPLES.md`](PRINCIPLES.md) — the design principles behind LKF.
-- [`GUIDELINES.md`](GUIDELINES.md) — how the project is run.
-- [`ROADMAP.md`](ROADMAP.md) — open questions and deferred features.
+- [`PRINCIPLES.md`](docs/PRINCIPLES.md) — the design principles behind LKF.
+- [`GUIDELINES.md`](docs/GUIDELINES.md) — how the project is run.
+- [`ROADMAP.md`](docs/ROADMAP.md) — open questions and deferred features.
 
 ## License
 

@@ -2,6 +2,57 @@
 
 Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` describes only what is settled; this file tracks what is not.
 
+## Next steps
+
+The three questions to answer next, in no particular order. Two are detailed
+under *Undecided* below; the third is new.
+
+1. **`extends: source`** — needs a ruling. §10.1's example Type Definition
+   inherits from `source`, which is not a built-in and is defined nowhere. Is
+   the built-ins list incomplete, or is the example showing a bundle-local
+   parent? Creating a `source` type to make the example work was declined
+   deliberately: that would be inventing specification to resolve errata, and
+   the two readings commit the format to different things.
+2. **Type Definition `version`** — §12 refers to "a Type Definition's own
+   `version`", which §10.1 never declares. The `semver` field type now exists to
+   hold it, so the remaining questions are whether a Type Definition carries one
+   at all and what a bump means for copies already vendored elsewhere.
+3. **Whether `concept` should carry fields of its own.** It currently declares
+   none, so `type: concept` and `type: document` are structurally identical and
+   differ only in what the name claims. That may be right — a type whose whole
+   content is its name is worth having when the name is what a reader needs —
+   but it has not been tested against a real knowledge base.
+
+## What `v0.1.0` would mean
+
+Not a promise that the format is finished, or safe to lean on. Only that it has stopped being a guess.
+
+`v0.0.z` says the format has been reasoned about and barely used. `v0.1.0` says it has been run for real in more than one place and held up there. That is a smaller claim than it sounds, and it is the honest one — all of this was designed before it met any data.
+
+Three things would have to be true.
+
+### It has been exercised, more than once
+
+Two or three separate codebases writing and reading real Documents — not examples, and not a corner chosen to avoid the awkward parts — reporting back that it worked for what they were doing.
+
+The signal is not that nobody complained. It is that newcomers stop hitting the wall the first one hit. One consumer's opening review turned up four holes, three of them the same missing capability and one closed in `v0.0.3`. That rate is ordinary for a format meeting real data. The bump asserts the rate has come down, and only later consumers can show that.
+
+### Type lookup has been run, not just written down
+
+How a Type Definition gets found — the chain, where it ends, which copy wins when two disagree, what a vendored copy remembers about its origin — is open on several fronts (see *Undecided*). Writing the rule is the easy half. **Resolution fails quietly, because the wrong definition is still a definition**, so a rule nobody has run against two bundles that disagree has not been tested at all.
+
+### The shape has stopped moving
+
+Bundle layout, how types get copied between bundles, and which names the format claims for itself.
+
+These cost the most to revisit, because they live in every consumer's files rather than in a document. A field can be deprecated for a version and then dropped — the format already allows for that. A reserved name gets no such courtesy: claim one at `v0.2` and anyone already using it as an ordinary name breaks without warning. Changing the layout is a migration for every bundle in existence.
+
+### What wouldn't count
+
+Reading without writing. Using a fraction of it. Elapsed time.
+
+**Who decides:** the maintainer, weighing what consumers report. Nothing here trips on its own.
+
 ## Undecided — needs a decision before it can be specified
 
 - **Field-level ratification** — confirm the working-default levels in `SPEC.md` §5.1 (`title`, `description`, `tags`, `verified`, `sources`).
@@ -10,8 +61,10 @@ Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` de
 - **Vendored-type provenance** — §10.4 makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, §7.3, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in §10.1** — the example Type Definition inherits from `source`, which is neither a reserved built-in (§10.4) nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
-- **Asset links** — §8 specifies links only between Concepts; a bundle's non-Concept files (PDFs, images, attachments) have no link form at all, and `sources[].resource` (§7.3) covers attribution rather than body-prose linking. Candidate rule, needing no new syntax: `[[…]]` links Concepts, `[…](…)` links everything else.
-- **Built-in types as files** — §10.3 calls the format self-hosting, but `concept` and `type_definition` exist only as prose tables (§5.1, §10.3). Decide whether the format ships them as real `_types/concept.md` and `_types/type_definition.md` — a normative reference rendering and a worked example of the format describing itself — and if so, whether a bundle vendors them or a tool supplies them.
+- **`concept` fields** — the built-in `concept` extends `document` and adds
+  nothing, making it structurally identical to the root and distinct only in
+  meaning. Decide whether that is the intent or whether it should carry fields
+  a knowledge-base entry always has.
 - **Reserved-file formats** — the exact structure of `index.md` and `log.md` (§11).
 
 ## Deferred features — postponed, may return in a later version
@@ -24,7 +77,7 @@ Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` de
 - **Stable identifiers** — opaque ids decoupled from path; additive when added (links stay name-based). See also the hidden-id link idea under [Ideas](#ideas--raised-for-consideration-not-evaluated-and-nothing-here-is-decided).
 - **`aliases`** — ships together with link resolution (above).
 - **`confidence`** and **`volatility`** — trust/freshness fields considered but held.
-- **Concept-level `owner`** — accountability/stewardship, distinct from a source's `author`.
+- **Document-level `owner`** — accountability/stewardship, distinct from a source's `author`.
 - **Attestation** — verifying that a computed value was produced by a sanctioned method (OKF's "Attested Computation"). Out of scope for MVP and adoption is uncertain, but worth revisiting in a later version.
 
 ## Ideas — raised for consideration, not evaluated, and nothing here is decided

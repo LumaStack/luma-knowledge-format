@@ -37,6 +37,6 @@ LKF tolerates imperfect input rather than rejecting it. A consumer MUST NOT refu
 ## Out of Scope
 
 LKF does not:
-- **Fix a taxonomy of Concept types.** The `type` vocabulary is open — yours to define and extend.
+- **Fix a taxonomy of Document types.** The `type` vocabulary is open — yours to define and extend.
 - **Prescribe how a bundle is stored, served, or searched.** LKF describes files on disk, not the systems built around them.
 - **Replace domain schemas.** Where a domain already defines one — a data model, an API contract — LKF points at it rather than absorbing or replacing it.
