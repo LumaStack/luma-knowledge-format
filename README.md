@@ -28,6 +28,7 @@ See [[score-based-models]] for the continuous-time formulation.
 ## Contents
 
 - [`SPEC.md`](SPEC.md) — the specification.
+- [`bundle/`](bundle/) — the built-in types as real Type Definitions, and itself a Bundle. This is what to copy from when vendoring (§10.4).
 - [`PRINCIPLES.md`](docs/PRINCIPLES.md) — the design principles behind LKF.
 - [`GUIDELINES.md`](docs/GUIDELINES.md) — how the project is run.
 - [`ROADMAP.md`](docs/ROADMAP.md) — open questions and deferred features.
