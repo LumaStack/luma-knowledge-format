@@ -300,8 +300,45 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
 ### 10.4 Resolution and namespacing
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `bundle/` directory — itself a Bundle, so that the unit of distribution is exactly the types and not the project around them — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
-- **Built-in names.** The names `document`, `concept`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `workflow`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `bundle/` directory — itself a Bundle, so that the unit of distribution is exactly the types and not the project around them — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Built-in names.** The names `document`, `concept`, `workflow`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
+- **Three base types, one for each way prose reaches a consumer.** `concept`, `workflow` and `policy` declare no fields between them. They are not three labels for three subjects — they partition how a Document is *engaged with*:
+
+  | type | how it reaches a consumer |
+  |---|---|
+  | `concept` | **retrieved when relevant** — progressively disclosed, pulled in by need |
+  | `workflow` | **invoked** — loaded while it is being followed, absent otherwise |
+  | `policy` | **standing** — kept present, because a rule consulted only when somebody thinks to look is not governing anything |
+
+  That is the dispatch difference all three rest on, and it is what closes the set at three rather than leaving it open to any word a Bundle finds useful. **A fourth would have to name a fourth way of engaging, not a fourth subject matter.**
+
+  The distinction is worth having because it is the one a consumer must act on. Two Documents can be identical prose with identical fields, and one belongs in permanent context while the other belongs behind an invocation. Nothing but the `type` can say which.
+
+- **A type earns its name when a consumer dispatches on it.** LKF does not fix what types exist (`PRINCIPLES.md`). The bar for declaring one — in this list or in a Bundle's own `_types/` — is concrete: **name the consumer, and name what it does differently.** If you cannot name both, the `type` is a label, and a label costs a name every other Bundle must then avoid.
+
+  Three forms that difference takes:
+
+  | | the consumer | what it does differently |
+  |---|---|---|
+  | **checked** | a validator | has a contract to check the Document against — `decision` requires a `decided` date, and nothing can enforce that without the type |
+  | **transformed** | whatever converts Documents into another form | `workflow` is projected into a harness; no other Document in a Bundle is |
+  | **consulted** | the format's own machinery | reads it to decide how to handle *other* Documents — `type_definition` and `bundle` are both of this kind |
+
+  **Enumeration is not enough.** *"Show me every Document of this kind"* works for any type at all, so admitting it as a reason would grow the list without limit.
+
+  A difference that is **intended but not yet built** may still justify a type, provided the consumer and the difference are named plainly. One that never acquires them has been *falsified* rather than merely unused, and should be deprecated.
+
+- **Being built in is a further bar, not the same one.** A type may earn its name and still belong to a single Bundle. It joins this list only if it is also **unavoidable**, which means one of:
+
+  - **Structural** — the format's own machinery depends on it. Without `document`, `bundle` or `type_definition` there is no root, no unit of distribution, and no way to resolve a contract at all.
+  - **Ubiquitous** — nearly every Bundle defines it independently anyway. **This is a measurement, not a prediction:** count the copies before making the claim, and say how many.
+
+    **Then check what you counted.** A sample drawn from Bundles that all serve one domain will find that domain's vocabulary everywhere — ubiquity across seven governance Bundles is not ubiquity. A count is corroboration for a reason that stands on its own, never the reason itself.
+
+  The second is the weaker of the two and cuts both ways. Declining to define a name everyone reaches for does not prevent the name — it produces many private definitions that drift apart. But a list that grows on popularity alone stops being a small core, which is the property the whole format rests on.
+
+  **Removing a built-in is cheaper than adding one.** Removal costs a deprecation cycle and a frontmatter migration. A late addition costs the same migration *plus* a collision with every Bundle that had already defined the name for itself. Where a case is genuinely balanced, that asymmetry favours admitting it now and deprecating later.
+
 - **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
 ### 10.5 Validation — a suggested framework, not a contract

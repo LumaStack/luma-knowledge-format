@@ -79,10 +79,24 @@ Reading without writing. Using a fraction of it. Elapsed time.
 - **Vendored-type provenance** — §10.4 makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, §7.3, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in §10.1** — the example Type Definition inherits from `source`, which is neither a reserved built-in (§10.4) nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
-- **`concept` fields** — the built-in `concept` extends `document` and adds
-  nothing, making it structurally identical to the root and distinct only in
-  meaning. Decide whether that is the intent or whether it should carry fields
-  a knowledge-base entry always has.
+- **Whether `concept` survives.** It extends `document`, adds nothing, and has
+  existed since `v0.0.1` without any consumer treating it differently from the
+  root. §10.4's own test calls that *falsified rather than merely unused*.
+
+  The case for keeping it is its retrieval mode — `concept` is **retrieved when
+  relevant**, where a `workflow` is invoked and a `policy` stands. That
+  completes the three-way partition, and it is a claim rather than something
+  anything implements today.
+
+  **What would settle it is a durable knowledge base**, which is the thing
+  `concept` was originally written for and which nobody has yet built with this
+  format. Until one exists there is nothing to check the claim against.
+
+  Held rather than removed, because removing a name and re-adding it later costs
+  a collision with every Bundle that defined it privately in between. The type
+  is marked *under review* so nobody adopts it by default. *Re-open when a real
+  knowledge base exists — either it needs fields a `document` cannot give it, or
+  it does not and the type goes.*
 - **Reserved-file formats** — the exact structure of `index.md` and `log.md` (§11).
 - **How many names the format claims at a Bundle root.** §11 reserves four — `bundle.md`, `index.md`, `log.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
 
