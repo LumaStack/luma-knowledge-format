@@ -4,7 +4,7 @@ LKF is a format for representing knowledge, designed to be equally friendly to h
 
 Knowledge lives in plain files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, systems, or organizations, and it is designed to require minimal tooling.
 
-> **Status: `v0.0.8` — unstable.** Breaking changes may ship in a patch release until `v0.1.0`, which is a claim the format has been run for real in more than one place and has not earned yet. Expect field renames. `SPEC.md` is authoritative for the version; releases are published as git tags — see [Releases](https://github.com/LumaStack/luma-knowledge-format/releases).
+> **Status: `v0.0.9` — unstable.** Breaking changes may ship in a patch release until `v0.1.0`, which is a claim the format has been run for real in more than one place and has not earned yet. Expect field renames. `SPEC.md` is authoritative for the version; releases are published as git tags — see [Releases](https://github.com/LumaStack/luma-knowledge-format/releases).
 
 ## Example
 

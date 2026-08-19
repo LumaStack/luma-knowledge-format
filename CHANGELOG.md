@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.9] — 2026-08-19
+
 ### Added
 - **`workflow` and `policy` as built-in types** (§10.4) — both field-free, both extending `document`. A `workflow` is a procedure that gets *transformed*: consumers project it into whatever form their harness expects, selected by the type rather than by where the file sits. A `policy` is a course of action that a consumer keeps as *standing context*, where a workflow is loaded on invocation — the type is what tells otherwise-identical prose apart.
   **They complete a three-way partition rather than adding two labels.** `concept` is *retrieved when relevant*, `workflow` is *invoked*, `policy` is *standing* — three ways prose reaches a consumer, and the set is closed at three because a fourth would have to name a fourth way of engaging rather than a fourth subject.
@@ -94,7 +96,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `obligation` (`mandatory`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.8...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.9...HEAD
+[0.0.9]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.5...v0.0.6
