@@ -82,3 +82,13 @@ Initial release.
 - **Core fields** — `type`, `title`, `description`, `tags`, `lifecycle_status`, `created`, `modified`, `verified`, `sources`, `stale_after`.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `obligation` (`mandatory`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
+
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.7...v0.0.8
+[0.0.7]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.6...v0.0.7
+[0.0.6]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/LumaStack/luma-knowledge-format/releases/tag/v0.0.1

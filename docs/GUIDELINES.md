@@ -39,7 +39,8 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 - **Include** behavior-affecting spec changes: additions, renames/migrations, deprecations, and removals of field types, core fields, and type mechanics, plus other notable highlights.
 - **Omit** anything that doesn't change behavior — wording, typos, formatting, example tweaks, and project-process changes.
-- **As changes land,** add an entry under `## [Unreleased]` in the right category (**Added** / **Changed** / **Deprecated** / **Removed**). A **breaking** change carries an italic *Migration:* note saying exactly what a bundle or type author must do.
+- **As changes land,** add an entry under `## [Unreleased]` in the right category. [Keep a Changelog](https://keepachangelog.com) defines six, used in this order: **Added** (new features) / **Changed** (changes in existing functionality) / **Deprecated** (soon-to-be removed) / **Removed** (now removed) / **Fixed** (bug fixes) / **Security** (vulnerabilities). A **breaking** change carries an italic *Migration:* note saying exactly what a bundle or type author must do.
+- **`Security` is never filed as `Fixed`.** It exists so a reader scanning for *must I upgrade urgently* finds the answer in one place, and burying a vulnerability among typo corrections defeats the only thing that group is for.
 - **At release,** rename `## [Unreleased]` to `## [x.y.z] — YYYY-MM-DD` and open a fresh empty `## [Unreleased]` above it. Newest version on top.
 
 ## Cutting a release
@@ -91,6 +92,14 @@ steps that get skipped are marked.
    version before `v0.0.7`. Releases up to `v0.0.3` touched `SPEC.md` alone.
 6. **Promote the changelog.** Rename `## [Unreleased]` to `## [x.y.z] — YYYY-MM-DD`
    and open a fresh empty `## [Unreleased]` above it. Newest version on top.
+   ⚠️ **Add the version's link definition at the foot of the file** and repoint
+   `[Unreleased]` at the new tag — versions are meant to be linkable, and a
+   heading in brackets with no definition renders as literal brackets:
+
+   ```
+   [Unreleased]: …/compare/vX.Y.Z...HEAD
+   [X.Y.Z]:      …/compare/vPREV...vX.Y.Z
+   ```
 7. **Commit as `Release vX.Y.Z`**, with the rationale — what it contains, and why
    that version number.
 8. **Tag `main`** with an annotated tag: `git tag -a vX.Y.Z -m "…"`. Lightweight
@@ -106,8 +115,9 @@ steps that get skipped are marked.
 12. **Publish the GitHub Release** against the tag. ⚠️ A pushed tag is not a
     release — the tag is the mechanism, the Release is what people read, and the
     repository has no other release notes. It carries:
-    - the changes, grouped **Added** / **Changed** / **Deprecated** / **Removed**,
-      each with the reasoning rather than only the outcome;
+    - the changes, grouped **Added** / **Changed** / **Deprecated** / **Removed**
+      / **Fixed** / **Security**, each with the reasoning rather than only the
+      outcome;
     - an **Upgrading from vX.Y.Z** section saying what a bundle or type author
       must actually do — and saying so plainly when the answer is *nothing*,
       which is usually the most useful sentence in the notes;
