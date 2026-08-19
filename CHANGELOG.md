@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Added
+- **`workflow` and `policy` as built-in types** (§10.4) — both field-free, both extending `document`. A `workflow` is a procedure that gets *transformed*: consumers project it into whatever form their harness expects, selected by the type rather than by where the file sits. A `policy` is a course of action that a consumer keeps as *standing context*, where a workflow is loaded on invocation — the type is what tells otherwise-identical prose apart.
+  **They complete a three-way partition rather than adding two labels.** `concept` is *retrieved when relevant*, `workflow` is *invoked*, `policy` is *standing* — three ways prose reaches a consumer, and the set is closed at three because a fourth would have to name a fourth way of engaging rather than a fourth subject.
+  `policy` must be built in rather than defined per Bundle for a specific reason: tooling that makes a policy hard to ignore can only be written against a name the format guarantees. A type each Bundle defines privately is one no consumer can rely on finding. Its dispatch difference is *intended* rather than shipped, which §10.4 permits provided the consumer and the difference are named — and if it never acquires them it has been falsified, not merely unused.
+  Corroborating count, offered as corroboration only: across the first seven Bundles written against this format, `workflow` was defined independently in 7 of 7 and `policy` in 6 of 7 — thirteen byte-identical files. **That sample is biased** and the spec now says so: all seven are governance Bundles, so finding governance vocabulary throughout them proves less than it appears to.
+- **The test for declaring a type at all** (§10.4) — *name the consumer, and name what it does differently.* If you cannot name both, the `type` is a label, and a label costs a name every other Bundle must avoid. Three forms are given: **checked** (a validator has a contract), **transformed** (something converts it into another form), **consulted** (the format's own machinery reads it to handle other Documents). Wanting to *enumerate* Documents of a kind is explicitly not enough, since that works for any type and would grow the list without limit.
+- **The further test for being built in** (§10.4) — earning a name is not enough; a built-in must also be **unavoidable**, either *structural* (the format's machinery depends on it) or *ubiquitous* (nearly every Bundle defines it independently, counted rather than asserted — **and then check what you counted**, since a sample drawn from one domain finds that domain's vocabulary everywhere). Records that removal is cheaper than late addition, and that the asymmetry favours admitting a balanced case now.
+
+### Deprecated
+- **`concept` is marked *under review*** and should be a deliberate choice rather than a default. It has existed since `v0.0.1` with no consumer treating it differently from `document`, which §10.4's own test calls *falsified rather than merely unused*. Its retrieval mode — pulled in when relevant — is the case for keeping it, and that case is a claim nothing yet implements. **What would settle it is a durable knowledge base**, the thing `concept` was written for and which nobody has built with this format. Held rather than removed, because a removed name re-added later collides with every Bundle that defined it privately in between.
+
 ## [0.0.8] — 2026-08-18
 
 ### Added
