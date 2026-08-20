@@ -1,6 +1,7 @@
 ---
 type: project
 title: luma-knowledge-format
+disclosure_level: public
 description: The LKF specification itself — open it for frontmatter fields, the type system, conformance rules, or what a Bundle is. Not for anything written in the format.
 owns:
   - the specification
