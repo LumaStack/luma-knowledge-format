@@ -7,7 +7,7 @@
 
 The Luma Knowledge Format (LKF) is a format for representing knowledge, designed to be equally friendly to humans and agents. Its core is small by design — flexible and made to be extended — so it adapts to whatever you need to capture.
 
-Knowledge lives in plain markdown files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, systems, or organizations, and is designed to require minimal tooling.
+Knowledge lives in plain markdown files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, tools, or organizations, and is designed to require minimal tooling.
 
 ## 1. Conventions
 
