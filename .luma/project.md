@@ -15,7 +15,7 @@ must_not_own:
 
 ## Why it exists
 
-Knowledge that has to cross teams, systems and organizations needs a shape both
+Knowledge that has to cross teams, tools, systems and organizations needs a shape
 people and agents can read without a tool in between. LKF is that shape: plain
 markdown files with YAML frontmatter, one hard requirement (`type`), and a core
 kept small enough to extend rather than fight.
