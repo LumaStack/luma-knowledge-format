@@ -1,8 +1,11 @@
 # Luma Knowledge Format (LKF)
 
-LKF is a format for representing knowledge, designed to be equally friendly to humans and agents. Its core is small by design — flexible and made to be extended — so it adapts to whatever you need to capture.
+**A contract in plain files, read the same way by anyone and any tool.**
+Standardize what matters. Extend the rest however you like.
 
-Knowledge lives in plain files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, systems, or organizations, and it is designed to require minimal tooling.
+LKF is an open markdown format for representing knowledge, designed to be equally friendly to humans and agents. Its core is small by design — flexible and made to be extended — so it adapts to whatever you need to capture.
+
+Knowledge lives in plain files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, tools, or organizations, and it is designed to require minimal tooling.
 
 > **Status: `v0.0.9` — unstable.** Breaking changes may ship in a patch release until `v0.1.0`, which is a claim the format has been run for real in more than one place and has not earned yet. Expect field renames. `SPEC.md` is authoritative for the version; releases are published as git tags — see [Releases](https://github.com/LumaStack/luma-knowledge-format/releases).
 
