@@ -24,9 +24,9 @@ split the type.
 
 ## How it reaches a consumer: **standing**
 
-Kept present, not fetched when somebody thinks to look. That is its place in the
-three-way partition (§10.4) — a `concept` is retrieved when relevant and a
-`workflow` is invoked.
+Kept present, not fetched when somebody thinks to look. That is its place among
+the three ways a Document reaches a consumer (§10.4) — a `workflow` is invoked,
+and a plain `document` is retrieved when relevant.
 
 ## What dispatches on it
 

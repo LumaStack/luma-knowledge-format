@@ -35,11 +35,10 @@ under *Undecided* below; the third is new.
    `version`", which §10.1 never declares. The `semver` field type now exists to
    hold it, so the remaining questions are whether a Type Definition carries one
    at all and what a bump means for copies already vendored elsewhere.
-3. **Whether `concept` should carry fields of its own.** It currently declares
-   none, so `type: concept` and `type: document` are structurally identical and
-   differ only in what the name claims. That may be right — a type whose whole
-   content is its name is worth having when the name is what a reader needs —
-   but it has not been tested against a real knowledge base.
+3. **~~Whether `concept` should carry fields of its own.~~** Resolved by removing
+   the type — see the Unreleased entry in `CHANGELOG.md`. The observation that
+   made it a question (`type: concept` and `type: document` were structurally
+   identical) turned out to be the answer.
 
 ## What `v0.1.0` would mean
 
@@ -76,27 +75,43 @@ Reading without writing. Using a fraction of it. Elapsed time.
 - **Field-level ratification** — confirm the working-default levels in `SPEC.md` §5.1 (`title`, `description`, `tags`, `verified`, `sources`).
 - **Type-extension rules** (§10) — property-type vocabulary, `extends`/inheritance and conflict resolution, tool-default vs. bundle precedence, validator severities.
 - **Type Definition `version`** — §12 refers to "a Type Definition's own `version`", but §10.1 never declares it. Decide whether a Type Definition carries one, whether it is semver, and what a bump means for copies already vendored elsewhere.
+
+  **`vendored_from` now depends on this.** It records the version a copy was taken at, and nothing declares what that version is a version *of*. Today the only answer is the containing Bundle's, which means changing one type bumps every other type beside it — and a consumer that vendored only the unchanged one sees a version change that means nothing. **This is the pressure that makes people want to split a shared-type Bundle into one repository per type**, and splitting would not fix it either.
+- **Should `lifecycle_status` carry `unknown`, as its default?** §6 currently defaults absence to `provisional`, which answers *what is the value* by guessing.
+
+  **§5.2 supplies the test and `lifecycle_status` fails it.** Justifying `preload`'s default, it contrasts `consumers`, *"where absence says nothing — there, both possible defaults would be wrong guesses."* Default a lifecycle to `provisional` and a `draft` thing reads as more settled than it is; default it the other way and a `stable` thing reads as less. **Neither direction is safe, which is the `consumers` case rather than the `preload` one.**
+
+  Adding the value *and making it the default* keeps it unambiguous — absent and explicit mean the same thing — while letting a producer state *looked at, not decided* as a fact rather than by omission. That is the argument `0.0.9` already accepted for the actor grammar: *"a missing author reads as an oversight where `unknown:unknown` reads as a fact."*
+
+  **`unknown` rather than a new word**, because §7.4 already glosses it as *"the actor was not recorded"* — the same meaning, already in the vocabulary. **Breaking**, semantically: every Document currently reading as `provisional` would read as `unknown`, which is the point. §6's opening sentence would need a clause, since the enum would then carry the named absence of a stage alongside the stages.
+- **`policy` and `preload` answer overlapping questions.** `preload: mandatory` says *load this before working at all*; `policy` is defined as *standing — kept present*. Close enough to the same instruction that a Document can state both and contradict itself, which adopters have already had to patch around with a *"`preload` and `type` must agree"* rule.
+
+  **This is the same redundancy `concept` was removed for, one level up**, and `0.0.10` closing one while leaving the other is the inconsistency worth naming.
+
+  **The likely resolution is that `policy` was defined on the wrong axis.** All three engagement modes are currently written in loading vocabulary — *invoked*, *standing*, *retrieved when relevant* — which is why two of them collide with a loading field. Rewritten as what a consumer *does* with the content rather than when it arrives, the overlap disappears: a `workflow` is a procedure you **run**, a `policy` is a rule that **binds** you, a `document` is information you **read**, and `preload` alone says whether you have it. A narrowly-scoped rule that loads on demand then stops being a contradiction.
+
+  **What that leaves unsolved is reachability** — a rule nobody loads governs nothing. That is a real problem and not a definitional one: the answer is that something always-present advertises the rule's *existence*, not that every rule is force-loaded.
 - **Vendored-type provenance** — §10.4 makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, §7.3, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
+
+  **This now has a real consumer and is the highest-value item here.** A shared type library — the thing §10.4 already contemplates when it says types are shared *by vendoring* — is only safe if drift is loud. Without provenance, the choice for a widely-used type is between an unprefixed built-in the format did not want and copies that disagree silently. **Provenance is what makes the namespaced-and-vendored path viable**, and it is what keeps the built-in list short.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in §10.1** — the example Type Definition inherits from `source`, which is neither a reserved built-in (§10.4) nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
-- **Whether `concept` survives.** It extends `document`, adds nothing, and has
-  existed since `v0.0.1` without any consumer treating it differently from the
-  root. §10.4's own test calls that *falsified rather than merely unused*.
+- **~~Whether `concept` survives.~~ It does not.** Removed — see the Unreleased
+  entry in `CHANGELOG.md`.
 
-  The case for keeping it is its retrieval mode — `concept` is **retrieved when
-  relevant**, where a `workflow` is invoked and a `policy` stands. That
-  completes the three-way partition, and it is a claim rather than something
-  anything implements today.
+  The argument that had held it here was that removing a name and re-adding it
+  later collides with every Bundle that defined it privately in between. **That
+  cost is real and was accepted**, because the deferral had started costing more:
+  a type marked *under review* still gets adopted, and five Documents across two
+  published Bundles had declared it, none of them for a reason a `document` could
+  not serve. **A name that is noise is not harmless once people begin using it.**
 
-  **What would settle it is a durable knowledge base**, which is the thing
-  `concept` was originally written for and which nobody has yet built with this
-  format. Until one exists there is nothing to check the claim against.
+  Its retrieval mode did not need rescuing. *Retrieved when relevant* is what a
+  plain `document` already is, so the mode survives the type — it simply lives on
+  the root, where it always was.
 
-  Held rather than removed, because removing a name and re-adding it later costs
-  a collision with every Bundle that defined it privately in between. The type
-  is marked *under review* so nobody adopts it by default. *Re-open when a real
-  knowledge base exists — either it needs fields a `document` cannot give it, or
-  it does not and the type goes.*
+  *Re-open only if a durable knowledge base turns out to need fields a `document`
+  cannot give it, which is what would have justified the type in the first place.*
 - **Reserved-file formats** — the exact structure of `index.md` and `log.md` (§11).
 - **How many names the format claims at a Bundle root.** §11 reserves four — `bundle.md`, `index.md`, `log.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
 
