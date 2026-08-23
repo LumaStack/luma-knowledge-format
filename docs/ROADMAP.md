@@ -36,7 +36,7 @@ under *Undecided* below; the third is new.
    hold it, so the remaining questions are whether a Type Definition carries one
    at all and what a bump means for copies already vendored elsewhere.
 3. **~~Whether `concept` should carry fields of its own.~~** Resolved by removing
-   the type — see the Unreleased entry in `CHANGELOG.md`. The observation that
+   the type — see the `0.0.10` entry in `CHANGELOG.md`. The observation that
    made it a question (`type: concept` and `type: document` were structurally
    identical) turned out to be the answer.
 
@@ -74,34 +74,20 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
 - **Field-level ratification** — confirm the working-default levels in `SPEC.md` §5.1 (`title`, `description`, `tags`, `verified`, `sources`).
 - **Type-extension rules** (§10) — property-type vocabulary, `extends`/inheritance and conflict resolution, tool-default vs. bundle precedence, validator severities.
-- **Type Definition `version`** — §12 refers to "a Type Definition's own `version`", but §10.1 never declares it. Decide whether a Type Definition carries one, whether it is semver, and what a bump means for copies already vendored elsewhere.
+- **Type Definition `version` — declared in `0.0.11`, semantics still open.** §10.1 now permits one and §12's dangling reference has something to point at. **What a bump *means* is deliberately undefined**: it is a label, not a promise, so a consumer compares for equality and infers nothing from the tier. Still to settle — whether the tiers in `bundle-versioning` carry over to types, and whether bumping a type forces a bump of the Bundle shipping it.
 
-  **`vendored_from` now depends on this.** It records the version a copy was taken at, and nothing declares what that version is a version *of*. Today the only answer is the containing Bundle's, which means changing one type bumps every other type beside it — and a consumer that vendored only the unchanged one sees a version change that means nothing. **This is the pressure that makes people want to split a shared-type Bundle into one repository per type**, and splitting would not fix it either.
-- **Should `lifecycle_status` carry `unknown`, as its default?** §6 currently defaults absence to `provisional`, which answers *what is the value* by guessing.
+  **This was the pressure behind wanting one repository per shared type**, and splitting would never have fixed it — a repository has one version too. Declaring the version on the type is what removes it: a consumer that vendored one type out of six no longer sees a bump caused by the other five.
+- **~~Should `lifecycle_status` carry `unknown`, as its default?~~ Yes.** Shipped in `0.0.11`. `unknown` is not a stage — it says the value was not filled in — and it is the default because both real defaults would be wrong guesses.
+- **~~`policy` and `preload` answer overlapping questions.~~ Resolved in `0.0.11`.** They were on the same axis: all three engagement modes were written in loading vocabulary, so two collided with a loading field. Redefined by what a consumer *does* — run it, be bound by it, read it — they are orthogonal, and a `policy` with `preload: optional` stops reading as a contradiction.
 
-  **§5.2 supplies the test and `lifecycle_status` fails it.** Justifying `preload`'s default, it contrasts `consumers`, *"where absence says nothing — there, both possible defaults would be wrong guesses."* Default a lifecycle to `provisional` and a `draft` thing reads as more settled than it is; default it the other way and a `stable` thing reads as less. **Neither direction is safe, which is the `consumers` case rather than the `preload` one.**
+  **What is not solved is reachability.** A rule nobody loads still governs nothing. The answer is something always present naming the rules that exist, and nothing does that yet.
 
-  Adding the value *and making it the default* keeps it unambiguous — absent and explicit mean the same thing — while letting a producer state *looked at, not decided* as a fact rather than by omission. That is the argument `0.0.9` already accepted for the actor grammar: *"a missing author reads as an oversight where `unknown:unknown` reads as a fact."*
-
-  **`unknown` means the value was not filled in, so at read time we do not know it.** Not *unknowable* — whether the fact is lost or was simply never stated is not the field's business, and collapsing both into one value is what lets a single word serve every field that needs it. §7.4 already uses it that way for actors.
-
-  **It is sometimes equivalent to *none*, and `none` is the wrong spelling for it either way.** Only sometimes, because the two genuinely differ for some fields — an empty list is not an unrecorded one, and a field that can legitimately hold nothing needs both meanings available. `none`, `null` and `nil` are absence words in one language or another, so a *value* that looks like a null invites being conflated with an actual one — and `lifecycle_status: none`, `lifecycle_status:` (empty, which YAML reads as null), and the field being absent entirely are three states that look alike to a reader and differ to a parser. `None` is also a Python keyword, so a consumer written there can compare against the wrong thing and pass.
-
-  **Breaking**, semantically: every Document currently reading as `provisional` would read as `unknown`, which is the point. §6's opening sentence would need a clause, since the enum would then carry the named absence of a stage alongside the stages.
-- **`policy` and `preload` answer overlapping questions.** `preload: mandatory` says *load this before working at all*; `policy` is defined as *standing — kept present*. Close enough to the same instruction that a Document can state both and contradict itself, which adopters have already had to patch around with a *"`preload` and `type` must agree"* rule.
-
-  **This is the same redundancy `concept` was removed for, one level up**, and `0.0.10` closing one while leaving the other is the inconsistency worth naming.
-
-  **The likely resolution is that `policy` was defined on the wrong axis.** All three engagement modes are currently written in loading vocabulary — *invoked*, *standing*, *retrieved when relevant* — which is why two of them collide with a loading field. Rewritten as what a consumer *does* with the content rather than when it arrives, the overlap disappears: a `workflow` is a procedure you **run**, a `policy` is a rule that **binds** you, a `document` is information you **read**, and `preload` alone says whether you have it. A narrowly-scoped rule that loads on demand then stops being a contradiction.
-
-  **What that leaves unsolved is reachability** — a rule nobody loads governs nothing. That is a real problem and not a definitional one: the answer is that something always-present advertises the rule's *existence*, not that every rule is force-loaded.
 - **Vendored-type provenance** — §10.4 makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, §7.3, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 
   **This now has a real consumer and is the highest-value item here.** A shared type library — the thing §10.4 already contemplates when it says types are shared *by vendoring* — is only safe if drift is loud. Without provenance, the choice for a widely-used type is between an unprefixed built-in the format did not want and copies that disagree silently. **Provenance is what makes the namespaced-and-vendored path viable**, and it is what keeps the built-in list short.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in §10.1** — the example Type Definition inherits from `source`, which is neither a reserved built-in (§10.4) nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
-- **~~Whether `concept` survives.~~ It does not.** Removed — see the Unreleased
-  entry in `CHANGELOG.md`.
+- **~~Whether `concept` survives.~~ It does not.** Removed in `0.0.10`.
 
   The argument that had held it here was that removing a name and re-adding it
   later collides with every Bundle that defined it privately in between. **That

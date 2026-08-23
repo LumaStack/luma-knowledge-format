@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.10`
+- **Version:** `v0.0.11`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -72,7 +72,7 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 | `title` | recommended | text | Human label; may fall back to the filename. |
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
 | `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
-| `lifecycle_status` | optional | enum | `draft \| provisional \| stable \| archived`. §6. |
+| `lifecycle_status` | optional | enum | `draft \| provisional \| stable \| archived \| unknown`. Default `unknown`. §6. |
 | `created` | optional | actor_event | Original author + creation time. **Immutable.** §7.1. |
 | `modified` | recommended | actor_event | Last editor + last meaningful change. **Advances on edit.** §7.1. |
 | `verified` | optional | list of actor_event | Independent confirmation events. §7.2. |
@@ -96,7 +96,9 @@ A Bundle is usually larger than any one task needs. `preload` lets a Document sa
 
 **`mandatory` is a hard requirement, not a strong preference.** A level that degrades quietly is a hint, and hints are ignored. A consumer that cannot load a `mandatory` Document refuses rather than proceeding without it. The cost of that falls on the author: marking too much `mandatory` makes a Bundle unusable in a constrained context, which is what keeps the level meaning anything. A Bundle's total `mandatory` weight is a requirement it imposes on every consumer, and is better surfaced where the Bundle is published than discovered when something fails.
 
-**It says nothing about importance.** All three values are about *timing*. An `optional` Document may be the most valuable thing in a Bundle and simply not be needed until something asks for it. Retirement is `lifecycle_status` (§6), not this.
+**It says nothing about what the Document is, or what it does to you.** Whether a Document is a procedure you run or a rule that binds you is its `type` (§10.4); `preload` answers only whether you have it. A `policy` with `preload: optional` is a rule that binds when it applies and costs nothing until then — not a contradiction.
+
+**It says nothing about importance either.** All three values are about *timing*. An `optional` Document may be the most valuable thing in a Bundle and simply not be needed until something asks for it. Retirement is `lifecycle_status` (§6), not this.
 
 **Preload is always relative to what contains the thing.** A Document's `preload` is relative to its Bundle — *of this Bundle's Documents, which do I need ahead of the work* — and says nothing about whether the Bundle should be in play at all. That is a question for whoever adopted it, and this field does not answer it.
 
@@ -104,14 +106,23 @@ A Bundle is usually larger than any one task needs. `preload` lets a Document sa
 
 ## 6. Lifecycle: `lifecycle_status`
 
-A Document's lifecycle stage — nascent to active, with `archived` as the retired terminal. Default (when absent): `provisional`.
+A Document's lifecycle stage — nascent to active, with `archived` as the retired terminal, plus the named absence of a stage. Default (when absent): `unknown`.
 
 | Value | Meaning |
 |---|---|
 | `draft` | Work in progress; not ready to rely on. |
-| `provisional` | Usable but not yet ratified — may still change. (Default.) |
+| `provisional` | Usable but not yet ratified — may still change. |
 | `stable` | Ratified and trusted. |
 | `archived` | Retired from active use; kept for the record. (Supersession — "replaced by X" — is a relationship, not this status.) |
+| `unknown` | **Not a stage.** The value was not filled in, so at read time nobody knows it. (Default.) |
+
+**`unknown` means not filled in, not unknowable.** Whether the fact is lost or was simply never stated is not this field's business, and collapsing both into one value is what lets a single word serve wherever it is needed — the same sense §7.4 gives it for actors.
+
+**It is the default because both real defaults would be wrong guesses.** Defaulting to `provisional` makes a `draft` thing read as more settled than it is; defaulting the other way makes a `stable` thing read as less. Neither direction is safe, which is the `consumers` case described in §5.2 rather than the `preload` one — and where no default is safe, the honest answer is to say nobody has declared.
+
+**Absent and explicitly `unknown` mean the same thing**, so nothing is ambiguous. Writing it is worth doing anyway: silence cannot distinguish *considered and undecided* from *never thought about*.
+
+*It is not spelled `none`. `none`, `null` and `nil` are absence words in one language or another, so a value that looks like a null gets conflated with one — and `lifecycle_status: none`, an empty value that YAML reads as null, and the field being absent are three states that look alike to a reader and differ to a parser.*
 
 The field is named `lifecycle_status` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field.
 
@@ -258,7 +269,22 @@ A single quantitative lab measurement. One file per result.
 - `defines` — the `type` name this document governs.
 - `extends` — a single parent type to inherit from (§10.3).
 - `fields` — the field declarations (§10.2).
+- `version` — this Type Definition's own version, `semver`. Optional (below).
 - `vendored_from` — where this copy came from, when it is a copy (below).
+
+#### `version`
+
+A Type Definition MAY carry its own `version`, independent of the Bundle it ships in:
+
+```yaml
+version: "1.2.0"
+```
+
+**It exists because a Bundle's version answers the wrong question for a copied type.** Vendor one type out of a Bundle holding six, and a bump caused by any of the other five reports your copy as out of date when it is byte-identical. A type that versions itself is comparable on its own terms.
+
+**What a bump *means* is deliberately not defined yet.** Treat it as a label rather than a promise. Semantic versioning is the obvious starting point and the tiers have not been worked through for types, so a consumer SHOULD compare versions for equality and difference and SHOULD NOT infer compatibility from the tier that changed.
+
+**Optional, and absence is ordinary.** A type that only ever ships inside one Bundle has nothing to gain from a second version number.
 
 #### `vendored_from`
 
@@ -272,6 +298,8 @@ vendored_from:
 ```
 
 **It is provenance, never a lookup.** Nothing fetches it, and a consumer that cannot reach `resource` reads the Document exactly as before — the contract is the local file and always was. Without this the copy is anonymous, and §10.4's vendoring model has no way to tell a current copy from a stale or edited one.
+
+**`version` records the Type Definition's own version where it declares one, and the containing Bundle's otherwise.** Say which in the copy if it could be read either way.
 
 **It answers two questions, and the second is easy to miss.** *Is my copy still current?* — compare against `resource` at `version`, on demand. And *do two copies in one place agree?* — two Bundles that vendored the same type at different versions hold two contracts under one name, which §10.4 permits and which nothing else would surface.
 
@@ -328,16 +356,20 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
 - **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `workflow`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `bundle/` directory — itself a Bundle, so that the unit of distribution is exactly the types and not the project around them — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
 - **Built-in names.** The names `document`, `workflow`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
-- **Two base types, because the third way of reaching a consumer is the root itself.** `workflow` and `policy` declare no fields between them. They are not labels for subjects — they name how a Document is *engaged with*:
+- **Two base types, because the third thing a consumer can do is the root itself.** `workflow` and `policy` declare no fields between them. They are not labels for subjects — they name **what a consumer does with the content**:
 
-  | type | how it reaches a consumer |
+  | type | what a consumer does with it |
   |---|---|
-  | `workflow` | **invoked** — loaded while it is being followed, absent otherwise |
-  | `policy` | **standing** — kept present, because a rule consulted only when somebody thinks to look is not governing anything |
+  | `workflow` | **runs it.** A procedure, projected into whatever form the consumer executes |
+  | `policy` | **is bound by it.** A rule that constrains the consumer's own behaviour, rather than informing it |
 
-  **The third way — retrieved when relevant, pulled in by need — needs no type, because it is what `document` already is.** A plain Document is the one a consumer fetches when it bears on the work. Naming that mode would be naming the default, and **a type that names the default dispatches on nothing**: every consumer already treats anything without a more specific type exactly that way.
+  **The third thing — reads it — needs no type, because it is what `document` already is.** Naming that would be naming the default, and **a type that names the default dispatches on nothing**: every consumer already treats anything without a more specific type exactly that way.
 
-  That is what closes the set rather than leaving it open to any word a Bundle finds useful. **A further base type would have to name a way of engaging that is neither invoked, nor standing, nor the default** — not a further subject matter.
+  That is what closes the set rather than leaving it open to any word a Bundle finds useful. **A further base type would have to name a further thing to *do*** — not a further subject matter.
+
+  **None of this says when a Document is loaded.** That is `preload` (§5.2), and the two are orthogonal: a `policy` binds whether or not it is present, and a `policy` that loads only when its subject arises is an ordinary thing rather than a contradiction. Reading the two as one axis is what made *standing* look like `preload: mandatory` by another name.
+
+  **A rule nobody loads governs nothing, and that is a reachability problem rather than a definitional one.** The answer is that something always present says the rule *exists* — an index costs a line where the rule costs a page — not that every rule is forced into context.
 
   The distinction is worth having because it is the one a consumer must act on. Two Documents can be identical prose with identical fields, and one belongs in permanent context while the other belongs behind an invocation. Nothing but the `type` can say which.
 
@@ -366,7 +398,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **A built-in is the format's only mandatory surface.** Everything else here is permissive by law (§4) — unknown types tolerated, missing fields tolerated, unresolved links tolerated, and no consumer may reject a Document for any of it. This list is the one place the format *requires* something of every implementation.
 
-  **So the question is never whether a type is important. It is whether a consumer that ignored it would fail to read a conformant Document, or engage with one in a way this specification says is wrong.** Both count, and they fail differently: without `bundle` or `type_definition` there is no Document ID and no way to obtain a contract, so nothing can be read at all; without `workflow` or `policy` a Document parses perfectly and is then kept when it should be invoked, which is a rule this specification states and the consumer got wrong.
+  **So the question is never whether a type is important. It is whether a consumer that ignored it would fail to read a conformant Document, or engage with one in a way this specification says is wrong.** Both count, and they fail differently: without `bundle` or `type_definition` there is no Document ID and no way to obtain a contract, so nothing can be read at all; without `workflow` or `policy` a Document parses perfectly and is then read as information when it is a rule that binds, or a procedure to run — a distinction this specification draws and the consumer got wrong.
 
   ***My tooling would break* is the wrong kind of broken.** It is true of every domain type ever written. A consumer ignoring one still reads the Document correctly — as a plain `document`, which is what it is — and merely does not participate in something built on top of the format. **That is the format working, not failing.**
 
