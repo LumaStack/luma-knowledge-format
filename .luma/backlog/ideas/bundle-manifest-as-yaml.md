@@ -1,5 +1,5 @@
 ---
-type: idea
+type: luma/idea
 title: Should bundle.md be YAML rather than markdown?
 created: { by: human:benlinton, at: 2026-08-18T00:00:00Z }
 contributors: [human:benlinton, agent:claude-opus-5]
