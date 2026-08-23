@@ -158,6 +158,22 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
 ## Ideas — raised for consideration, not evaluated, and nothing here is decided
 
+- **A strict mode.** Raised as: *by design and by default LKF is open and accepting, but in cases where allowing faults is not acceptable, there should be a strict mode that gets enabled, where everything needs to be perfect or it fails.* **This does not break the specification or go against it** — it gives people a way to use most of the format while letting producers and consumers know that **this type is not open. It is exact, it fails, it throws errors, and corruption is not tolerated.**
+
+  Whether strictness is set *on* a type, or whether you get it by declaring a different type that is always strict, is open. *"I'm assuming the new-type route is best, but not sure."*
+
+  **The seam it would use already exists, and §4 is not in the way.** §4's `MUST NOT reject` governs **conformance** — whether a file *is* a Document. It says nothing about whether a tool will *act* on one. The specification already relies on that gap: `preload: mandatory` says a consumer that cannot load the Document **refuses rather than proceeding**, which is a consumer failing without rejecting anything as non-conformant. **A strict mode is that same move, generalised** — the file stays a valid Document and the work stops.
+
+  **It may need no new vocabulary.** §5 says obligation *"describes intent. Whether and how a tool checks it is a suggested validation framework, not a rule."* On that reading **strict mode is simply the switch that turns published intent into an enforced contract** — the contract is already fully specified in the Type Definition and merely unbinding. If that is all it is, nothing new is declared and the question becomes who throws the switch.
+
+  **Where it should live is the real question, and there is precedent cutting both ways.** Against putting it on the artifact: obligation is deliberately *not* a property of a bundle, because *"the same bundle is mandatory at one organization and merely available everywhere else — the publisher declares it; the artifact does not carry it."* The same argument says a `decision` type might warrant strictness at a bank and not at a startup. For putting it on the artifact: the idea explicitly wants producers to be able to *signal* exactness, which a consumer-side setting cannot do.
+
+  **The shape that satisfies both is probably the `preload: mandatory` one** — the author declares the claim, the consumer decides whether to honour it, and what is refused is the work rather than the document.
+
+  **The always-strict-type route has one property the flag does not:** strictness travels with the name and cannot be quietly turned off. That is also its cost — no deployment can relax it, and the type vocabulary doubles if every strict thing needs a strict twin. Whether inheritance could carry it instead (`extends` some strict root) runs into single inheritance and into using a field mechanism for a non-field property.
+
+  Evaluating it would have to settle: **what counts as a failure** — unknown keys, unresolved links, a missing `recommended`, a value outside an enum are four very different bars, and §4 currently forgives all of them; whether strictness is all-or-nothing or per-check; **what a strict consumer does with a non-strict type**, and vice versa, since a Bundle will hold both; and whether *"corruption is not tolerated"* is the same feature as validation or a second one about integrity, which would point at checksums rather than contracts.
+
 - **A link that carries a hidden id** — a markdown link whose target is a path by default, but which also carries an identifier no reader sees, so a rename cannot break it. Recorded to be evaluated; neither adopted nor dismissed.
 
   A first look at possible carriers, as observations rather than a shortlist:
