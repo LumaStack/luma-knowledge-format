@@ -1,7 +1,7 @@
 # Luma Knowledge Format (LKF)
 
-**A contract in plain files, read the same way by anyone or any tool.**
-Standardize what matters. Extend the rest however you like.
+> **A contract in plain files, read the same way by anyone or any tool.**<br>
+> Standardize what matters. Extend the rest however you like.
 
 LKF is an open markdown format for representing knowledge, designed to be equally friendly to humans and agents. Its core is small by design — flexible and made to be extended — so it adapts to whatever you need to capture.
 
