@@ -139,6 +139,12 @@ modified: { by: agent:gemini-2.5-pro, at: 2026-06-20T22:53:05Z } # last editor; 
 - `modified.at` is the "last meaningful change" — the freshness signal a consumer uses to tell a recent edit from a stale fact.
 - `by` values follow the actor convention (§7.4). Both fields have field type `actor_event` (§10.2).
 
+**Why one nested field rather than `created_by` and `created_at`.** The flat pair reads better in a diff and greps in one line, which is a real cost paid here deliberately. Three things buy it back:
+
+- **`verified` is a *list* of these** (§7.2), and a flat form would be parallel arrays correlated by index. That is the positional-correlation failure this specification avoids everywhere else — §7.3 keys source footnotes precisely so *"rewrites do not misattribute."* The composite has to exist for `verified` regardless; using it for `created` and `modified` is consistency rather than extra machinery.
+- **The pair is atomic, and §7.4 depends on that.** Its argument for writing `unknown:unknown` rather than omitting `by` is that omission *"discards the `at` timestamp sharing the same `actor_event`."* That reasoning only holds because they are one object. Flat, a `created_at` with no `created_by` is a natural half-record and nothing marks it as incomplete.
+- **One declaration instead of an invisible invariant.** A Type Definition says `field_type: actor_event` once; the flat form is two fields plus a rule that they travel together, which no validator can see.
+
 ### 7.2 `verified` and trust tiers
 
 ```yaml

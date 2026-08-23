@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Changed
+- **§7.1 now says why `actor_event` is nested** rather than a flat `created_by`/`created_at` pair. No behaviour change; the shape is unaltered and this records reasoning that was load-bearing and unwritten.
+  Three grounds: **`verified` is a list of them**, so a flat form would be parallel arrays correlated by index — the positional failure §7.3 avoids by keying footnotes; **§7.4's argument depends on the pair being atomic**, since omitting `by` *"discards the `at` timestamp sharing the same `actor_event`"*, which only holds if they are one object; and **one `field_type` declaration beats two fields plus an invariant no validator can see**.
+  The cost is stated rather than waved away: the flat pair reads better in a diff and greps in one line.
+
 ## [0.0.11] — 2026-08-23
 
 ### Added
