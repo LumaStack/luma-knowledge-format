@@ -172,7 +172,31 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **The always-strict-type route has one property the flag does not:** strictness travels with the name and cannot be quietly turned off. That is also its cost — no deployment can relax it, and the type vocabulary doubles if every strict thing needs a strict twin. Whether inheritance could carry it instead (`extends` some strict root) runs into single inheritance and into using a field mechanism for a non-field property.
 
-  Evaluating it would have to settle: **what counts as a failure** — unknown keys, unresolved links, a missing `recommended`, a value outside an enum are four very different bars, and §4 currently forgives all of them; whether strictness is all-or-nothing or per-check; **what a strict consumer does with a non-strict type**, and vice versa, since a Bundle will hold both; and whether *"corruption is not tolerated"* is the same feature as validation or a second one about integrity, which would point at checksums rather than contracts.
+  Evaluating it would have to settle: **what counts as a failure** — unknown keys, unresolved links, a missing `recommended`, a value outside an enum are four very different bars, and §4 currently forgives all of them; whether strictness is all-or-nothing or per-check; and **what a strict consumer does with a non-strict type**, and vice versa, since a Bundle will hold both.
+
+  ### The corruption half may be a second feature, and a smaller one
+
+  *"Corruption is not tolerated"* is not validation. **Validation asks whether a Document satisfies its contract; integrity asks whether it is the file it was.** A perfectly valid Document can be corrupt — somebody rewrote a settled decision's reasoning — and a pristine one can be invalid. The format also already has a third thing easily confused with both: `verified` and `stale_after` are integrity of *claims*, not of bytes.
+
+  **Most of it is already answered, which shrinks the problem to one gap.** `adopted.toml` checksums answer *altered since adoption*; git answers *altered since authoring*, free, for anything committed; `vendored_from` answers *matches what upstream published*. **What none of them answers is which changes are illegitimate** — git reports that a file changed and has no idea it was never supposed to.
+
+  **The obvious design is ruled out by an argument already made here.** An in-document `content_hash` is maintained by whoever edits the file, and the person it guards against is exactly that person — the same reason `adopted.toml`'s checksum *"lives nowhere near a file you are invited to edit"*. It is also self-referential and stale after every legitimate change.
+
+  **So the shape worth considering is a declaration rather than a digest**, because the format already makes immutability claims and enforces none of them: §11 says a `log.md` writer **MUST append rather than rewrite**, and a `stable` decision is *frozen*. Rules, stated, unchecked.
+
+  ```yaml
+  type: type_definition
+  defines: audit_record
+  mutability: frozen          # append_only | frozen | open (default)
+  ```
+
+  **It detects nothing by itself, and that is the point.** It states the rule so a validator, a review or git can check it, and so a reader knows an edit here is a defect rather than maintenance. No self-reference, no tool required to maintain it, and it makes existing unenforced prose declarable. **It also composes with strict mode rather than duplicating it:** the type says what may change, strict mode says whether a violation stops the work.
+
+  **The heavier alternative** is a sidecar digest — an `adopted.toml` for authored content. It genuinely detects corruption, and it needs a tool to maintain, duplicates git for anything committed, and puts a must-not-be-hand-edited file among files people hand-edit.
+
+  **The honest third option is nothing.** Git plus `adopted.toml` already cover every case anyone has hit, and *corruption is not tolerated* may be a strict-mode posture rather than a mechanism.
+
+  *Prior art worth lifting rather than reinventing, if integrity ever does become a format concern: a consumer of this format has already built the layer — algorithm-tagged content hashes so the algorithm can change without breaking the format, a cheap size-and-mtime pre-check before hashing, and a vocabulary distinguishing output that is thin from output that is false. **That it was built downstream without the format's help is also an argument the format does not need it.***
 
 - **A link that carries a hidden id** — a markdown link whose target is a path by default, but which also carries an identifier no reader sees, so a rename cannot break it. Recorded to be evaluated; neither adopted nor dismissed.
 
