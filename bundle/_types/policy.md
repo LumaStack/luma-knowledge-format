@@ -22,19 +22,28 @@ a secrets rule, and differs only in what it costs to break.
 Strength of obligation is a property of an individual policy, not a reason to
 split the type.
 
-## How it reaches a consumer: **standing**
+## What a consumer does with it: **is bound by it**
 
-Kept present, not fetched when somebody thinks to look. That is its place among
-the three ways a Document reaches a consumer (§10.4) — a `workflow` is invoked,
-and a plain `document` is retrieved when relevant.
+A rule that constrains the consumer's own behaviour rather than informing it.
+That is its place among the three things a consumer can do with a Document
+(§10.4) — a `workflow` you **run**, and a plain `document` you **read**.
+
+**Binding is not presence, and this type claims only the first.** Whether a
+policy is loaded is `preload` (§5.2), and the two are orthogonal: a policy binds
+whether or not it happens to be in front of you.
 
 ## What dispatches on it
 
-**A policy is standing; a workflow is invoked.** A consumer assembling
-what an agent should know keeps policy present — these are the rules in force,
-and a rule that is only consulted when someone thinks to look is not governing
-anything. A procedure is the opposite: loaded when it is being followed, absent
-otherwise.
+**A policy binds; a workflow is run.** A consumer assembling what an agent
+should know treats a policy as a constraint on its own behaviour — these are the
+rules in force — where a procedure is something it carries out when asked. Same
+prose, opposite handling.
+
+**A rule nobody can reach governs nothing**, which is true and is a separate
+problem. It argues for making sure a policy is *findable* — something always
+present naming the rules that exist — not for defining the type in terms of
+being loaded. Conflating the two is what made this type look like
+`preload: mandatory` wearing a different name.
 
 The type is what tells them apart. Both are prose with no declared fields, and
 without the name a consumer has no way to know that one belongs in permanent

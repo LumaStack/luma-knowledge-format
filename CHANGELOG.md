@@ -6,6 +6,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.11] — 2026-08-23
+
+### Added
+- **A Type Definition may carry its own `version`** (§10.1), `semver`, optional. A Bundle's version answers the wrong question for a copied type: vendor one type out of a Bundle holding six and a bump caused by any of the other five reports your copy as out of date when it is byte-identical.
+  **What a bump means is deliberately not defined yet.** Treat it as a label rather than a promise — compare for equality and difference, and do not infer compatibility from which tier changed. This also gives §12's dangling reference to *"a Type Definition's own `version`"* something to point at.
+  `vendored_from.version` records the type's own version where it declares one, and the containing Bundle's otherwise.
+- **`unknown` on `lifecycle_status`, as the default** (§5.1, §6) *(breaking)*. It is **not a stage** — it says the value was not filled in, so at read time nobody knows it. Whether the fact is lost or was never stated is not the field's business, which is what lets one word serve wherever it is needed; §7.4 already uses it that way for actors.
+  **It is the default because both real defaults would be wrong guesses.** `provisional` makes a `draft` thing read as more settled than it is, and the other direction makes a `stable` thing read as less. Neither is safe — which is the `consumers` case §5.2 contrasts, not the `preload` one.
+  **Absent and explicitly `unknown` mean the same thing**, so nothing is ambiguous; writing it is still worth doing, because silence cannot distinguish *considered and undecided* from *never thought about*. Not spelled `none`: `none`, `null` and `nil` are absence words in one language or another, and a value that looks like a null gets conflated with one.
+  *Migration:* **no file changes.** Documents that declare a value keep it. Documents that do not now read as `unknown` rather than `provisional`, which is the point. A consumer branching on the enum gains a case.
+
+### Changed
+- **`workflow` and `policy` are defined by what a consumer *does* with a Document, not by when it arrives** (§10.4, §5.2, and both Type Definitions). A `workflow` you **run**, a `policy` **binds** you, a plain `document` you **read**.
+  **This closes an overlap with `preload`.** `policy` was defined as *standing — kept present*, which is close enough to `preload: mandatory` that a Document could state both and contradict itself — and adopters had already written a *"`preload` and `type` must agree"* rule to patch around it. All three engagement modes were written in loading vocabulary, so two of them collided with a loading field.
+  **On the new axis they are orthogonal.** The type says what the content is to you; `preload` says whether you have it. **A `policy` with `preload: optional` is now an ordinary thing** — a rule that binds when it applies and costs nothing until then — where before it read as a mistake.
+  **A rule nobody loads still governs nothing**, and that is a reachability problem rather than a definitional one: the answer is something always present naming the rules that *exist*, not forcing every rule into context.
+  *Migration:* **none.** No field changes, no frontmatter changes, and no Document is affected. This is what the two types have always meant, said on the correct axis.
+- **The concept migration note now covers `extends: concept`** (0.0.10). It said only to replace `type: concept`, while 0.0.6 had explicitly promised *"`extends: concept` keeps working unchanged"* — so anyone who read that had it in their Type Definitions. Three downstream definitions did.
+
 ## [0.0.10] — 2026-08-22
 
 ### Removed

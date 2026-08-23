@@ -12,11 +12,15 @@ A procedure a person or an agent follows. The body is the instructions.
 It adds no fields of its own — a workflow needs a name, a line on when it
 applies, and a body, all of which the root already provides.
 
-## How it reaches a consumer: **invoked**
+## What a consumer does with it: **runs it**
 
-Loaded while it is being followed, absent otherwise. That is its place among the
-three ways a Document reaches a consumer (§10.4) — a `policy` is kept standing,
-and a plain `document` is retrieved when relevant.
+A procedure, executed rather than read. That is its place among the three things
+a consumer can do with a Document (§10.4) — a `policy` **binds** you, and a plain
+`document` you **read**.
+
+**This says nothing about when it loads.** That is `preload` (§5.2). A workflow
+is usually fetched when it is being followed and absent otherwise, but that is a
+sensible default rather than part of what the type means.
 
 ## What dispatches on it
 
