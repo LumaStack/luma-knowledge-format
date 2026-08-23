@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.9`
+- **Version:** `v0.0.10`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -19,11 +19,10 @@ Two roles are referenced throughout:
 
 ## 2. Terminology
 
-- **Knowledge Bundle (or Bundle)**: A self-contained, hierarchical collection of files — the unit of distribution. Every file in a Bundle is either a Document or an Asset. A Bundle is self-contained: it may be moved, archived, or copied whole, and nothing it needs lives outside it.
+- **Knowledge Bundle (or Bundle)**: A self-contained, hierarchical collection of files — the unit of distribution. Every file in a Bundle is either a Document or an Asset. **Self-contained means nothing is fetched in order to read it:** its Documents, its Assets and every Type Definition its Documents use are present in the Bundle, so it may be moved, archived or copied whole and still be read offline. **It is a statement about lookup, not about relationships** — a Bundle may *name* another it expects alongside it, which is a claim about what should be adopted, never a lookup performed while reading.
 - **Asset**: A file in a Bundle that is not a Document — a script, a template, an image, a binary. It carries no frontmatter and no `type`, and Type Definitions (§10) do not apply to it.
 - **Attachment**: An Asset that a Document links to (§8). A relationship, not a category: the same Asset may be an Attachment of several Documents, and an Asset that nothing links to is nobody's Attachment.
 - **Document**: A single unit of knowledge within a Bundle, represented as one markdown file with YAML frontmatter. Every Document declares a `type`; what it describes — a table, an API, a metric, a task, a lab result — is that type's business, not the format's.
-- **`concept`**: A built-in type (§10.4) for knowledge-base entries — the conceptual material LKF was first written for. It extends `document` and adds no fields of its own; declaring it says *this is a unit of knowledge* rather than a task, a record, or a bundle's manifest.
 - **Document ID**: The path of the Document's file within the Bundle, with the `.md` suffix removed.
 - **Slug**: A Document's filename without its directory path or `.md` extension (e.g. `diffusion-models` for `wiki/concepts/diffusion-models.md`).
 - **Document Type** (or **Type**): The value of a Document's `type` field — a short string naming the kind of Document (e.g. `task`, `note`, `lab_result`). An open vocabulary; consumers tolerate unknown types.
@@ -259,6 +258,22 @@ A single quantitative lab measurement. One file per result.
 - `defines` — the `type` name this document governs.
 - `extends` — a single parent type to inherit from (§10.3).
 - `fields` — the field declarations (§10.2).
+- `vendored_from` — where this copy came from, when it is a copy (below).
+
+#### `vendored_from`
+
+A Type Definition copied from elsewhere SHOULD record where it came from:
+
+```yaml
+vendored_from:
+  resource: https://example.org/shared-types
+  version: "0.1.0"
+  at: 2026-08-22
+```
+
+**It is provenance, never a lookup.** Nothing fetches it, and a consumer that cannot reach `resource` reads the Document exactly as before — the contract is the local file and always was. Without this the copy is anonymous, and §10.4's vendoring model has no way to tell a current copy from a stale or edited one.
+
+**It answers two questions, and the second is easy to miss.** *Is my copy still current?* — compare against `resource` at `version`, on demand. And *do two copies in one place agree?* — two Bundles that vendored the same type at different versions hold two contracts under one name, which §10.4 permits and which nothing else would surface.
 
 ### 10.2 Field declarations
 
@@ -295,22 +310,34 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 ### 10.3 Inheritance
 
 - **`extends`** names a single parent type (single inheritance). A type inherits all of its parent's fields and adds its own.
-- Every type implicitly extends the built-in **`document`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields. This is self-hosting: `type_definition` is itself a type that extends `document`.
-- **Add-only.** A type may only *add* fields. It MUST NOT redefine or remove an inherited field — core or domain. This keeps every inherited field's meaning stable everywhere the type is used.
+- Every type implicitly extends the built-in **`document`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields, except to strengthen an obligation as below. This is self-hosting: `type_definition` is itself a type that extends `document`.
+- **Add-only.** A type may only *add* fields. It MUST NOT remove an inherited field, nor redefine its `field_type`, its `values`, or its meaning — core or domain. This keeps every inherited field's meaning stable everywhere the type is used.
+- **Obligation may be strengthened, never weakened.** A type MAY raise an inherited field's obligation — `optional` → `recommended` → `mandatory` — by redeclaring the field with a higher `obligation` and nothing else changed. It MUST NOT lower one. Where a field is declared at several points in a chain, the **strongest obligation wins**; an attempted weakening SHOULD be reported rather than honoured.
+
+  `deprecated` is not on that ladder and is not reachable this way. It states something about a field's future rather than its strength, so a type inheriting a `deprecated` field may not mandate it — a field both deprecated and required is a contradiction rather than a precedence question.
+
+  **This is consistent with add-only because obligation is not meaning.** The field means exactly what its declaring type said; a subtype only states how strongly *it* expects the field. Nothing becomes non-conformant either — obligation describes intent (§5) and the sole hard requirement remains a non-empty `type` (§4) — so a consumer that knows only the parent and one that knows the subtype may reach different completeness verdicts, and each is right at its own level.
+
+  **Without this, a type whose semantics rest on inherited fields cannot state them.** Where a type's growth stage *is* `lifecycle_status` and its age *is* `created` — both `optional` on the root — the type has no way to say that a Document missing either is incomplete, and its own contract calls unremarkable exactly the omissions that break it.
 
 ### 10.4 Resolution and namespacing
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `concept`, `workflow`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `bundle/` directory — itself a Bundle, so that the unit of distribution is exactly the types and not the project around them — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
-- **Built-in names.** The names `document`, `concept`, `workflow`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
-- **Three base types, one for each way prose reaches a consumer.** `concept`, `workflow` and `policy` declare no fields between them. They are not three labels for three subjects — they partition how a Document is *engaged with*:
+- **The Bundle is the resolution scope, and that has a consequence worth stating.** Because a contract is found in *this* Bundle's `_types/`, two Bundles may hold different versions of the same type without contradiction — each one's Documents are checked against the copy that travelled with them. This is the scoping mechanism prose does not have, and it is why vendoring a type is safe where duplicating a policy would not be.
+
+  **A Document outside every Bundle has no such scope.** Nothing prevents a Document living beside Bundles rather than inside one — describing a repository, or a place Bundles are published from. Such a Document declares a `type` like any other, and the format offers no rule for where its contract is found: there is no Bundle to look in. **Whoever puts a Document there owes it an answer**, and where two Bundles disagree about that type, nothing decides between them.
+
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `workflow`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `bundle/` directory — itself a Bundle, so that the unit of distribution is exactly the types and not the project around them — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Built-in names.** The names `document`, `workflow`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law (§4) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
+- **Two base types, because the third way of reaching a consumer is the root itself.** `workflow` and `policy` declare no fields between them. They are not labels for subjects — they name how a Document is *engaged with*:
 
   | type | how it reaches a consumer |
   |---|---|
-  | `concept` | **retrieved when relevant** — progressively disclosed, pulled in by need |
   | `workflow` | **invoked** — loaded while it is being followed, absent otherwise |
   | `policy` | **standing** — kept present, because a rule consulted only when somebody thinks to look is not governing anything |
 
-  That is the dispatch difference all three rest on, and it is what closes the set at three rather than leaving it open to any word a Bundle finds useful. **A fourth would have to name a fourth way of engaging, not a fourth subject matter.**
+  **The third way — retrieved when relevant, pulled in by need — needs no type, because it is what `document` already is.** A plain Document is the one a consumer fetches when it bears on the work. Naming that mode would be naming the default, and **a type that names the default dispatches on nothing**: every consumer already treats anything without a more specific type exactly that way.
+
+  That is what closes the set rather than leaving it open to any word a Bundle finds useful. **A further base type would have to name a way of engaging that is neither invoked, nor standing, nor the default** — not a further subject matter.
 
   The distinction is worth having because it is the one a consumer must act on. Two Documents can be identical prose with identical fields, and one belongs in permanent context while the other belongs behind an invocation. Nothing but the `type` can say which.
 
@@ -337,9 +364,23 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   The second is the weaker of the two and cuts both ways. Declining to define a name everyone reaches for does not prevent the name — it produces many private definitions that drift apart. But a list that grows on popularity alone stops being a small core, which is the property the whole format rests on.
 
-  **Removing a built-in is cheaper than adding one.** Removal costs a deprecation cycle and a frontmatter migration. A late addition costs the same migration *plus* a collision with every Bundle that had already defined the name for itself. Where a case is genuinely balanced, that asymmetry favours admitting it now and deprecating later.
+  **A built-in is the format's only mandatory surface.** Everything else here is permissive by law (§4) — unknown types tolerated, missing fields tolerated, unresolved links tolerated, and no consumer may reject a Document for any of it. This list is the one place the format *requires* something of every implementation.
 
-- **Namespacing (for consideration, not required).** To avoid collisions when types are shared or published, a `type` name SHOULD be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
+  **So the question is never whether a type is important. It is whether a consumer that ignored it would fail to read a conformant Document, or engage with one in a way this specification says is wrong.** Both count, and they fail differently: without `bundle` or `type_definition` there is no Document ID and no way to obtain a contract, so nothing can be read at all; without `workflow` or `policy` a Document parses perfectly and is then kept when it should be invoked, which is a rule this specification states and the consumer got wrong.
+
+  ***My tooling would break* is the wrong kind of broken.** It is true of every domain type ever written. A consumer ignoring one still reads the Document correctly — as a plain `document`, which is what it is — and merely does not participate in something built on top of the format. **That is the format working, not failing.**
+
+  **The cost of a built-in is a word taken from everyone, permanently.** An unprefixed name belongs to the format for good: every Bundle in every domain must then avoid it, and releasing one later collides with whoever defined it privately in the meantime. So *important to us* is not an argument for this list — **importance is what a namespace is for**, and a namespaced type costs nobody anything.
+
+  **A cheap further check: does it change at the format's rate?** A built-in's contract is versioned with the format. A type that gains fields as somebody's tooling matures drags the format's version along with it, and a specification whose releases track one adopter's roadmap has stopped being a specification.
+
+  **Removing a built-in is cheaper than adding one.** Removal costs a deprecation cycle and a frontmatter migration. A late addition costs the same migration *plus* a collision with every Bundle that had already defined the name for itself.
+
+  **That asymmetry is a tiebreaker, not an entry route.** It applies only to a candidate that has already cleared the checks above and is still genuinely balanced — there, admitting now and deprecating later is the cheaper error. It is not a reason to admit something that failed them, because a namespace costs nothing and is available immediately.
+
+- **Namespacing.** **Unprefixed means the format defines it; a prefix means somebody else does.** That is the whole convention, and it lets a reader tell a type's origin from its name without a lookup — `workflow` is LKF's, `acme/deploy_check` is an organization's.
+
+  A `type` published beyond the Bundle that wrote it SHOULD therefore be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
 ### 10.5 Validation — a suggested framework, not a contract
 
@@ -362,7 +403,7 @@ Two deliberate choices: a `deprecated` field stays a *warning* even under `--str
 
 ### 10.6 Discovery
 
-Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`, or use tooling such as `luma type list` / `luma type show <type>`.
+Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
 
 ## 11. Reserved files
 
@@ -406,7 +447,7 @@ It is a list because a Bundle may legitimately apply to more than one kind, and 
 
 It is deliberately *not* the same claim as `preload: mandatory` (§5.2), though in a small Bundle the same Document usually carries both. Entry point is reading order — *start here* — while `preload` is context presence — *have this available*. A Bundle may need three Documents loaded and still have one place to begin.
 
-`description` is inherited rather than declared: it is already a core field, and inheritance is add-only (§10.3), so a type may not restate an inherited field to strengthen its obligation. The built-in `bundle` Type Definition therefore declares only `version`, `published`, `consumers` and `entry_point`.
+`description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entry_point`. A type *may* restate an inherited field to raise its obligation (§10.3); `bundle` has no need to, since `description` at `optional` is already what it wants.
 
 Consistent with §4, a Bundle missing `bundle.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 

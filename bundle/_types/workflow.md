@@ -14,9 +14,9 @@ applies, and a body, all of which the root already provides.
 
 ## How it reaches a consumer: **invoked**
 
-Loaded while it is being followed, absent otherwise. That is its place in the
-three-way partition (§10.4) — a `concept` is retrieved when relevant and a
-`policy` is kept standing.
+Loaded while it is being followed, absent otherwise. That is its place among the
+three ways a Document reaches a consumer (§10.4) — a `policy` is kept standing,
+and a plain `document` is retrieved when relevant.
 
 ## What dispatches on it
 

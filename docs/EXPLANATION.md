@@ -83,7 +83,7 @@ below is added because it earns its place, never because the format demands it.
 
 ```markdown
 ---
-type: concept
+type: document
 title: Diffusion Models
 tags: [ml/generative]
 lifecycle_status: stable
