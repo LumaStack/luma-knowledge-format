@@ -445,7 +445,19 @@ Because Type Definitions are just files, humans and agents discover a type's con
 
 ## 11. Reserved files
 
-**Reserved file names are ALL CAPS**, unless the name is shared with an outside convention, in which case that convention's casing wins. The casing is not decoration: **nobody types all caps by accident**, so a file participates in the format's machinery only when somebody deliberately made it so. Getting it wrong fails safe — a `BUNDLE.md` is an ordinary Document, ignored rather than silently treated as a manifest. Directories are outside this rule and keep their own convention.
+**The rule, and it is the whole of it:**
+
+> **ALL CAPS names a file that speaks for the thing containing it. Lowercase names one of the things contained.**
+
+`BUNDLE.md` speaks for its Bundle; `LOG.md` for its directory's history. A Type Definition at `_types/bundle.md` does not — it describes what a Bundle *is*, living inside one thing while being about another. A template at `templates/bundle.md` is a pattern for making one. Both are content and both stay lowercase. **The rule excludes them rather than exempting them**, which is why it needs no list of exceptions.
+
+Where a name is shared with an outside convention, that convention's casing wins. `README.md` and `LICENSE` arrive uppercase anyway.
+
+**The casing is a gate on participation, not decoration.** Nobody types all caps by accident, so a file joins the format's machinery only when somebody deliberately made it so — and getting it wrong fails in the safe direction: a `bundle.md` is an ordinary Document, ignored rather than silently treated as a manifest. Somebody who writes lowercase either is not using these tools or does not want that file wired up, and both are cases where wiring it up anyway would be wrong.
+
+**It is the inverse of why `README.md` can carry no rules.** People edit a README without knowing any exist — universal permission semantics that no specification overturns. An all-caps name cannot be opted into by accident, so its rules bind only somebody who went looking for them. **A consumer MUST NOT depend on the content or structure of `README.md`.**
+
+Directories are outside the rule and keep their own convention. `_types/` already says *structural rather than content* with its underscore, and a second signal for one meaning is worse than one.
 
 - **`BUNDLE.md`** — the Bundle's own Document, at its root, with `type: bundle`. It is how a Bundle describes itself; see below. Recommended.
 - **`LOG.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
