@@ -11,7 +11,7 @@ fields:
 
 # bundle
 
-A Bundle's own Document, living at the Bundle root as `bundle.md` (§11.1). It
+A Bundle's own Document, living at the Bundle root as `BUNDLE.md` (§11.1). It
 describes the Bundle rather than any file inside it.
 
 `version` is mandatory because a Bundle without one cannot be pinned, compared,

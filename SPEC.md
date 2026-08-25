@@ -445,14 +445,29 @@ Because Type Definitions are just files, humans and agents discover a type's con
 
 ## 11. Reserved files
 
-- **`bundle.md`** — the Bundle's own Document, at its root, with `type: bundle`. It is how a Bundle describes itself; see below. Recommended.
-- **`index.md`** — derived navigation for a directory; a rebuildable cache, not a source of truth. Optional.
-- **`log.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
+**The rule, and it is the whole of it:**
+
+> **ALL CAPS names a file that speaks for the thing containing it. Lowercase names one of the things contained.**
+
+`BUNDLE.md` speaks for its Bundle; `LOG.md` for its directory's history. A Type Definition at `_types/bundle.md` does not — it describes what a Bundle *is*, living inside one thing while being about another. A template at `templates/bundle.md` is a pattern for making one. Both are content and both stay lowercase. **The rule excludes them rather than exempting them**, which is why it needs no list of exceptions.
+
+Where a name is shared with an outside convention, that convention's casing wins. `README.md` and `LICENSE` arrive uppercase anyway.
+
+**The casing is a gate on participation, not decoration.** Nobody types all caps by accident, so a file joins the format's machinery only when somebody deliberately made it so — and getting it wrong fails in the safe direction: a `bundle.md` is an ordinary Document, ignored rather than silently treated as a manifest. Somebody who writes lowercase either is not using these tools or does not want that file wired up, and both are cases where wiring it up anyway would be wrong.
+
+**It is the inverse of why `README.md` can carry no rules.** People edit a README without knowing any exist — universal permission semantics that no specification overturns. An all-caps name cannot be opted into by accident, so its rules bind only somebody who went looking for them. **A consumer MUST NOT depend on the content or structure of `README.md`.**
+
+Directories are outside the rule and keep their own convention. `_types/` already says *structural rather than content* with its underscore, and a second signal for one meaning is worse than one.
+
+- **`BUNDLE.md`** — the Bundle's own Document, at its root, with `type: bundle`. It is how a Bundle describes itself; see below. Recommended.
+- **`LOG.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
 - **`_types/`** — Type Definitions (§10).
 
-### 11.1 `bundle.md`
+> **Withdrawn:** `index.md` previously reserved *derived navigation for a directory; a rebuildable cache, not a source of truth.* Its structure was never specified, nothing implemented it, and the name is one static site generators resolve in lowercase — so keeping it would have been this rule's only exception. The name is released. A future reservation for derived navigation should take a name of its own.
 
-A Bundle SHOULD describe itself in a `bundle.md` at its root — an ordinary Document with `type: bundle`, carrying the Bundle's own metadata rather than any file's:
+### 11.1 `BUNDLE.md`
+
+A Bundle SHOULD describe itself in a `BUNDLE.md` at its root — an ordinary Document with `type: bundle`, carrying the Bundle's own metadata rather than any file's:
 
 ```yaml
 ---
@@ -487,14 +502,14 @@ It is deliberately *not* the same claim as `preload: mandatory` (§5.2), though 
 
 `description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entry_point`. A type *may* restate an inherited field to raise its obligation (§10.3); `bundle` has no need to, since `description` at `optional` is already what it wants.
 
-Consistent with §4, a Bundle missing `bundle.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
+Consistent with §4, a Bundle missing `BUNDLE.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
-> **Not yet fully specified:** the exact structure of `index.md` and `log.md`.
+> **Not yet fully specified:** the exact structure of `LOG.md`.
 
 ## 12. Versioning
 
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
 - Published versions are **git tags**; the newest tag is the current version.
-- A Bundle MAY declare an `lkf_version` on its root `bundle.md` (§11.1); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, §11.1), not a file's content version (git's job), and not a Type Definition's own `version`.
+- A Bundle MAY declare an `lkf_version` on its root `BUNDLE.md` (§11.1); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, §11.1), not a file's content version (git's job), and not a Type Definition's own `version`.
 
 > Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).
