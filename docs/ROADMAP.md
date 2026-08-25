@@ -102,8 +102,8 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   *Re-open only if a durable knowledge base turns out to need fields a `document`
   cannot give it, which is what would have justified the type in the first place.*
-- **Reserved-file formats** — the exact structure of `index.md` and `log.md` (§11).
-- **How many names the format claims at a Bundle root.** §11 reserves four — `bundle.md`, `index.md`, `log.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
+- **Reserved-file formats** — the exact structure of `index.md` and `LOG.md` (§11).
+- **How many names the format claims at a Bundle root.** §11 reserves four — `BUNDLE.md`, `index.md`, `LOG.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
 
   The alternative is to claim **one** name and nest everything reserved beneath it:
 
@@ -127,13 +127,13 @@ Reading without writing. Using a fraction of it. Elapsed time.
   Working around it means either declaring the directory a Bundle, which makes Bundles-inside-Bundles a concept the format then owes an answer for, or letting the consumer invent its own lookup — which is how two tools end up disagreeing about where a type lives, and resolution fails quietly.
 
   The likely fix is to stop keying resolution on *Bundle* and key it on the directory root a Document is found under, whatever that root is. Decide whether `_types/` is Bundle-specific or root-specific, and if the latter, what constitutes a root.
-- **Whether reserved manifests should be markdown at all.** §11.1 makes `bundle.md` a markdown Document carrying a frontmatter manifest. That is right when the body carries something a reader wants and it is a YAML file with a misleading extension when the body is empty — which is the state a pure manifest tends toward.
+- **Whether reserved manifests should be markdown at all.** §11.1 makes `BUNDLE.md` a markdown Document carrying a frontmatter manifest. That is right when the body carries something a reader wants and it is a YAML file with a misleading extension when the body is empty — which is the state a pure manifest tends toward.
 
   Evidence from the first consumer, and it cuts both ways. A Bundle's body has real work to do: what this Bundle is, when to reach for it, what it assumes. `luma-catalog`'s equivalent manifest ended up a short instance note over frontmatter once its general prose moved into the Type Definition where it belonged. **The two may deserve different answers**, and assuming one format for every manifest is what makes that hard to see.
 
   A plain YAML file would buy a JSON Schema, and with it the editor validation and completion frontmatter never gets, plus no ambiguity about whether a body is normative. Markdown buys one parser for every file a consumer reads, a `type` that makes the file discoverable by the same tooling that reads Documents, and the self-describing property the format rests on.
 
-  **Timing is the sharp part.** `bundle.md` is a reserved name and `bundle` is a built-in, so changing it is breaking — and `0.0.z` is precisely the window for that. It closes at `v0.1.0`, which *The shape has stopped moving* above defines partly as Bundle layout settling. Cheap now; a migration for every Bundle in existence later.
+  **Timing is the sharp part.** `BUNDLE.md` is a reserved name and `bundle` is a built-in, so changing it is breaking — and `0.0.z` is precisely the window for that. It closes at `v0.1.0`, which *The shape has stopped moving* above defines partly as Bundle layout settling. Cheap now; a migration for every Bundle in existence later.
 
   What would settle it is observable rather than a matter of taste: whether real Bundles turn out to have bodies worth reading. Nobody has written enough of them to know.
 
@@ -182,7 +182,7 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **The obvious design is ruled out by an argument already made here.** An in-document `content_hash` is maintained by whoever edits the file, and the person it guards against is exactly that person — the same reason `adopted.toml`'s checksum *"lives nowhere near a file you are invited to edit"*. It is also self-referential and stale after every legitimate change.
 
-  **So the shape worth considering is a declaration rather than a digest**, because the format already makes immutability claims and enforces none of them: §11 says a `log.md` writer **MUST append rather than rewrite**, and a `stable` decision is *frozen*. Rules, stated, unchecked.
+  **So the shape worth considering is a declaration rather than a digest**, because the format already makes immutability claims and enforces none of them: §11 says a `LOG.md` writer **MUST append rather than rewrite**, and a `stable` decision is *frozen*. Rules, stated, unchecked.
 
   ```yaml
   type: type_definition
