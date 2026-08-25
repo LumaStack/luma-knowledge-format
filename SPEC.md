@@ -449,6 +449,8 @@ Because Type Definitions are just files, humans and agents discover a type's con
 
 > **ALL CAPS names a file that speaks for the thing containing it. Lowercase names one of the things contained.**
 
+**In plain terms:** a file in CAPITALS is the folder's own file — it tells you what the folder *is*. Everything in lowercase is one of the things the folder *holds*. The test, when you are unsure: *is this file describing what surrounds it, or is it one of the things surrounded?*
+
 `BUNDLE.md` speaks for its Bundle; `LOG.md` for its directory's history. A Type Definition at `_types/bundle.md` does not — it describes what a Bundle *is*, living inside one thing while being about another. A template at `templates/bundle.md` is a pattern for making one. Both are content and both stay lowercase. **The rule excludes them rather than exempting them**, which is why it needs no list of exceptions.
 
 Where a name is shared with an outside convention, that convention's casing wins. `README.md` and `LICENSE` arrive uppercase anyway.
