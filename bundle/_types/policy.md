@@ -2,14 +2,15 @@
 type: type_definition
 defines: policy
 extends: document
-fields: {}
+fields:
+  on_violation: { field_presence: optional, field_type: enum, values: [allow, audit, warn, require_reason, require_approval, block], desc: "What a consumer SHOULD do when this policy is not complied with. Intent, never a guarantee — see below." }
 ---
 
 # policy
 
 A course of action adopted, and the reasoning that makes it worth holding.
 
-It adds no fields of its own — a policy needs a name, a line on what it governs,
+It adds one field. A policy otherwise needs a name, a line on what it governs,
 and a body.
 
 **The range is wide on purpose.** A guardrail nobody may cross, a convention of
@@ -20,7 +21,34 @@ this to rules about risk or security; a naming convention is as much a policy as
 a secrets rule, and differs only in what it costs to break.
 
 Strength of obligation is a property of an individual policy, not a reason to
-split the type.
+split the type — and not a field either. **A policy binds because it is a
+policy**; how strongly is what its body says, in the words its author chose. A
+scale would only restate the type on documents that bind and invite a soft tier
+for documents that do not bind at all, which are `document`s wearing the wrong
+type.
+
+## `on_violation`
+
+**What a consumer SHOULD do at the moment this policy is not complied with**,
+ordered by how much reaches the actor:
+
+| | |
+| --- | --- |
+| `allow` | nothing intercepts. The default, and the honest state of most policies |
+| `audit` | detected and recorded, silently |
+| `warn` | detected, the actor is told, and it proceeds |
+| `require_reason` | proceeds only if a reason is recorded |
+| `require_approval` | stops until a third party approves |
+| `block` | stops; there is no path through |
+
+**Intent, never a guarantee.** Like everything a type declares (§10.5), this
+says what the author asked for. A consumer that cannot intercept SHOULD say so
+rather than silently doing the nearest thing it can — a policy that reads as
+enforced and is not is worse than one that never claimed to be.
+
+**`audit` before teeth.** Detecting and recording without changing behaviour
+tells you the real violation rate before anyone decides a rule deserves
+stopping power, and nothing else on the ladder offers that.
 
 ## What a consumer does with it: **is bound by it**
 
@@ -29,8 +57,9 @@ That is its place among the three things a consumer can do with a Document
 (§10.4) — a `workflow` you **run**, and a plain `document` you **read**.
 
 **Binding is not presence, and this type claims only the first.** Whether a
-policy is loaded is `preload` (§5.2), and the two are orthogonal: a policy binds
-whether or not it happens to be in front of you.
+policy is in front of anyone is a consumer's decision, derived at most from
+`applies_to` (§5.2) — and the two are orthogonal: **a policy binds whether or
+not it happens to be loaded.**
 
 ## What dispatches on it
 
@@ -42,10 +71,10 @@ prose, opposite handling.
 **A rule nobody can reach governs nothing**, which is true and is a separate
 problem. It argues for making sure a policy is *findable* — something always
 present naming the rules that exist — not for defining the type in terms of
-being loaded. Conflating the two is what made this type look like
-`preload: mandatory` wearing a different name.
+being loaded. Conflating the two is what made this type look like a loading
+setting wearing a different name.
 
-The type is what tells them apart. Both are prose with no declared fields, and
+The type is what tells them apart. Both are prose, and
 without the name a consumer has no way to know that one belongs in permanent
 context and the other behind an invocation.
 
