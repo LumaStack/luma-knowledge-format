@@ -6,6 +6,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Changed
+- **`applies_to` is renamed to `matches`** *(deprecation, not yet breaking)*. `applies_to` is still read where `matches` is absent, and a consumer SHOULD report each use so a migration can be finished rather than assumed. Removal is scheduled and will be its own entry.
+  **The old name obliged an author to write a false sentence.** `applies_to: everything` claims a Document governs everything, and none does — what a rule governs is stated in its body, and no frontmatter value widens or narrows it. The field says what makes a Document **surface**, which is a smaller and honest claim, and `matches` reads as a sentence in every form the field takes: *matches `git commit`*, *matches always*, *matches nothing*.
+  **The vocabulary had also outgrown the name.** `path` is a target, but `event` is a *moment*, and nothing about a moment is a resource a rule scopes over — so the enforcement-scope convention that chose `applies_to` stopped applying once `event` joined the list.
+  *Migration:* rename the field. Nothing else about it changes.
+
+- **`always` leaves the trigger vocabulary and becomes a value of the field** *(breaking)*. `matches: always`, never an entry inside the list.
+  As a list member it could sit beside a condition it silently rendered dead — `[always, path: "src/**"]` parses, validates, and ignores the path under OR semantics. It was never a peer of the other kinds either: **every kind narrows, and `always` refuses to.** Making the invalid combination unwritable is cheaper than a rule forbidding it.
+  *Migration:* nothing in any known Bundle declares it. The spellings meaning *unconditionally* were silently discarded by consumers, and the one that parsed produced a trigger classing the Document as cheap — so a rule declaring itself ever-present was the one rule that would not be there.
+
+### Added
+- **`matches: nothing`, and the absence of `matches` means it** *(breaking — the default reverses)*. A Document declaring nothing is one that nothing surfaces on its own behalf. Consumers MUST NOT read the omission as a claim to be delivered unconditionally, which is what the previous default implied for `policy`.
+  **The expensive reading is now the one that has to be asked for.** A Document acquiring a permanent claim on a reader's attention because an author forgot a field is the costliest available default, and it fails in the unrecoverable direction — under-delivering is recoverable, over-delivering is a token bomb.
+  *Migration:* a `policy` that genuinely should always be present declares `matches: always`. No Bundle in the universal catalog is affected — all thirty-two of its policies already state what matches them.
+
+- **`field_type: list_or_keyword`**, for a field taking either a list or one of a closed set of keywords. `field_type` is an open vocabulary (§10.2), so this names a shape rather than adding a mechanism.
+
 ## [0.0.13] — 2026-08-25
 
 ### Changed

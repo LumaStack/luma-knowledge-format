@@ -66,7 +66,7 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule (§10.5), and nothing about presence changes whether a file is conformant (§4). The sole hard requirement remains a non-empty `type`.
 
-**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `applies_to` (§10.7) is not its replacement in that sense: it says when a Document's subject **arises**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there. **The name `preload` is released** and is no longer reserved.
+**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` (§10.7) is not its replacement in that sense: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there. **The name `preload` is released** and is no longer reserved.
 
 ### 5.1 Core fields
 
@@ -424,33 +424,48 @@ Two deliberate choices: a `deprecated` field stays a *warning* even under `--str
 
 Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
 
-### 10.7 `applies_to`, declared by `policy` and `workflow`
+### 10.7 `matches`, declared by `policy` and `workflow`
 
 **Not a core field.** Two of the built-in types declare it, and no other Document carries it.
 
 **The two kinds that carry a trigger are the two that act on you** — a rule that binds, and a procedure you run. Background does not act; it is reached *through* the things that do. Rationale has no moment either: it is wanted when somebody wonders *why*, and wondering is not a trigger. A concept whose subject genuinely arises somewhere is already reachable from the policy or workflow that arises there, and advertising it separately makes it compete with them for attention.
 
-**When this Document's subject arises.** A list of single-key mappings, each naming a situation:
+**What makes this Document surface.** Three forms, and each reads as a sentence:
 
 ```yaml
-applies_to:
+matches: always                 # nothing gates it
+```
+```yaml
+matches:                        # these situations do — any one of them
   - command: git commit
   - path: "src/**/*.css"
   - event: before-release
 ```
+```yaml
+matches: nothing                # nothing surfaces it; it is fetched deliberately
+```
 
 | Kind | Arises when |
 |---|---|
-| `always` | unconditionally |
 | `path` | a file matching the glob is read or written |
 | `tool` | a named tool or capability is invoked |
 | `command` | a command of the given shape runs |
 | `event` | a lifecycle point is reached — `session-start`, `session-end`, `before-commit`, `before-push`, `before-merge`, `before-release` |
 | `topic` | the work is *about* something, recognised by meaning rather than by pattern |
 
+**`always` and `nothing` are values of the field, never members of that list.** A kind narrows; these two decline to. As a list member `always` could sit beside a condition it renders dead — `[always, path: "src/**"]` parses, validates and silently ignores the path under OR semantics — and a form whose invalid state cannot be written needs no rule forbidding it.
+
+*The field's declared `field_type` is `list_or_keyword`, which is new. `field_type` is an open vocabulary (§10.2), so this adds a name rather than a mechanism, and it is declared where a validator will look for it: the built-in `policy` and `workflow` Type Definitions.*
+
+**Absent means `nothing`.** A Document that declares no `matches` is one nothing surfaces on its own behalf, and a consumer MUST NOT read the omission as a claim to be delivered unconditionally. **The expensive reading is the one that has to be asked for**, because a Document acquiring a permanent claim on a reader's attention by an author forgetting a field is the costliest possible default.
+
 **Entries combine with OR: any one arising is enough.** This is a closed vocabulary and not an expression language — there is no AND, no negation and no grouping, because the moment those exist a consumer needs a parser and this stops being a list. Glob syntax already absorbs the common compound cases (`src/**/*.py` is *Python and under src*), and a Document needing more than that writes it in its body.
 
 **An unknown kind is a Document that never arises**, which is indistinguishable from one whose subject has not come up. A consumer SHOULD report it rather than ignore it, and MUST NOT reject the Document for it (§4).
+
+**`applies_to` was this field's name through `v0.0.13` and is deprecated, not removed.** A consumer SHOULD read it where `matches` is absent, and SHOULD report each use so a migration can be finished rather than assumed. It is scheduled for removal; §10.7 will say so when it goes.
+
+*Why the rename: the old name obliged an author to write a false sentence. `applies_to: everything` claims a Document governs everything, and none does — what a rule governs is stated in its body, and no frontmatter value widens or narrows it. The field says what makes a Document **surface**, which is a smaller and honest claim. The vocabulary had also outgrown the name: `path` is a target, but `event` is a moment, and nothing about a moment is a resource a rule scopes over.*
 
 **It says nothing about loading.** What a consumer does with knowing *when a subject arises* — put the Document in front of a reader then, keep it always, do nothing — is the consumer's business (see the note at the end of §5).
 
