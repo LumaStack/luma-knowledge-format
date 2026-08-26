@@ -6,13 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
-## [0.0.13] — 2026-08-25
+## [0.0.12] — 2026-08-25
 
-> **`0.0.12` was assigned and never released.** The version header on `main`
-> carried it briefly while the `field_presence` rename landed, with no tag and no
-> changelog section behind it. Both changes ship here instead. The number is
-> skipped rather than tagged after the fact, because a tag asserts a release
-> happened and none did.
+> **The version header ran ahead of the releases.** While this work sat unreleased
+> on `main`, the header carried `0.0.12` and then `0.0.13` with no tag and no
+> dated changelog section behind either. Neither was a release. **A version
+> number is consumed by a release, not by a file briefly saying it** — so this is
+> `0.0.12`, the successor to `0.0.11`, and no number is skipped.
 
 ### Removed
 - **`preload` is gone** *(breaking)*. It was the one field here that described how a Document should be **consumed** rather than what it is — and consumption belongs to whatever distributes and loads Bundles, not to the format that defines them. `0.0.11` already found the seam, separating *what a consumer does with a Document* (the type) from *when it loads*; this finishes it by removing the second half rather than keeping a coarser answer than the question deserves.
