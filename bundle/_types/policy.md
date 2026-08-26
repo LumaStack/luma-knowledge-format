@@ -61,7 +61,7 @@ That is its place among the three things a consumer can do with a Document
 
 **Binding is not presence, and this type claims only the first.** Whether a
 policy is in front of anyone is a consumer's decision, derived at most from
-`applies_to` (§5.2) — and the two are orthogonal: **a policy binds whether or
+`matches` (§10.7) — and the two are orthogonal: **a policy binds whether or
 not it happens to be loaded.**
 
 ## What dispatches on it
