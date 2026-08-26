@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.15`
+- **Version:** `v0.0.16`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -543,5 +543,36 @@ Consistent with §4, a Bundle missing `BUNDLE.md` is not thereby invalid — not
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
 - Published versions are **git tags**; the newest tag is the current version.
 - A Bundle MAY declare an `lkf_version` on its root `BUNDLE.md` (§11.1); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, §11.1), not a file's content version (git's job), and not a Type Definition's own `version`.
+
+## 13. Released names
+
+**Names this specification once defined and no longer does.** A name here is
+free: nothing reserves it, no consumer reads it, and a producer may use it for
+unrelated domain data (§4).
+
+| name | was | released in | replaced by |
+|---|---|---|---|
+| `preload` | a core field: when a Document should be placed in front of a reader | `v0.0.12` | nothing — delivery is a consumer's decision, derived (§5) |
+| `compliance` | a field grading how strongly a rule obliged compliance | never specified; invented and withdrawn in the estate during `v0.0.13` | nothing — a `policy` binds by being one, and `on_violation` says what happens when it does not |
+| `applies_to` | the field naming what makes a Document surface | `v0.0.15` | `matches` (§10.7) |
+| `index.md` | a reserved file: derived per-directory navigation | `v0.0.14` | nothing — see §11 |
+| `concept` | a Document type for background | `v0.0.10` | `document` |
+
+**Why this list exists rather than the same fact scattered through the
+sections that once defined each name.** Three of these were recorded only in
+the prose of the section that removed them, in three different phrasings, and
+one — `compliance` — was never recorded here at all, because it never reached
+the specification. **A reader asking "is `preload` still a thing?" had to read
+three paragraphs and know about a fourth name that is absent.**
+
+**It is also the list a tool can read.** A retired name appearing in a published
+Document's *prose* is not a conformance question — §4 stands, and such a Document
+is valid — but it is usually a rule still instructing authors to declare
+something nothing reads. **A consumer MAY report that; it MUST NOT reject the
+Document for it.**
+
+**A released name may be reserved again**, and doing so is a breaking change
+even though nothing currently uses it — a Bundle that adopted the free name for
+its own purposes would silently acquire the specification's meaning.
 
 > Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).

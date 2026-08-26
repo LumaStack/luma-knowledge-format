@@ -6,6 +6,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.16] — 2026-08-26
+
+### Added
+- **§13, Released names** — one list of every name this specification once defined and no longer does: `preload`, `compliance`, `applies_to`, `index.md`, `concept`. Each says what it was, when it was released, and what replaced it.
+  **The same facts were already here, in four phrasings and one absence.** Three were recorded only in the prose of the section that removed them — `preload` names itself in its sentence, `applies_to` and `index.md` say only *"The name is released"* with the name a paragraph earlier — and `compliance` appeared nowhere, because it was invented and withdrawn in the estate without ever reaching the specification. **A reader asking whether `preload` is still a thing had to find three paragraphs and know about a fourth name that was missing.**
+  **It is also the list a tool can read.** A retired name in a published Document's *prose* is usually a rule still instructing authors to declare something nothing reads. §4 is untouched: a consumer MAY report it and MUST NOT reject the Document for it.
+  It records one rule that was implicit: **re-reserving a released name is a breaking change** even though nothing uses it, because a Bundle that adopted the free name would silently acquire the specification's meaning.
+  *Migration:* none. Nothing changes about any Document.
+
+
 ## [0.0.15] — 2026-08-26
 
 ### Changed
@@ -236,7 +246,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.15...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.16...HEAD
+[0.0.16]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.15...v0.0.16
 [0.0.15]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.14...v0.0.15
 [0.0.14]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.13...v0.0.14
 [0.0.13]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.12...v0.0.13
