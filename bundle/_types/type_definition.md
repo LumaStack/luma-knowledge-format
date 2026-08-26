@@ -3,9 +3,9 @@ type: type_definition
 defines: type_definition
 extends: document
 fields:
-  defines: { obligation: mandatory,   field_type: text, desc: "The type name this document governs. §10.1." }
-  extends: { obligation: optional,    field_type: text, desc: "A single parent type to inherit from. §10.3." }
-  fields:  { obligation: recommended, field_type: text, desc: "The field declarations. §10.2. See the note below on its field type." }
+  defines: { field_presence: required,   field_type: text, desc: "The type name this document governs. §10.1." }
+  extends: { field_presence: optional,    field_type: text, desc: "A single parent type to inherit from. §10.3." }
+  fields:  { field_presence: recommended, field_type: text, desc: "The field declarations. §10.2. See the note below on its field type." }
 ---
 
 # type_definition

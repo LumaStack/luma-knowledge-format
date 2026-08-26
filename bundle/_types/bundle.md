@@ -3,10 +3,10 @@ type: type_definition
 defines: bundle
 extends: document
 fields:
-  version:     { obligation: mandatory,   field_type: semver,       desc: "This Bundle's content version. §11.1." }
-  published:   { obligation: recommended, field_type: date,         desc: "When this version was published." }
-  consumers:   { obligation: optional,    field_type: list of text, desc: "Kinds of consumer that may adopt this Bundle. Open vocabulary. §11.1." }
-  entry_point: { obligation: optional,    field_type: text,         desc: "Document ID (§3) of where a reader should start. §11.1." }
+  version:     { field_presence: required,   field_type: semver,       desc: "This Bundle's content version. §11.1." }
+  published:   { field_presence: recommended, field_type: date,         desc: "When this version was published." }
+  consumers:   { field_presence: optional,    field_type: list of text, desc: "Kinds of consumer that may adopt this Bundle. Open vocabulary. §11.1." }
+  entry_point: { field_presence: optional,    field_type: text,         desc: "Document ID (§3) of where a reader should start. §11.1." }
 ---
 
 # bundle

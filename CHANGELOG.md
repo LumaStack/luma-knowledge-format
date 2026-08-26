@@ -7,6 +7,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 ## [Unreleased]
 
 ### Changed
+- **`obligation` is now `field_presence`, and `mandatory` is now `required`** (§5, §5.1, §10.3, §11.1). Two renames, one reason each.
+  **`field_presence` says what the field grades.** `obligation` graded *how strongly a field should be present*, which is the JSON Schema question — and every schema language in use calls it `required`, not `obligation`. A reader arriving from any of them stopped to check whether the word meant something subtler. It does not.
+  **`required` completes the ladder.** RFC 2119's adjectival set is `REQUIRED / RECOMMENDED / OPTIONAL`, and the scale was using two of those three with a synonym in the top rung. Anybody who has read a specification now recognises all of it at once. `deprecated` still sits beside the ladder rather than on it — it states a field's future rather than its strength, which is why §10.3 cannot reach it by strengthening.
+  *Migration:* mechanical. Rename the key and the one value; nothing else about the scale moves, and no consumer behaviour changes, since presence never affected conformance (§4).
+
+- **`preload` is marked superseded, and retained** (§5.2). The estate that produced this format no longer uses it: it conflated *when a Document arrives* with *how strongly its content binds*, which turned out to be two questions with different answers. The replacement is being run outside the specification first, because §4's tolerance of unknown fields allows it and **a built-in field takes a word from everyone permanently**. The section moves when the replacement has earned it.
+
+
+### Changed
 - **§7.1 now says why `actor_event` is nested** rather than a flat `created_by`/`created_at` pair. No behaviour change; the shape is unaltered and this records reasoning that was load-bearing and unwritten.
   Three grounds: **`verified` is a list of them**, so a flat form would be parallel arrays correlated by index — the positional failure §7.3 avoids by keying footnotes; **§7.4's argument depends on the pair being atomic**, since omitting `by` *"discards the `at` timestamp sharing the same `actor_event`"*, which only holds if they are one object; and **one `field_type` declaration beats two fields plus an invariant no validator can see**.
   The cost is stated rather than waved away: the flat pair reads better in a diff and greps in one line.
@@ -57,9 +66,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 - **The Bundle is named as the resolution scope, with its consequence** (§10.4). Because a contract is found in *this* Bundle's `_types/`, **two Bundles may hold different versions of one type without contradiction** — each Bundle's Documents are checked against the copy that travelled with them. That is the scoping mechanism prose lacks, and it is why vendoring a type is safe where duplicating a policy would not be.
   **The exception is now stated too:** a Document living outside every Bundle has no such scope, the format offers no rule for where its contract is found, and whoever puts a Document there owes it an answer.
 - **§10.6 no longer names a particular vendor's command.** Discovery is reading `_types/<type>.md`; tooling may wrap that and needs no index to do it.
-- **A subtype may strengthen an inherited field's obligation** (§10.3) — `optional` → `recommended` → `mandatory`, by redeclaring the field with a higher `obligation` and nothing else changed. Weakening stays forbidden, and where a field is declared at several points in a chain the strongest obligation wins.
+- **A subtype may strengthen an inherited field's obligation** (§10.3) — `optional` → `recommended` → `required`, by redeclaring the field with a higher `field_presence` and nothing else changed. Weakening stays forbidden, and where a field is declared at several points in a chain the strongest obligation wins.
   **The gap it closes: a type whose semantics rest on inherited fields could not state them.** Where a type's growth stage *is* `lifecycle_status` and its age *is* `created` — both `optional` on the root — add-only left no way to say a Document missing either is incomplete. The type's own contract called unremarkable exactly the omissions that break it, and the workaround in practice was a sentence of prose telling readers to treat a field as required despite what the contract said.
-  **Consistent with add-only, because obligation is not meaning.** That rule exists to keep an inherited field's meaning stable everywhere it is used; the field still means what its declaring type said, and a subtype only states how strongly *it* expects it. Removing a field, or changing its `field_type`, `values` or meaning, is still forbidden — §10.3 now says so in those terms rather than by the broader word *redefine*.
+  **Consistent with add-only, because presence is not meaning.** That rule exists to keep an inherited field's meaning stable everywhere it is used; the field still means what its declaring type said, and a subtype only states how strongly *it* expects it. Removing a field, or changing its `field_type`, `values` or meaning, is still forbidden — §10.3 now says so in those terms rather than by the broader word *redefine*.
   **Nothing becomes non-conformant.** Obligation describes intent (§5) and the sole hard requirement is still a non-empty `type` (§4), so a consumer that knows only the parent type and one that knows the subtype may disagree about whether a file is complete, and each is right at its own level.
   **`deprecated` is not on the ladder** and is not reachable this way — it states something about a field's future rather than its strength, so a type inheriting a deprecated field may not mandate it.
   *Migration:* none. This permits what was previously forbidden, so every existing Type Definition and Document stays valid. Validators gain a rule; documents do not change.
@@ -81,7 +90,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ### Added
 - **`preload` as a core field** (§5.1, §5.2) — `optional`, an enum of `mandatory | recommended | optional`, saying how strongly a Document should be loaded before working with its Bundle. A Bundle is usually larger than any one task needs, and nothing let a Document say it was the spine rather than reference material.
-  It sits on the root rather than on `bundle` because any Document may carry it. **`mandatory` is a hard requirement**: a consumer that cannot load such a Document fails and names it, rather than starting diminished — a level that degrades quietly is a hint, and hints are ignored. The cost falls on authors, which is what keeps the level meaning anything.
+  It sits on the root rather than on `bundle` because any Document may carry it. **`required` is a hard requirement**: a consumer that cannot load such a Document fails and names it, rather than starting diminished — a level that degrades quietly is a hint, and hints are ignored. The cost falls on authors, which is what keeps the level meaning anything.
   Absent means `optional`, and §5.2 states why that is a genuine default here while absence of `consumers` means nothing: the weakest value is also the safe one.
 - **`entry_point` on the built-in `bundle` type** (§11.1) — `optional`, a Document ID (§3) naming where a reader should start. Without it every consumer invents its own answer — first alphabetically, longest file, name matching the directory. It is deliberately distinct from `preload: mandatory`: entry point is reading order, `preload` is context presence, and a Bundle may need several Documents loaded while still having one place to begin.
   Both are additive and non-breaking; existing Bundles remain valid unchanged.
@@ -152,7 +161,7 @@ Initial release.
 - **Core model** — files as Concepts, path-based identity, and permissive conformance (a non-empty `type` is the only hard requirement; consumers never reject).
 - **Core fields** — `type`, `title`, `description`, `tags`, `lifecycle_status`, `created`, `modified`, `verified`, `sources`, `stale_after`.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
-- **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `obligation` (`mandatory`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
+- **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
 [Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.9...HEAD
 [0.0.9]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.8...v0.0.9

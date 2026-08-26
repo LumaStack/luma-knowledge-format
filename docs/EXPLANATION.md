@@ -133,10 +133,10 @@ ignorance, not as a default for tools that never asked.
 type: type_definition
 defines: incident
 fields:
-  severity:  { obligation: mandatory,   field_type: enum, values: [sev1, sev2, sev3] }
-  detected:  { obligation: mandatory,   field_type: datetime }
-  resolved:  { obligation: optional,    field_type: datetime }
-  responder: { obligation: recommended, field_type: wikilink }
+  severity:  { field_presence: required,   field_type: enum, values: [sev1, sev2, sev3] }
+  detected:  { field_presence: required,   field_type: datetime }
+  resolved:  { field_presence: optional,    field_type: datetime }
+  responder: { field_presence: recommended, field_type: wikilink }
 ---
 
 # Incident

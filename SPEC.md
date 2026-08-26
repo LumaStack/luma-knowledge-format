@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.11`
+- **Version:** `v0.0.12`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -26,7 +26,7 @@ Two roles are referenced throughout:
 - **Document ID**: The path of the Document's file within the Bundle, with the `.md` suffix removed.
 - **Slug**: A Document's filename without its directory path or `.md` extension (e.g. `diffusion-models` for `wiki/concepts/diffusion-models.md`).
 - **Document Type** (or **Type**): The value of a Document's `type` field — a short string naming the kind of Document (e.g. `task`, `note`, `lab_result`). An open vocabulary; consumers tolerate unknown types.
-- **Type Definition**: A Document (with `type: type_definition`) that declares a type's contract — its fields, their obligations, and their field types (§10).
+- **Type Definition**: A Document (with `type: type_definition`) that declares a type's contract — its fields, how strongly each should be present, and their field types (§10).
 - **Field type**: The shape of a field's value (e.g. `text`, `number`, `wikilink`), declared in a Type Definition (§10.2). Distinct from a Document's `type`.
 - **Frontmatter**: A YAML metadata block delimited by `---` at the top of a markdown file.
 - **Body**: Everything in the file after the frontmatter.
@@ -51,24 +51,26 @@ Core fields defined by this specification appear at the **top level** of the fro
 
 **Conformance.** A file is a conformant Document if it has a parseable YAML frontmatter block containing a non-empty `type`. **This is the only hard requirement.** Consumers **MUST NOT** reject a Document for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Everything a type declares (§10) is *published intent*, not an enforced rule — validation is a **suggested framework** (§10.5), never a conformance gate, and it never rejects by default.
 
-## 5. Field obligation
+## 5. Field presence
 
-Every field — a core field here, or a domain field declared by a Type Definition (§10) — carries an **`obligation`**: how strongly it should be present. Values are stored as full lowercase words:
+Every field — a core field here, or a domain field declared by a Type Definition (§10) — carries a **`field_presence`**: how strongly it should be present. Values are stored as full lowercase words:
 
-| Obligation | Meaning |
+| Presence | Meaning |
 |---|---|
-| `mandatory` | Expected on every Document of this type. |
-| `recommended` | Not mandatory, but include it whenever the information is available; omit only when it genuinely doesn't apply or isn't known. |
+| `required` | Expected on every Document of this type. |
+| `recommended` | Not required, but include it whenever the information is available; omit only when it genuinely doesn't apply or isn't known. |
 | `optional` | May be present; its absence is unremarkable. |
 | `deprecated` | Still accepted and read, but on its way out; migrate off it. |
 
-Obligation describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule (§10.5), and nothing about obligations changes whether a file is conformant (§4). The sole hard requirement remains a non-empty `type`.
+**`required / recommended / optional` is RFC 2119's adjectival set**, deliberately. Every specification uses those three words for exactly this ladder, so a reader recognises all of them at once rather than two and a synonym. `deprecated` sits beside the ladder rather than on it — it states a field's future rather than its strength, which is why §10.3 cannot reach it by strengthening.
+
+Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule (§10.5), and nothing about presence changes whether a file is conformant (§4). The sole hard requirement remains a non-empty `type`.
 
 ### 5.1 Core fields
 
-| Field | Obligation | Field type | Meaning |
+| Field | Presence | Field type | Meaning |
 |---|---|---|---|
-| `type` | mandatory | text | What kind of Document this is. **The one hard conformance requirement (§4).** Consumers tolerate unknown types. |
+| `type` | required | text | What kind of Document this is. **The one hard conformance requirement (§4).** Consumers tolerate unknown types. |
 | `title` | recommended | text | Human label; may fall back to the filename. |
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
 | `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
@@ -80,21 +82,32 @@ Obligation describes *intent*. Whether and how a tool checks it is a suggested v
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
 | `preload` | optional | enum | `mandatory \| recommended \| optional`. How strongly this Document should be loaded before working with its Bundle. §5.2. |
 
-> Some obligations above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
+> Some presence values above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
 
 ### 5.2 `preload`
+
+> **Superseded in practice, retained here until its replacement is proven.** The
+> estate that produced this format no longer uses `preload`: it conflated *when
+> a Document arrives* with *how strongly its content binds*, and those turned
+> out to be different questions with different answers. The replacement —
+> declaring what a Document obliges and when it applies, and **deriving**
+> delivery from those — is being run outside the specification first, because
+> §4's tolerance of unknown fields makes that possible and a built-in field
+> takes a word from everyone permanently. This section will move when the
+> replacement has earned it.
+
 
 A Bundle is usually larger than any one task needs. `preload` lets a Document say how strongly it should be in front of a reader — human or agent — *before* work with its Bundle begins, so a consumer working to a budget knows what it may leave until later.
 
 | Value | A consumer SHOULD | If it cannot |
 |---|---|---|
-| `mandatory` | load it before working with the Bundle at all | **fail, naming the Document.** Not a diminished start |
+| `required` | load it before working with the Bundle at all | **fail, naming the Document.** Not a diminished start |
 | `recommended` | load it upfront when able | proceed, and report that it did not |
 | `optional` | leave it until something references it or a need arises | nothing — it was never going to be loaded unprompted |
 
 **Absent means `optional`.** A genuine default rather than a meaning assigned to silence: here the weakest value is also the safe one, since failing to load something is recoverable while loading everything by default is not. (Contrast `consumers` in §11.1, where absence says *nothing* — there, both possible defaults would be wrong guesses.)
 
-**`mandatory` is a hard requirement, not a strong preference.** A level that degrades quietly is a hint, and hints are ignored. A consumer that cannot load a `mandatory` Document refuses rather than proceeding without it. The cost of that falls on the author: marking too much `mandatory` makes a Bundle unusable in a constrained context, which is what keeps the level meaning anything. A Bundle's total `mandatory` weight is a requirement it imposes on every consumer, and is better surfaced where the Bundle is published than discovered when something fails.
+**`required` is a hard requirement, not a strong preference.** A level that degrades quietly is a hint, and hints are ignored. A consumer that cannot load a `required` Document refuses rather than proceeding without it. The cost of that falls on the author: marking too much `required` makes a Bundle unusable in a constrained context, which is what keeps the level meaning anything. A Bundle's total `required` weight is a requirement it imposes on every consumer, and is better surfaced where the Bundle is published than discovered when something fails.
 
 **It says nothing about what the Document is, or what it does to you.** Whether a Document is a procedure you run or a rule that binds you is its `type` (§10.4); `preload` answers only whether you have it. A `policy` with `preload: optional` is a rule that binds when it applies and costs nothing until then — not a contradiction.
 
@@ -259,12 +272,12 @@ type: type_definition
 defines: lab_result
 extends: source
 fields:
-  test_name: { obligation: mandatory,   field_type: text,   desc: "e.g. LDL cholesterol" }
-  value:     { obligation: mandatory,   field_type: number }
-  unit:      { obligation: mandatory,   field_type: text }
-  patient:   { obligation: mandatory,   field_type: wikilink, desc: "→ the person Document" }
-  panel:     { obligation: recommended, field_type: list of wikilink }
-  status:    { obligation: optional,    field_type: enum, values: [pending, final, corrected] }
+  test_name: { field_presence: required,   field_type: text,   desc: "e.g. LDL cholesterol" }
+  value:     { field_presence: required,   field_type: number }
+  unit:      { field_presence: required,   field_type: text }
+  patient:   { field_presence: required,   field_type: wikilink, desc: "→ the person Document" }
+  panel:     { field_presence: recommended, field_type: list of wikilink }
+  status:    { field_presence: optional,    field_type: enum, values: [pending, final, corrected] }
 ---
 
 # Lab Result
@@ -315,7 +328,7 @@ Each entry under `fields` declares one field with up to four keys:
 
 | Key | Meaning |
 |---|---|
-| `obligation` | how strongly the field should be present — `mandatory` / `recommended` / `optional` / `deprecated` (§5) |
+| `field_presence` | how strongly the field should be present — `required` / `recommended` / `optional` / `deprecated` (§5) |
 | `field_type` | the shape of the field's value (below) |
 | `desc` | a one-line human/agent description (surfaced by discovery tooling, §10.6) |
 | `values` | the allowed values — **required when `field_type` is `enum`**, ignored otherwise |
@@ -344,13 +357,13 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 ### 10.3 Inheritance
 
 - **`extends`** names a single parent type (single inheritance). A type inherits all of its parent's fields and adds its own.
-- Every type implicitly extends the built-in **`document`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields, except to strengthen an obligation as below. This is self-hosting: `type_definition` is itself a type that extends `document`.
+- Every type implicitly extends the built-in **`document`** root, which supplies the LKF core fields (§5.1). A Type Definition therefore declares only its *domain* fields — never the core fields, except to strengthen a presence value as below. This is self-hosting: `type_definition` is itself a type that extends `document`.
 - **Add-only.** A type may only *add* fields. It MUST NOT remove an inherited field, nor redefine its `field_type`, its `values`, or its meaning — core or domain. This keeps every inherited field's meaning stable everywhere the type is used.
-- **Obligation may be strengthened, never weakened.** A type MAY raise an inherited field's obligation — `optional` → `recommended` → `mandatory` — by redeclaring the field with a higher `obligation` and nothing else changed. It MUST NOT lower one. Where a field is declared at several points in a chain, the **strongest obligation wins**; an attempted weakening SHOULD be reported rather than honoured.
+- **Presence may be strengthened, never weakened.** A type MAY raise an inherited field's presence — `optional` → `recommended` → `required` — by redeclaring the field with a higher `field_presence` and nothing else changed. It MUST NOT lower one. Where a field is declared at several points in a chain, the **strongest presence wins**; an attempted weakening SHOULD be reported rather than honoured.
 
   `deprecated` is not on that ladder and is not reachable this way. It states something about a field's future rather than its strength, so a type inheriting a `deprecated` field may not mandate it — a field both deprecated and required is a contradiction rather than a precedence question.
 
-  **This is consistent with add-only because obligation is not meaning.** The field means exactly what its declaring type said; a subtype only states how strongly *it* expects the field. Nothing becomes non-conformant either — obligation describes intent (§5) and the sole hard requirement remains a non-empty `type` (§4) — so a consumer that knows only the parent and one that knows the subtype may reach different completeness verdicts, and each is right at its own level.
+  **This is consistent with add-only because presence is not meaning.** The field means exactly what its declaring type said; a subtype only states how strongly *it* expects the field. Nothing becomes non-conformant either — presence describes intent (§5) and the sole hard requirement remains a non-empty `type` (§4) — so a consumer that knows only the parent and one that knows the subtype may reach different completeness verdicts, and each is right at its own level.
 
   **Without this, a type whose semantics rest on inherited fields cannot state them.** Where a type's growth stage *is* `lifecycle_status` and its age *is* `created` — both `optional` on the root — the type has no way to say that a Document missing either is incomplete, and its own contract calls unremarkable exactly the omissions that break it.
 
@@ -426,7 +439,7 @@ Validation is **entirely optional.** LKF never requires a validator, and no vali
 
 | What a validator finds | Default | `--strict` |
 |---|---|---|
-| Missing `mandatory` field | warning | error |
+| Missing `required` field | warning | error |
 | A value whose shape ≠ its declared `field_type` | warning | error |
 | An `enum` value not listed in `values` | warning | error |
 | `extends` naming a type that doesn't exist (broken definition) | warning | error |
@@ -481,16 +494,16 @@ description: Health knowledge — lab results, medications, and conditions.
 ---
 ```
 
-| Field | Obligation | Field type | Meaning |
+| Field | Presence | Field type | Meaning |
 |---|---|---|---|
-| `type` | mandatory | text | `bundle` |
-| `version` | mandatory | semver | this Bundle's version (§10.2) |
+| `type` | required | text | `bundle` |
+| `version` | required | semver | this Bundle's version (§10.2) |
 | `published` | recommended | date | when this version was published |
 | `consumers` | optional | list of text | the kinds of consumer that may adopt this Bundle |
 | `entry_point` | optional | text | the Document ID (§3) of where a reader should start |
 | `description` | *inherited* | text | one line on what the Bundle holds — a core field (§5.1), so `optional`; a Bundle SHOULD still carry one |
 
-`version` is mandatory because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` (§12), which is the format-grammar version.
+`version` is required because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` (§12), which is the format-grammar version.
 
 **`consumers` is an open vocabulary, and LKF defines no values for it.** Where a distribution model has more than one kind of consumer — a repository and an organization, a workstation and a server, a patient and a clinic — a Bundle may say which of them it is for. LKF does not know what those kinds are and does not enumerate them; the values belong to whoever is distributing, exactly as `tags` (§5.1) is `list of text` and left loose.
 
@@ -502,7 +515,7 @@ It is a list because a Bundle may legitimately apply to more than one kind, and 
 
 It is deliberately *not* the same claim as `preload: mandatory` (§5.2), though in a small Bundle the same Document usually carries both. Entry point is reading order — *start here* — while `preload` is context presence — *have this available*. A Bundle may need three Documents loaded and still have one place to begin.
 
-`description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entry_point`. A type *may* restate an inherited field to raise its obligation (§10.3); `bundle` has no need to, since `description` at `optional` is already what it wants.
+`description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entry_point`. A type *may* restate an inherited field to raise its presence (§10.3); `bundle` has no need to, since `description` at `optional` is already what it wants.
 
 Consistent with §4, a Bundle missing `BUNDLE.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
