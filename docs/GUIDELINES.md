@@ -28,10 +28,13 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 `main` always reflects the **latest released version** — it advances only when a release is cut, so `main` and the newest tag stay in lockstep. Checking out `main` always gives a coherent release, never half-finished work.
 
-- **All changes are made on a branch off `main`**, never committed directly to `main`. Unreleased work accumulates on a **`develop`** branch (feature branches may fork off it and merge back).
-- **`main` advances only at release time**, by merging the release-ready work in and tagging it.
+- **Work toward the next release accumulates on a branch named for it** — `v0.0.14-draft`. It is created when the first change toward that release starts and **deleted when it ships**. Between releases there may be no draft branch at all, which correctly says nothing is pending.
+- **The branch name decides the version, at the start.** You cannot name it without answering *is this breaking?* — which is the question most often decided wrongly, and it is easier to answer while the change is fresh than at release time when you have stopped thinking about it. It also means **the version is decided once** rather than per pull request, so two changes in flight cannot both claim the next number.
+- **Feature branches fork off the draft and merge back.** A small change may go straight to the draft.
 - **Merge, never squash or rebase.** Every merge is a merge commit. This project requires the rationale for a change to live in its commit message, and squashing collapses a branch's messages into one — losing exactly what the rule exists to preserve. Rebasing rewrites them. Squash and rebase merging are disabled on the repository, so the buttons are absent rather than merely discouraged.
-- **Exception — critical hotfix:** a fix that genuinely can't wait for the next release may go straight to `main` and ship as a patch; `develop` then picks it up.
+- **A fix that changes no meaning may go straight to `main`** — a typo, a broken link, anything under `docs/`. No version moves and no tag is cut. The invariant is that `main` is a coherent released specification, not that it is byte-identical to a tag.
+
+> **`develop` is retired.** It was a long-lived second branch accumulating anything, and it rotted: thirty-one commits behind `main` and unused since `v0.0.10`. A branch named for the release it is building is finite, says what it is for, and disappears when it is done. `develop` said only *later*.
 
 ## Changelog
 
@@ -45,102 +48,48 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 ## Cutting a release
 
-A release is the only thing that advances `main`. Work through this in order; the
-steps that get skipped are marked.
+**Releasing is merging the draft branch into `main` and tagging it.** The version is already correct everywhere, because the branch name decided it when the work started.
 
-> **Drift, recorded 2026-08-25 rather than quietly corrected.** The last tag is
-> `v0.0.9`; `SPEC.md` has since reached `v0.0.13`, `main` is thirty-one commits
-> ahead of `develop`, and the README's Status line — the only one of the three
-> version places nobody moved — is the only one still telling the truth about
-> what has been *released*.
->
-> So `develop` stopped being used somewhere around `v0.0.10`, and the version
-> header has been advancing on `main` without releases. **Either this checklist
-> describes a process the project no longer follows, or four releases are owed.**
-> Both are fixable; neither is fixed by editing this paragraph. Whoever settles
-> it should also decide whether the `Version` header means *the spec as
-> released* or *the spec as it stands*, because those have been the same thing
-> until now and are not any more.
-
-1. **Confirm `develop` is what you mean to ship.** It is clean, pushed, and
-   `## [Unreleased]` in `CHANGELOG.md` describes everything in it. A breaking
-   change carries its italic *Migration:* note (see [Changelog](#changelog)).
-2. **Decide the version**, by the categories below. If a breaking change is
-   shipping as a patch under the pre-1.0 clause, say so in the release commit —
-   it otherwise reads as a miscategorisation later.
-3. **Open a pull request** from `develop` to `main`.
-4. **Merge it with a merge commit.** Squash and rebase merging are disabled on
-   the repository (see [Branching](#branching)), so this should be the only
-   option offered.
-5. **Bump the version in all three places.** ⚠️ Three files. Only the first is
-   obvious, and a release that misses one is not detectable by reading any single
-   file:
-   - `SPEC.md` — the `Version` header. The specification's version.
-   - `bundle/bundle.md` — the `version` field. The version of the Bundle that
-     ships the built-in Type Definitions.
-   - `README.md` — the version in the **Status** line.
-
-   Then verify rather than trust, because all three are one-line edits that look
-   done at a glance:
-
-   ```sh
-   grep -n '^- \*\*Version' SPEC.md
-   grep -n '^version:' bundle/bundle.md
-   grep -n '^> \*\*Status' README.md
-   ```
-
-   They are kept in lockstep deliberately, and each states something different
-   that a stale number makes false. The built-in types are a rendering of what
-   the specification says, so a Bundle claiming a different version than the spec
-   it renders is lying about which spec it implements. The README's Status line
-   is what a reader sees before deciding whether to adopt an unstable format at
-   all, so a stale one understates how much has moved.
-
-   **Resist a fourth.** Three is already more than the design wants — each is a
-   place to forget. A new file needing the version should read it from one of
-   these or go without; a number that exists to be looked at by a human is worth
-   the duplication, and one that exists to be parsed is not.
-
-   *History, so an old release does not read as a missed step:*
-   `bundle/bundle.md` did not exist before `v0.0.4`, and the README carried no
-   version before `v0.0.7`. Releases up to `v0.0.3` touched `SPEC.md` alone.
-6. **Promote the changelog.** Rename `## [Unreleased]` to `## [x.y.z] — YYYY-MM-DD`
-   and open a fresh empty `## [Unreleased]` above it. Newest version on top.
-   ⚠️ **Add the version's link definition at the foot of the file** and repoint
-   `[Unreleased]` at the new tag — versions are meant to be linkable, and a
-   heading in brackets with no definition renders as literal brackets:
-
+1. **Confirm the draft is what you mean to ship.** Clean, pushed, and its `CHANGELOG` section describes everything in it. A breaking change carries its italic *Migration:* note (see [Changelog](#changelog)).
+2. **Date the changelog section.** `## [Unreleased]` becomes `## [x.y.z] — YYYY-MM-DD`, with a fresh empty `## [Unreleased]` above it.
+   ⚠️ **Add the version's link definition at the foot of the file** and repoint `[Unreleased]` at the new tag — versions are meant to be linkable, and a heading in brackets with no definition renders as literal brackets:
    ```
    [Unreleased]: …/compare/vX.Y.Z...HEAD
    [X.Y.Z]:      …/compare/vPREV...vX.Y.Z
    ```
-7. **Commit as `Release vX.Y.Z`**, with the rationale — what it contains, and why
-   that version number.
-8. **Tag `main`** with an annotated tag: `git tag -a vX.Y.Z -m "…"`. Lightweight
-   tags carry no message and no author.
-9. **Push `main` and the tag.** ⚠️ Two pushes. `git push origin main` does not
-   push tags; `git push origin vX.Y.Z` is a separate command.
-10. **Fast-forward `develop` to `main`.** ⚠️ Easily forgotten, and the next cycle
-    silently starts from stale state — the following release PR would show the
-    previous release commit as a change.
-11. **Verify the invariant:** `main` and the newest tag point at the same commit.
-    `git rev-parse --short main` and `git rev-parse --short vX.Y.Z^{commit}`
-    must agree.
-12. **Publish the GitHub Release** against the tag. ⚠️ A pushed tag is not a
-    release — the tag is the mechanism, the Release is what people read, and the
-    repository has no other release notes. It carries:
-    - the changes, grouped **Added** / **Changed** / **Deprecated** / **Removed**
-      / **Fixed** / **Security**, each with the reasoning rather than only the
-      outcome;
-    - an **Upgrading from vX.Y.Z** section saying what a bundle or type author
-      must actually do — and saying so plainly when the answer is *nothing*,
-      which is usually the most useful sentence in the notes;
-    - the version-category note, if a breaking change shipped as a patch;
-    - a pointer to `CHANGELOG.md` for the full history.
+3. **Open a pull request** from the draft to `main`, and **merge it with a merge commit.**
+4. **Tag `main`** with an annotated tag: `git tag -a vX.Y.Z -m "…"`. Lightweight tags carry no message and no author.
+5. **Push the tag separately.** ⚠️ `git push origin main` does not push tags.
+6. **Verify the invariant:** `main` and the newest tag point at the same commit. `git rev-parse --short main` and `git rev-parse --short vX.Y.Z^{commit}` must agree.
+7. **Publish the GitHub Release** against the tag. ⚠️ A pushed tag is not a release — the tag is the mechanism, the Release is what people read, and the repository has no other release notes.
+8. **Delete the draft branch.**
 
-    The upgrade section is not a duplicate of the changelog's *Migration:* notes.
-    Those are per-change and written as the change lands; this is the whole
-    upgrade in one place, written once the release is known.
+### A release is titled with its version and nothing else
+
+`v0.0.13`. **Never** `v0.0.13 — some summary of the changes`.
+
+The tag, the release commit and the GitHub Release all carry the same bare version. The changelog says what changed; a title that also says it is **a second summary, free to disagree with the first** — and it will, because one gets edited and the other does not. The place for *what this release contains* is the Release body and the changelog, both of which can hold the whole answer instead of a clause.
+
+### What the GitHub Release body carries
+
+- the changes, grouped **Added** / **Changed** / **Deprecated** / **Removed** / **Fixed** / **Security**, each with the reasoning rather than only the outcome;
+- an **Upgrading from vX.Y.Z** section saying what a bundle or type author must actually do — and saying so plainly when the answer is *nothing*, which is usually the most useful sentence in the notes;
+- the version-category note, if a breaking change shipped as a patch;
+- a pointer to `CHANGELOG.md` for the full history.
+
+The upgrade section is not a duplicate of the changelog's *Migration:* notes. Those are per-change and written as the change lands; this is the whole upgrade in one place, written once the release is known.
+
+### The version lives in three files
+
+- `SPEC.md` — the `Version` header. The specification's version.
+- `bundle/BUNDLE.md` — the `version` field. The version of the Bundle that ships the built-in Type Definitions.
+- `README.md` — the version in the **Status** line.
+
+**You do not have to remember all three.** Continuous integration refuses a mismatch, because *a release that misses one is not detectable by reading any single file* — which describes a check, not a checklist item. It has been missed in practice: `README.md` sat at `v0.0.9` through two releases before anybody noticed.
+
+Each states something different that a stale number makes false. The built-in types are a rendering of what the specification says, so a Bundle claiming a different version than the spec it renders is lying about which spec it implements. The README's Status line is what a reader sees before deciding whether to adopt an unstable format at all, so a stale one understates how much has moved.
+
+**Resist a fourth.** Three is already more than the design wants — each is a place to forget. A new file needing the version should read it from one of these or go without; a number that exists to be looked at by a human is worth the duplication, and one that exists to be parsed is not.
 
 ## Versioning & release policy
 

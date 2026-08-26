@@ -1,0 +1,81 @@
+name: check
+
+# The version lives in three files, and GUIDELINES says the trap out loud: **a
+# release that misses one is not detectable by reading any single file.** That
+# sentence describes a check rather than a checklist item, and the checklist
+# lost twice to it — `README.md` sat two releases behind before anybody noticed.
+#
+# So this reads all three and refuses a mismatch. It is the whole workflow: a
+# specification has nothing to build and nothing to test, and a check that
+# exists to catch a silent failure should not be padded with checks that catch
+# loud ones.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    name: The version agrees with itself
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: All three places carry the same version
+        run: |
+          set -eu
+
+          spec=$(sed -n 's/^- \*\*Version:\*\* `v\(.*\)`$/\1/p' SPEC.md | head -1)
+          bundle=$(sed -n 's/^version: *\(.*\)$/\1/p' bundle/BUNDLE.md | head -1)
+          readme=$(sed -n 's/.*Status: `v\([0-9][^`]*\)`.*/\1/p' README.md | head -1)
+
+          printf 'SPEC.md          %s\n' "${spec:-(not found)}"
+          printf 'bundle/BUNDLE.md %s\n' "${bundle:-(not found)}"
+          printf 'README.md        %s\n' "${readme:-(not found)}"
+
+          # Absent is a failure, not a pass. A regex that stops matching after a
+          # reformat would otherwise report agreement between three empty
+          # strings, which is the shape of dishonesty this check exists to
+          # prevent.
+          for v in "$spec" "$bundle" "$readme"; do
+            [ -n "$v" ] || { echo; echo "A version could not be read — the file moved or the line was reformatted."; exit 1; }
+          done
+
+          if [ "$spec" != "$bundle" ] || [ "$spec" != "$readme" ]; then
+            echo
+            echo "These must agree. Each states something different that a stale number makes false:"
+            echo "  SPEC.md          what the specification is"
+            echo "  bundle/BUNDLE.md which specification the built-in types render"
+            echo "  README.md        what a reader sees before deciding to adopt"
+            echo
+            echo "See docs/GUIDELINES.md, 'Cutting a release'."
+            exit 1
+          fi
+
+          echo
+          echo "v$spec, consistently."
+
+      - name: A released version has a dated changelog section
+        run: |
+          set -eu
+          spec=$(sed -n 's/^- \*\*Version:\*\* `v\(.*\)`$/\1/p' SPEC.md | head -1)
+
+          # Only meaningful on `main`, where the version is by definition
+          # released. On a draft branch the section is dated at release time —
+          # step 2 — so demanding it earlier would fail every pull request.
+          if [ "${GITHUB_REF_NAME:-}" != "main" ]; then
+            echo "Not main — the changelog is dated when the draft ships."
+            exit 0
+          fi
+
+          if grep -q "^## \[$spec\] — " CHANGELOG.md; then
+            echo "CHANGELOG.md has a dated section for $spec."
+          else
+            echo "SPEC.md says v$spec, and CHANGELOG.md has no dated '## [$spec] — …' section."
+            echo "Either the release was never dated, or the version moved without one."
+            exit 1
+          fi
