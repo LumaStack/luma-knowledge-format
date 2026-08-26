@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.13] — 2026-08-25
+
+### Changed
+- **`applies_to` is no longer a core field** *(breaking)*. `v0.0.12` put it on the `document` root, which put it on every Document. It is now declared by **`policy` and `workflow` only** (§10.7), and by nothing else.
+  **The two kinds that carry a trigger are the two that act on a consumer** — a rule that binds, and a procedure that is run. Background does not act; it is reached *through* the things that do. Rationale has no moment either: it is wanted when somebody wonders *why*, and wondering is not a trigger. Where a concept's subject genuinely arises somewhere, the policy or workflow that arises there is already advertised at that moment, and announcing the rationale alongside makes it compete with them for attention.
+  §5.2 is gone with it — the field was never a property of every Document, so describing it inside **Field presence** was the wrong home. It is now §10.7, beside the built-in types that declare it.
+  *Migration:* a Document other than a `policy` or `workflow` carrying `applies_to` is still conformant (§4) and no consumer is obliged to read it. Remove it, or move the claim to the rule or procedure the subject actually belongs to.
+
+- **`workflow` declares `applies_to` and not `on_violation`.** A policy can be broken, at a moment, by an action somebody takes, and something can act on that. The only way to fail a workflow is **not to run it** — the absence of an action, and detecting absence needs state no consumer is obliged to keep.
+  **The gap this leaves is real rather than an oversight:** there is no way to say *you must run this when that moment arrives*. A workflow's body may say so, and nothing mechanical follows.
+
 ## [0.0.12] — 2026-08-25
 
 > **The version header ran ahead of the releases.** While this work sat unreleased

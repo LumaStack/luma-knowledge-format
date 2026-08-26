@@ -3,6 +3,7 @@ type: type_definition
 defines: policy
 extends: document
 fields:
+  applies_to:   { field_presence: optional, field_type: list, desc: "When this Document's subject arises. §10.7." }
   on_violation: { field_presence: optional, field_type: enum, values: [allow, audit, warn, require_reason, require_approval, block], desc: "What a consumer SHOULD do when this policy is not complied with. Intent, never a guarantee — see below." }
 ---
 
@@ -10,8 +11,9 @@ fields:
 
 A course of action adopted, and the reasoning that makes it worth holding.
 
-It adds one field. A policy otherwise needs a name, a line on what it governs,
-and a body.
+It adds two fields — when its subject arises, and what to do when it is not
+complied with. A policy otherwise needs a name, a line on what it governs, and a
+body.
 
 **The range is wide on purpose.** A guardrail nobody may cross, a convention of
 house style, what *done* means here, when to stop and ask a person, what this

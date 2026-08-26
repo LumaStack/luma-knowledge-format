@@ -2,7 +2,8 @@
 type: type_definition
 defines: workflow
 extends: document
-fields: {}
+fields:
+  applies_to:   { field_presence: optional, field_type: list, desc: "When this Document's subject arises. §10.7." }
 ---
 
 # workflow
@@ -18,7 +19,7 @@ A procedure, executed rather than read. That is its place among the three things
 a consumer can do with a Document (§10.4) — a `policy` **binds** you, and a plain
 `document` you **read**.
 
-**This says nothing about when it loads.** `applies_to` (§5.2) says when its subject arises, and a consumer derives the rest. A workflow
+**This says nothing about when it loads.** `applies_to` (§10.7) says when its subject arises, and a consumer derives the rest. A workflow
 is usually fetched when it is being followed and absent otherwise, but that is a
 sensible default rather than part of what the type means.
 
@@ -51,3 +52,20 @@ A workflow says what to do. It does not say where it should be installed, in
 what format, or for which tool — those belong to whatever consumes it. A
 procedure naming its harness has bound vendor-neutral knowledge to whichever
 assistant happened to be current when it was written.
+
+## `applies_to`, and not `on_violation`
+
+A workflow declares **when its subject arises** — *before a release*, *at the
+first commit in a fresh repository* — so a consumer can reach for it then rather
+than waiting to be asked.
+
+**It does not declare `on_violation`, and that is the difference between the two
+kinds that carry triggers.** A `policy` can be *broken*, at a moment, by an
+action somebody takes — and something can act on that. The only way to fail a
+workflow is **not to run it**, which is the absence of an action. Detecting
+absence needs state no consumer is obliged to keep, so the format does not ask
+for it.
+
+The consequence, stated plainly because it is a real gap rather than an
+oversight: **there is no way to say *you must run this when that moment
+arrives*.** A workflow's body may say so, and nothing mechanical follows.
