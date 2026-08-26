@@ -3,7 +3,8 @@ type: type_definition
 defines: policy
 extends: document
 fields:
-  applies_to:   { field_presence: optional, field_type: list, desc: "When this Document's subject arises. §10.7." }
+  matches:      { field_presence: optional, field_type: list_or_keyword, values: [always, nothing], desc: "What makes this Document surface — always, nothing, or a list of triggers. Absent means nothing. §10.7." }
+  applies_to:   { field_presence: deprecated, field_type: list, desc: "The former name of `matches`, through v0.0.13. Read where `matches` is absent; report each use. §10.7." }
   on_violation: { field_presence: optional, field_type: enum, values: [allow, audit, warn, require_reason, require_approval, block], desc: "What a consumer SHOULD do when this policy is not complied with. Intent, never a guarantee — see below." }
 ---
 
@@ -60,7 +61,7 @@ That is its place among the three things a consumer can do with a Document
 
 **Binding is not presence, and this type claims only the first.** Whether a
 policy is in front of anyone is a consumer's decision, derived at most from
-`applies_to` (§5.2) — and the two are orthogonal: **a policy binds whether or
+`matches` (§10.7) — and the two are orthogonal: **a policy binds whether or
 not it happens to be loaded.**
 
 ## What dispatches on it

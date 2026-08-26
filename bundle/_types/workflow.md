@@ -3,7 +3,8 @@ type: type_definition
 defines: workflow
 extends: document
 fields:
-  applies_to:   { field_presence: optional, field_type: list, desc: "When this Document's subject arises. §10.7." }
+  matches:      { field_presence: optional, field_type: list_or_keyword, values: [always, nothing], desc: "What makes this Document surface — always, nothing, or a list of triggers. Absent means nothing. §10.7." }
+  applies_to:   { field_presence: deprecated, field_type: list, desc: "The former name of `matches`, through v0.0.13. Read where `matches` is absent; report each use. §10.7." }
 ---
 
 # workflow
@@ -19,7 +20,7 @@ A procedure, executed rather than read. That is its place among the three things
 a consumer can do with a Document (§10.4) — a `policy` **binds** you, and a plain
 `document` you **read**.
 
-**This says nothing about when it loads.** `applies_to` (§10.7) says when its subject arises, and a consumer derives the rest. A workflow
+**This says nothing about when it loads.** `matches` (§10.7) says what makes it surface, and a consumer derives the rest. A workflow
 is usually fetched when it is being followed and absent otherwise, but that is a
 sensible default rather than part of what the type means.
 
@@ -53,7 +54,7 @@ what format, or for which tool — those belong to whatever consumes it. A
 procedure naming its harness has bound vendor-neutral knowledge to whichever
 assistant happened to be current when it was written.
 
-## `applies_to`, and not `on_violation`
+## `matches`, and not `on_violation`
 
 A workflow declares **when its subject arises** — *before a release*, *at the
 first commit in a fresh repository* — so a consumer can reach for it then rather
