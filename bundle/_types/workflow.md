@@ -18,7 +18,7 @@ A procedure, executed rather than read. That is its place among the three things
 a consumer can do with a Document (§10.4) — a `policy` **binds** you, and a plain
 `document` you **read**.
 
-**This says nothing about when it loads.** That is `preload` (§5.2). A workflow
+**This says nothing about when it loads.** `applies_to` (§5.2) says when its subject arises, and a consumer derives the rest. A workflow
 is usually fetched when it is being followed and absent otherwise, but that is a
 sensible default rather than part of what the type means.
 

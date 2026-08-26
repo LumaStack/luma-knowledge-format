@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.12`
+- **Version:** `v0.0.13`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -66,6 +66,8 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule (§10.5), and nothing about presence changes whether a file is conformant (§4). The sole hard requirement remains a non-empty `type`.
 
+**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `applies_to` (§5.2) is not its replacement in that sense: it says when a Document's subject **arises**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **The name `preload` is released** and is no longer reserved.
+
 ### 5.1 Core fields
 
 | Field | Presence | Field type | Meaning |
@@ -80,42 +82,37 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 | `verified` | optional | list of actor_event | Independent confirmation events. §7.2. |
 | `sources` | optional | list | Materials the content derives from (bespoke shape). §7.3. |
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
-| `preload` | optional | enum | `mandatory \| recommended \| optional`. How strongly this Document should be loaded before working with its Bundle. §5.2. |
+| `applies_to` | optional | list | When this Document's subject arises. §5.2. |
 
 > Some presence values above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
 
-### 5.2 `preload`
+### 5.2 `applies_to`
 
-> **Superseded in practice, retained here until its replacement is proven.** The
-> estate that produced this format no longer uses `preload`: it conflated *when
-> a Document arrives* with *how strongly its content binds*, and those turned
-> out to be different questions with different answers. The replacement —
-> declaring what a Document obliges and when it applies, and **deriving**
-> delivery from those — is being run outside the specification first, because
-> §4's tolerance of unknown fields makes that possible and a built-in field
-> takes a word from everyone permanently. This section will move when the
-> replacement has earned it.
+**When this Document's subject arises.** A list of single-key mappings, each naming a situation:
 
+```yaml
+applies_to:
+  - command: git commit
+  - path: "src/**/*.css"
+  - event: before-release
+```
 
-A Bundle is usually larger than any one task needs. `preload` lets a Document say how strongly it should be in front of a reader — human or agent — *before* work with its Bundle begins, so a consumer working to a budget knows what it may leave until later.
+| Kind | Arises when |
+|---|---|
+| `always` | unconditionally |
+| `path` | a file matching the glob is read or written |
+| `tool` | a named tool or capability is invoked |
+| `command` | a command of the given shape runs |
+| `event` | a lifecycle point is reached — `session-start`, `session-end`, `before-commit`, `before-push`, `before-merge`, `before-release` |
+| `topic` | the work is *about* something, recognised by meaning rather than by pattern |
 
-| Value | A consumer SHOULD | If it cannot |
-|---|---|---|
-| `required` | load it before working with the Bundle at all | **fail, naming the Document.** Not a diminished start |
-| `recommended` | load it upfront when able | proceed, and report that it did not |
-| `optional` | leave it until something references it or a need arises | nothing — it was never going to be loaded unprompted |
+**Entries combine with OR: any one arising is enough.** This is a closed vocabulary and not an expression language — there is no AND, no negation and no grouping, because the moment those exist a consumer needs a parser and this stops being a list. Glob syntax already absorbs the common compound cases (`src/**/*.py` is *Python and under src*), and a Document needing more than that writes it in its body.
 
-**Absent means `optional`.** A genuine default rather than a meaning assigned to silence: here the weakest value is also the safe one, since failing to load something is recoverable while loading everything by default is not. (Contrast `consumers` in §11.1, where absence says *nothing* — there, both possible defaults would be wrong guesses.)
+**An unknown kind is a Document that never arises**, which is indistinguishable from one whose subject has not come up. A consumer SHOULD report it rather than ignore it, and MUST NOT reject the Document for it (§4).
 
-**`required` is a hard requirement, not a strong preference.** A level that degrades quietly is a hint, and hints are ignored. A consumer that cannot load a `required` Document refuses rather than proceeding without it. The cost of that falls on the author: marking too much `required` makes a Bundle unusable in a constrained context, which is what keeps the level meaning anything. A Bundle's total `required` weight is a requirement it imposes on every consumer, and is better surfaced where the Bundle is published than discovered when something fails.
+**It says nothing about loading.** What a consumer does with knowing *when a subject arises* — put the Document in front of a reader then, keep it always, do nothing — is the consumer's business (see the note at the end of §5).
 
-**It says nothing about what the Document is, or what it does to you.** Whether a Document is a procedure you run or a rule that binds you is its `type` (§10.4); `preload` answers only whether you have it. A `policy` with `preload: optional` is a rule that binds when it applies and costs nothing until then — not a contradiction.
-
-**It says nothing about importance either.** All three values are about *timing*. An `optional` Document may be the most valuable thing in a Bundle and simply not be needed until something asks for it. Retirement is `lifecycle_status` (§6), not this.
-
-**Preload is always relative to what contains the thing.** A Document's `preload` is relative to its Bundle — *of this Bundle's Documents, which do I need ahead of the work* — and says nothing about whether the Bundle should be in play at all. That is a question for whoever adopted it, and this field does not answer it.
-
-*Ahead of the work* is deliberately not pinned to a moment. In current practice it means what a consumer loads at the start of a session, and that is the clearest way to explain it — but the loading model is a property of the consumer, and a field carried by every Document that uses it has to outlive whatever the current one turns out to be.
+**`event` reaches what the others cannot: a lifecycle point, however it is arrived at.** `command: git commit` catches that literal invocation; `event: before-commit` catches the point itself. A Document may reasonably declare both, and under OR semantics that is redundancy in the useful direction.
 
 ## 6. Lifecycle: `lifecycle_status`
 
@@ -131,7 +128,7 @@ A Document's lifecycle stage — nascent to active, with `archived` as the retir
 
 **`unknown` means not filled in, not unknowable.** Whether the fact is lost or was simply never stated is not this field's business, and collapsing both into one value is what lets a single word serve wherever it is needed — the same sense §7.4 gives it for actors.
 
-**It is the default because both real defaults would be wrong guesses.** Defaulting to `provisional` makes a `draft` thing read as more settled than it is; defaulting the other way makes a `stable` thing read as less. Neither direction is safe, which is the `consumers` case described in §5.2 rather than the `preload` one — and where no default is safe, the honest answer is to say nobody has declared.
+**It is the default because both real defaults would be wrong guesses.** Defaulting to `provisional` makes a `draft` thing read as more settled than it is; defaulting the other way makes a `stable` thing read as less. Neither direction is safe, which is the `consumers` case described in §11.1 rather than the `lifecycle_status` one — and where no default is safe, the honest answer is to say nobody has declared.
 
 **Absent and explicitly `unknown` mean the same thing**, so nothing is ambiguous. Writing it is worth doing anyway: silence cannot distinguish *considered and undecided* from *never thought about*.
 
@@ -386,7 +383,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   That is what closes the set rather than leaving it open to any word a Bundle finds useful. **A further base type would have to name a further thing to *do*** — not a further subject matter.
 
-  **None of this says when a Document is loaded.** That is `preload` (§5.2), and the two are orthogonal: a `policy` binds whether or not it is present, and a `policy` that loads only when its subject arises is an ordinary thing rather than a contradiction. Reading the two as one axis is what made *standing* look like `preload: mandatory` by another name.
+  **None of this says when a Document is loaded.** The format does not say, deliberately — see §4 on unknown keys, and the note at the end of §5. A `policy` binds whether or not it is present, and a `policy` that reaches a reader only when its subject arises is an ordinary thing rather than a contradiction.
 
   **A rule nobody loads governs nothing, and that is a reachability problem rather than a definitional one.** The answer is that something always present says the rule *exists* — an index costs a line where the rule costs a page — not that every rule is forced into context.
 
@@ -513,7 +510,7 @@ It is a list because a Bundle may legitimately apply to more than one kind, and 
 
 **`entry_point` names where to start reading.** A Bundle of any size gives a newcomer no way to tell which Document is the way in, and every consumer otherwise invents its own answer — first alphabetically, the longest one, the one matching the directory name. It carries a **Document ID** (§3), not a link: `entry_point: recording-decisions`.
 
-It is deliberately *not* the same claim as `preload: mandatory` (§5.2), though in a small Bundle the same Document usually carries both. Entry point is reading order — *start here* — while `preload` is context presence — *have this available*. A Bundle may need three Documents loaded and still have one place to begin.
+It is a claim about **reading order** — *start here* — and nothing else. Whether that Document, or any other, is placed in front of a reader is a consumption question the format leaves alone.
 
 `description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entry_point`. A type *may* restate an inherited field to raise its presence (§10.3); `bundle` has no need to, since `description` at `optional` is already what it wants.
 

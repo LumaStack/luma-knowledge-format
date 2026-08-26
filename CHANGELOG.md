@@ -6,6 +6,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Removed
+- **`preload` is gone** *(breaking)*. It was the one field here that described how a Document should be **consumed** rather than what it is — and consumption belongs to whatever distributes and loads Bundles, not to the format that defines them. `0.0.11` already found the seam, separating *what a consumer does with a Document* (the type) from *when it loads*; this finishes it by removing the second half rather than keeping a coarser answer than the question deserves.
+  **It could only ever say `always`.** With three values on one axis and no way to express a condition, an author who meant *this matters, but only while you are doing X* had to round up. In the estate that produced this format, 26 Documents did exactly that. Given `applies_to`, none does.
+  **The name is released** and is no longer reserved.
+  *Migration:* replace it with `applies_to` where the Document's subject genuinely arises at particular times, and with nothing at all otherwise. A `policy` with no `applies_to` is one whose subject always arises, which is the honest reading of `preload: mandatory` on a rule.
+
+### Added
+- **`applies_to` (§5.2), a core field** — when a Document's subject arises, as a list of single-key mappings drawn from a closed vocabulary: `always`, `path`, `tool`, `command`, `event`, `topic`.
+  **Entries combine with OR and it is not an expression language.** No AND, no negation, no grouping — the moment those exist a consumer needs a parser. Glob syntax absorbs the common compound cases, and anything beyond that belongs in the body.
+  **It is a property of the content, not an instruction to a consumer.** *This governs `git commit`* says what the Document is about; whether that means putting it in front of a reader at that moment is a decision a consumer **derives**. That distinction is why it belongs here where `preload` did not.
+  `event` is the kind the others cannot reach: a lifecycle point, however it is arrived at. `command: git commit` catches that literal invocation, `event: before-commit` catches the point itself, and declaring both is redundancy in the useful direction.
+
+- **`on_violation` on the built-in `policy` type** — what a consumer SHOULD do at the moment a policy is not complied with: `allow`, `audit`, `warn`, `require_reason`, `require_approval`, `block`.
+  **Intent, never a guarantee**, like everything a type declares (§10.5). A consumer that cannot intercept SHOULD say so rather than silently doing the nearest thing it can, because a policy that reads as enforced and is not is worse than one that never claimed to be.
+  It is on `policy` and not on `workflow`: a rule can be broken at a moment, where failing to *run* a procedure is the absence of an action, and detecting that needs state no consumer is obliged to keep.
+
+### Changed
+- **`policy` declares no strength scale, deliberately.** A policy binds because it is a policy; how strongly is what its body says. A scale would restate the type on Documents that bind, and invite a soft tier for Documents that do not bind at all — which are `document`s wearing the wrong type. This is the type's existing position that *strength of obligation is a property of an individual policy*, now stated as a reason not to add a field.
+
+
 ### Changed
 - **`obligation` is now `field_presence`, and `mandatory` is now `required`** (§5, §5.1, §10.3, §11.1). Two renames, one reason each.
   **`field_presence` says what the field grades.** `obligation` graded *how strongly a field should be present*, which is the JSON Schema question — and every schema language in use calls it `required`, not `obligation`. A reader arriving from any of them stopped to check whether the word meant something subtler. It does not.
