@@ -139,10 +139,10 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
 ## Deferred features — postponed, may return in a later version
 
-- **`obligation: conditional`** — a field that is mandatory *only when* a stated condition holds, carrying a `when:` predicate (ISO 19115-style). Deferred from v0.0.1; `obligation` was chosen as the field-declaration key partly so this can be added later without a rename.
+- **`obligation: conditional`** — a field that is mandatory *only when* a stated condition holds, carrying a `when:` predicate (ISO 19115-style). Deferred from v0.0.1; `field_presence` was chosen as the field-declaration key partly so this can be added later without a rename.
 - **User-defined composite field types** — LKF ships the built-in `actor` and `actor_event` field types; arbitrary/user-defined nested object shapes are deferred.
 
-  **No longer hypothetical.** The first consumer hit it immediately: `luma-catalog` declares a `type: catalog` whose `requires` is a list of five-key records (`bundle`, `obligation`, `version`, `by`, `tags`) and whose `starters` is a map of named lists of records. Neither is expressible, so both are declared with an obligation and a description and **no `field_type`** — legal, since §10.2 permits up to four keys and requires only `values` for enums, but it means the two fields carrying all the meaning are the two the contract says nothing about.
+  **No longer hypothetical.** The first consumer hit it immediately: `luma-catalog` declares a `type: catalog` whose `requires` is a list of five-key records (`bundle`, `field_presence`, `version`, `by`, `tags`) and whose `starters` is a map of named lists of records. Neither is expressible, so both are declared with an obligation and a description and **no `field_type`** — legal, since §10.2 permits up to four keys and requires only `values` for enums, but it means the two fields carrying all the meaning are the two the contract says nothing about.
 
   Worth noting what the gap does and does not cost. Discovery still works: a reader finds the definition, sees the fields exist, and reads the shapes from the body prose. What is lost is machine checking of exactly the parts most likely to be got wrong. That is a tolerable trade for one consumer and a poor one at ten.
 
