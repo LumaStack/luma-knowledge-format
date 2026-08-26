@@ -48,6 +48,20 @@ This is the format's own trust model applied to the project itself: drafting is 
 A release is the only thing that advances `main`. Work through this in order; the
 steps that get skipped are marked.
 
+> **Drift, recorded 2026-08-25 rather than quietly corrected.** The last tag is
+> `v0.0.9`; `SPEC.md` has since reached `v0.0.13`, `main` is thirty-one commits
+> ahead of `develop`, and the README's Status line — the only one of the three
+> version places nobody moved — is the only one still telling the truth about
+> what has been *released*.
+>
+> So `develop` stopped being used somewhere around `v0.0.10`, and the version
+> header has been advancing on `main` without releases. **Either this checklist
+> describes a process the project no longer follows, or four releases are owed.**
+> Both are fixable; neither is fixed by editing this paragraph. Whoever settles
+> it should also decide whether the `Version` header means *the spec as
+> released* or *the spec as it stands*, because those have been the same thing
+> until now and are not any more.
+
 1. **Confirm `develop` is what you mean to ship.** It is clean, pushed, and
    `## [Unreleased]` in `CHANGELOG.md` describes everything in it. A breaking
    change carries its italic *Migration:* note (see [Changelog](#changelog)).
