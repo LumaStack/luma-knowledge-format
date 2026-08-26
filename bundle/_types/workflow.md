@@ -4,7 +4,6 @@ defines: workflow
 extends: document
 fields:
   matches:      { field_presence: optional, field_type: list_or_keyword, values: [always, nothing], desc: "What makes this Document surface — always, nothing, or a list of triggers. Absent means nothing. §10.7." }
-  applies_to:   { field_presence: deprecated, field_type: list, desc: "The former name of `matches`, through v0.0.13. Read where `matches` is absent; report each use. §10.7." }
 ---
 
 # workflow
