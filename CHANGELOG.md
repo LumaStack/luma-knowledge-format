@@ -8,6 +8,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [0.0.15] — 2026-08-26
 
+### Changed
+- **The version no longer appears in `README.md`.** It lived in three files; it now lives in two, `SPEC.md` and `bundle/BUNDLE.md`, both of which are parsed by something. The README says *unstable* and points at the specification and the tags.
+  **It went stale three times** — it sat at `v0.0.9` through two releases, and `v0.0.14` was tagged while it still said `v0.0.13`. Each time the answer was a better check rather than one fewer place to forget. **A number nothing parses is not worth duplicating**, and a reader who wants the current version gets it from the newest release, which cannot go stale because it is not written down.
+
 ### Fixed
 - **`README.md` said `v0.0.13`.** It is the third place the version lives — the one a reader sees before deciding to adopt — and it was missed at `0.0.14`, which therefore shipped and was tagged claiming a version its own README contradicted. The repository has a check for exactly this; it could not run, because Actions was in a major outage while that release was cut. Corrected here rather than by retagging: `0.0.14` stood for under an hour and `0.0.15` supersedes it.
 

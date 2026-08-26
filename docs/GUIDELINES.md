@@ -79,17 +79,18 @@ The tag, the release commit and the GitHub Release all carry the same bare versi
 
 The upgrade section is not a duplicate of the changelog's *Migration:* notes. Those are per-change and written as the change lands; this is the whole upgrade in one place, written once the release is known.
 
-### The version lives in three files
+### The version lives in two files, and both have to
 
 - `SPEC.md` — the `Version` header. The specification's version.
 - `bundle/BUNDLE.md` — the `version` field. The version of the Bundle that ships the built-in Type Definitions.
-- `README.md` — the version in the **Status** line.
 
-**You do not have to remember all three.** Continuous integration refuses a mismatch, because *a release that misses one is not detectable by reading any single file* — which describes a check, not a checklist item. It has been missed in practice: `README.md` sat at `v0.0.9` through two releases before anybody noticed.
+**Neither is redundant.** The built-in types are a rendering of what the specification says, so a Bundle claiming a different version than the spec it renders is lying about which spec it implements — and a Bundle manifest has to carry a version whatever this project prefers, because that is what makes it pinnable. Continuous integration refuses a mismatch between them.
 
-Each states something different that a stale number makes false. The built-in types are a rendering of what the specification says, so a Bundle claiming a different version than the spec it renders is lying about which spec it implements. The README's Status line is what a reader sees before deciding whether to adopt an unstable format at all, so a stale one understates how much has moved.
+**`README.md` used to be a third, and was removed on 2026-08-26.** It stated the version in its Status line, which was the only one of the three a reader looked at rather than a tool parsed — and it went stale three times: it sat at `v0.0.9` through two releases, and then `v0.0.14` shipped and was tagged while it still said `v0.0.13`. Each time the response was a better check rather than one fewer place to forget.
 
-**Resist a fourth.** Three is already more than the design wants — each is a place to forget. A new file needing the version should read it from one of these or go without; a number that exists to be looked at by a human is worth the duplication, and one that exists to be parsed is not.
+**The lesson is the general one, so it is written as a rule rather than an anecdote: a number nothing parses is not worth duplicating.** The README now says *unstable* and points at `SPEC.md` and the tags. A reader who wants the current version gets it from the newest release, which cannot go stale because it is not written down anywhere.
+
+**Resist a third.** A new file needing the version should read it from one of these, or go without.
 
 ## Versioning & release policy
 
