@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.12`
+- **Version:** `v0.0.13`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -66,7 +66,7 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule (§10.5), and nothing about presence changes whether a file is conformant (§4). The sole hard requirement remains a non-empty `type`.
 
-**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `applies_to` (§5.2) is not its replacement in that sense: it says when a Document's subject **arises**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **The name `preload` is released** and is no longer reserved.
+**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `applies_to` (§10.7) is not its replacement in that sense: it says when a Document's subject **arises**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there. **The name `preload` is released** and is no longer reserved.
 
 ### 5.1 Core fields
 
@@ -82,37 +82,8 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 | `verified` | optional | list of actor_event | Independent confirmation events. §7.2. |
 | `sources` | optional | list | Materials the content derives from (bespoke shape). §7.3. |
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
-| `applies_to` | optional | list | When this Document's subject arises. §5.2. |
 
 > Some presence values above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
-
-### 5.2 `applies_to`
-
-**When this Document's subject arises.** A list of single-key mappings, each naming a situation:
-
-```yaml
-applies_to:
-  - command: git commit
-  - path: "src/**/*.css"
-  - event: before-release
-```
-
-| Kind | Arises when |
-|---|---|
-| `always` | unconditionally |
-| `path` | a file matching the glob is read or written |
-| `tool` | a named tool or capability is invoked |
-| `command` | a command of the given shape runs |
-| `event` | a lifecycle point is reached — `session-start`, `session-end`, `before-commit`, `before-push`, `before-merge`, `before-release` |
-| `topic` | the work is *about* something, recognised by meaning rather than by pattern |
-
-**Entries combine with OR: any one arising is enough.** This is a closed vocabulary and not an expression language — there is no AND, no negation and no grouping, because the moment those exist a consumer needs a parser and this stops being a list. Glob syntax already absorbs the common compound cases (`src/**/*.py` is *Python and under src*), and a Document needing more than that writes it in its body.
-
-**An unknown kind is a Document that never arises**, which is indistinguishable from one whose subject has not come up. A consumer SHOULD report it rather than ignore it, and MUST NOT reject the Document for it (§4).
-
-**It says nothing about loading.** What a consumer does with knowing *when a subject arises* — put the Document in front of a reader then, keep it always, do nothing — is the consumer's business (see the note at the end of §5).
-
-**`event` reaches what the others cannot: a lifecycle point, however it is arrived at.** `command: git commit` catches that literal invocation; `event: before-commit` catches the point itself. A Document may reasonably declare both, and under OR semantics that is redundancy in the useful direction.
 
 ## 6. Lifecycle: `lifecycle_status`
 
@@ -452,6 +423,40 @@ Two deliberate choices: a `deprecated` field stays a *warning* even under `--str
 ### 10.6 Discovery
 
 Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
+
+### 10.7 `applies_to`, declared by `policy` and `workflow`
+
+**Not a core field.** Two of the built-in types declare it, and no other Document carries it.
+
+**The two kinds that carry a trigger are the two that act on you** — a rule that binds, and a procedure you run. Background does not act; it is reached *through* the things that do. Rationale has no moment either: it is wanted when somebody wonders *why*, and wondering is not a trigger. A concept whose subject genuinely arises somewhere is already reachable from the policy or workflow that arises there, and advertising it separately makes it compete with them for attention.
+
+**When this Document's subject arises.** A list of single-key mappings, each naming a situation:
+
+```yaml
+applies_to:
+  - command: git commit
+  - path: "src/**/*.css"
+  - event: before-release
+```
+
+| Kind | Arises when |
+|---|---|
+| `always` | unconditionally |
+| `path` | a file matching the glob is read or written |
+| `tool` | a named tool or capability is invoked |
+| `command` | a command of the given shape runs |
+| `event` | a lifecycle point is reached — `session-start`, `session-end`, `before-commit`, `before-push`, `before-merge`, `before-release` |
+| `topic` | the work is *about* something, recognised by meaning rather than by pattern |
+
+**Entries combine with OR: any one arising is enough.** This is a closed vocabulary and not an expression language — there is no AND, no negation and no grouping, because the moment those exist a consumer needs a parser and this stops being a list. Glob syntax already absorbs the common compound cases (`src/**/*.py` is *Python and under src*), and a Document needing more than that writes it in its body.
+
+**An unknown kind is a Document that never arises**, which is indistinguishable from one whose subject has not come up. A consumer SHOULD report it rather than ignore it, and MUST NOT reject the Document for it (§4).
+
+**It says nothing about loading.** What a consumer does with knowing *when a subject arises* — put the Document in front of a reader then, keep it always, do nothing — is the consumer's business (see the note at the end of §5).
+
+**`policy` also declares `on_violation`; `workflow` does not.** A rule can be broken at a moment and something can act on that. The only way to fail a procedure is not to run it, which is the **absence** of an action — detecting absence needs state no consumer is obliged to keep, so the format does not ask for it.
+
+**`event` reaches what the others cannot: a lifecycle point, however it is arrived at.** `command: git commit` catches that literal invocation; `event: before-commit` catches the point itself. A Document may reasonably declare both, and under OR semantics that is redundancy in the useful direction.
 
 ## 11. Reserved files
 

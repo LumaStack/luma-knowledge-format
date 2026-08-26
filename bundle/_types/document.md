@@ -25,7 +25,7 @@ fields, because it is where the core fields come from.
 `document` is a real type as well as the root: a file with nothing more specific
 to say may declare `type: document` rather than inventing a name for it.
 
-`applies_to` lives on the root because **any Document may say when its subject
-arises** — not only a rule. Background that is only wanted while somebody is
-doing a particular thing can say so, and a consumer decides what to do with
-knowing. See §5.2.
+**The root declares nothing about when a Document is wanted.** `applies_to` is
+declared by `policy` and `workflow` and by nothing else (§10.7) — the two kinds
+that act on a consumer. Background does not act; it is reached through the
+things that do.
