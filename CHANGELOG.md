@@ -8,6 +8,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [0.0.15] — 2026-08-26
 
+### Fixed
+- **`README.md` said `v0.0.13`.** It is the third place the version lives — the one a reader sees before deciding to adopt — and it was missed at `0.0.14`, which therefore shipped and was tagged claiming a version its own README contradicted. The repository has a check for exactly this; it could not run, because Actions was in a major outage while that release was cut. Corrected here rather than by retagging: `0.0.14` stood for under an hour and `0.0.15` supersedes it.
+
 ### Removed
 - **`applies_to` is gone** *(breaking)*. `0.0.14` renamed it to `matches` and kept the old name readable so a migration could finish without dropping anybody's triggers. The migration finished the same day, so the fallback is now a second spelling every reader and every consumer has to know about, in exchange for compatibility with nobody.
   **Deprecation is a cost paid for adopters who exist.** This format has none outside the estate that produced it, and carrying a dead name this early buys noise rather than safety. Removing it while the count is zero is free; removing it later would not be.
