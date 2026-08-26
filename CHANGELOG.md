@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.14] — 2026-08-26
+
 ### Changed
 - **`applies_to` is renamed to `matches`** *(deprecation, not yet breaking)*. `applies_to` is still read where `matches` is absent, and a consumer SHOULD report each use so a migration can be finished rather than assumed. Removal is scheduled and will be its own entry.
   **The old name obliged an author to write a false sentence.** `applies_to: everything` claims a Document governs everything, and none does — what a rule governs is stated in its body, and no frontmatter value widens or narrows it. The field says what makes a Document **surface**, which is a smaller and honest claim, and `matches` reads as a sentence in every form the field takes: *matches `git commit`*, *matches always*, *matches nothing*.
@@ -219,7 +221,12 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.9...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.14...HEAD
+[0.0.14]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.13...v0.0.14
+[0.0.13]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.12...v0.0.13
+[0.0.12]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.11...v0.0.12
+[0.0.11]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.10...v0.0.11
+[0.0.10]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.6...v0.0.7
