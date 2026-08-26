@@ -6,6 +6,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.15] — 2026-08-26
+
+### Changed
+- **The version no longer appears in `README.md`.** It lived in three files; it now lives in two, `SPEC.md` and `bundle/BUNDLE.md`, both of which are parsed by something. The README says *unstable* and points at the specification and the tags.
+  **It went stale three times** — it sat at `v0.0.9` through two releases, and `v0.0.14` was tagged while it still said `v0.0.13`. Each time the answer was a better check rather than one fewer place to forget. **A number nothing parses is not worth duplicating**, and a reader who wants the current version gets it from the newest release, which cannot go stale because it is not written down.
+
+### Fixed
+- **`README.md` said `v0.0.13`.** It is the third place the version lives — the one a reader sees before deciding to adopt — and it was missed at `0.0.14`, which therefore shipped and was tagged claiming a version its own README contradicted. The repository has a check for exactly this; it could not run, because Actions was in a major outage while that release was cut. Corrected here rather than by retagging: `0.0.14` stood for under an hour and `0.0.15` supersedes it.
+
+### Removed
+- **`applies_to` is gone** *(breaking)*. `0.0.14` renamed it to `matches` and kept the old name readable so a migration could finish without dropping anybody's triggers. The migration finished the same day, so the fallback is now a second spelling every reader and every consumer has to know about, in exchange for compatibility with nobody.
+  **Deprecation is a cost paid for adopters who exist.** This format has none outside the estate that produced it, and carrying a dead name this early buys noise rather than safety. Removing it while the count is zero is free; removing it later would not be.
+  *Migration:* rename `applies_to` to `matches`. Consumers stop reading the old name, so a Document still declaring it surfaces nothing — which is the safe direction and is reported rather than silent.
+
+
 ## [0.0.14] — 2026-08-26
 
 ### Changed
@@ -221,7 +236,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.14...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.15...HEAD
+[0.0.15]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.14...v0.0.15
 [0.0.14]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.13...v0.0.14
 [0.0.13]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.12...v0.0.13
 [0.0.12]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.11...v0.0.12

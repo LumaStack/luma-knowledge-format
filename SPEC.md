@@ -1,6 +1,6 @@
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.14`
+- **Version:** `v0.0.15`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -463,7 +463,7 @@ matches: nothing                # nothing surfaces it; it is fetched deliberatel
 
 **An unknown kind is a Document that never arises**, which is indistinguishable from one whose subject has not come up. A consumer SHOULD report it rather than ignore it, and MUST NOT reject the Document for it (§4).
 
-**`applies_to` was this field's name through `v0.0.13` and is deprecated, not removed.** A consumer SHOULD read it where `matches` is absent, and SHOULD report each use so a migration can be finished rather than assumed. It is scheduled for removal; §10.7 will say so when it goes.
+**`applies_to` was this field's name through `v0.0.13` and is gone.** It is not deprecated and consumers do not read it — a name nobody writes is not compatibility, it is a second spelling every reader has to know about. **The name is released** and is no longer reserved.
 
 *Why the rename: the old name obliged an author to write a false sentence. `applies_to: everything` claims a Document governs everything, and none does — what a rule governs is stated in its body, and no frontmatter value widens or narrows it. The field says what makes a Document **surface**, which is a smaller and honest claim. The vocabulary had also outgrown the name: `path` is a target, but `event` is a moment, and nothing about a moment is a resource a rule scopes over.*
 
