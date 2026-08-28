@@ -77,6 +77,7 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
 | `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
 | `lifecycle_status` | optional | enum | `draft \| provisional \| stable \| archived \| unknown`. Default `unknown`. §6. |
+| `survival` | optional | enum | `experimental \| intended \| promised`. Default `intended`, and usually left unwritten. §14. |
 | `created` | optional | actor_event | Original author + creation time. **Immutable.** §7.1. |
 | `modified` | recommended | actor_event | Last editor + last meaningful change. **Advances on edit.** §7.1. |
 | `verified` | optional | list of actor_event | Independent confirmation events. §7.2. |
@@ -577,3 +578,60 @@ even though nothing currently uses it — a Bundle that adopted the free name fo
 its own purposes would silently acquire the specification's meaning.
 
 > Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).
+
+## 14. Survival: `survival`
+
+**So a reader knows how much to lean on this.** The question it answers is the
+simplest one available: **does it survive?** Not *how long* — that is far harder
+to answer, and nobody can — and not *will it continue indefinitely*, which is
+harder still. Default (when absent): `intended`.
+
+| Value | Meaning |
+|---|---|
+| `experimental` | **No intentions.** It is out in the world to find out whether it earns its keep, and many experiments do not. Do not fall in love with it. |
+| `intended` | **It is meant to exist and to stick around. Nothing is promised.** (Default.) |
+| `promised` | **Committed to.** Withdrawing it is an event rather than an edit. |
+
+**`intended` is the ordinary case and usually goes unwritten.** Most things are
+meant to last and carry no undertaking beyond that, so declaring it costs a line
+in every file to tell a reader what they already assumed. **The field earns its
+place at the two ends** — a warning, or an undertaking. Both are deliberate, and
+both are worth writing.
+
+**Being used does not change it.** Somebody relying on an experiment has taken a
+risk they were warned about, and their use creates no undertaking nobody gave.
+**Only the publisher moves this value**, and only deliberately.
+
+**Neither this field nor `lifecycle_status` (§6) is an input to the other**, and
+each is useful alone: a Document may declare `survival` and no lifecycle, or the
+reverse, and a consumer reading one need not look for the other.
+
+They are orthogonal in the sense §7.2 gives the word for trust. A Document can
+be `stable` and not expected to last — reliable now, and dying soon — or
+`provisional` with its survival `promised`, because the undertaking was given
+early and the journey is not far along.
+
+### Why it has a default at all
+
+**Future intent is frequently and legitimately undecided**, and *we mean to keep
+this and have promised nothing* is both the honest answer and the common one. A
+default that states what a reader already infers from silence costs nothing and
+hides nothing.
+
+**The name was chosen for how it degrades.** A neglected Document saying
+`intended` is out of date rather than untrue — where `maintained` or `supported`
+would be making a false claim to everybody who reads it, and neglect is exactly
+the state nobody returns to correct.
+
+### Moving between values is an act, not a feeling
+
+| | |
+|---|---|
+| `experimental` → `intended` | the moment you would be reluctant to delete it. `experimental` means *no intentions*, so the transition is when intentions form |
+| `intended` → `promised` | the moment somebody else's work breaks if you withdraw it |
+
+Neither is a matter of degree, and both are answerable by asking the publisher
+one question.
+
+**A Document that has been retired did not survive**, whatever it last intended.
+That is a fact about what happened rather than a contradiction of the field.
