@@ -43,6 +43,21 @@ every link to it, which is the cost this convention trades numbering churn for.
 It is the better trade because a rename is deliberate and rare, where a reorder
 is neither.
 
+**Slugs follow the common markdown convention** — lowercase, non-word characters
+dropped, spaces to hyphens — which is what GitHub, GitLab and most renderers
+already generate. Nothing here defines its own, and that is the point: a link
+written by hand resolves because it matches what the renderer produced.
+
+**Which means a heading that would produce an awkward slug gets a better
+heading, never a corrected slug.** Renderers do not collapse repeated hyphens,
+so ` — ` in a heading yields `--`; tidying that by hand would produce a link
+that resolves nowhere. Write the heading so the question does not arise.
+
+*One exception falls out of that rather than being carved into it: where a
+heading is an identifier from the data model, the slug carries that identifier's
+spelling — `vendored_from` keeps its underscore, because renaming the heading to
+suit a slug would misname the field.*
+
 **Unless numbers demonstrably help.** If numbering makes a consumer — human or
 agent — read, navigate or behave more reliably in a given document, number it and
 say why. **This rule exists to stop churn, not to enforce a style**, and evidence
@@ -77,7 +92,7 @@ Core fields defined by this specification appear at the **top level** of the fro
 - Consumers MUST preserve unrecognized keys when rewriting a file, and MUST NOT reject a file for containing them.
 - **Identifier casing (a recommendation).** Field names, `type` names, and `field_type` values prefer snake_case (lowercase words joined by `_`); Document slugs and IDs prefer kebab-case (`-`), since they are path- and URI-like. Like nearly everything here, this is a strong recommendation, not a hard rule — the only hard requirement is a non-empty `type` (Conformance, below).
 
-**Conformance.** A file is a conformant Document if it has a parseable YAML frontmatter block containing a non-empty `type`. **This is the only hard requirement.** Consumers **MUST NOT** reject a Document for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Everything a type declares ([Type extensions](#type-extensions)) is *published intent*, not an enforced rule — validation is a **suggested framework** ([Validation — a suggested framework, not a contract](#validation--a-suggested-framework-not-a-contract)), never a conformance gate, and it never rejects by default.
+**Conformance.** A file is a conformant Document if it has a parseable YAML frontmatter block containing a non-empty `type`. **This is the only hard requirement.** Consumers **MUST NOT** reject a Document for: missing recommended or optional fields, an unrecognized `type`, unknown extra keys, or unresolved links. Everything a type declares ([Type extensions](#type-extensions)) is *published intent*, not an enforced rule — validation is a **suggested framework** ([Validation](#validation)), never a conformance gate, and it never rejects by default.
 
 ## Field presence
 Every field — a core field here, or a domain field declared by a Type Definition ([Type extensions](#type-extensions)) — carries a **`field_presence`**: how strongly it should be present. Values are stored as full lowercase words:
@@ -91,9 +106,9 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 **`required / recommended / optional` is RFC 2119's adjectival set**, deliberately. Every specification uses those three words for exactly this ladder, so a reader recognises all of them at once rather than two and a synonym. `deprecated` sits beside the ladder rather than on it — it states a field's future rather than its strength, which is why [Inheritance](#inheritance) cannot reach it by strengthening.
 
-Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule ([Validation — a suggested framework, not a contract](#validation--a-suggested-framework-not-a-contract)), and nothing about presence changes whether a file is conformant ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)). The sole hard requirement remains a non-empty `type`.
+Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule ([Validation](#validation)), and nothing about presence changes whether a file is conformant ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)). The sole hard requirement remains a non-empty `type`.
 
-**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`, declared by `policy` and `workflow`](#matches-declared-by-policy-and-workflow)) is not its replacement in that sense: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there. **The name `preload` is released** and is no longer reserved.
+**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`](#matches)) is not its replacement in that sense: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there. **The name `preload` is released** and is no longer reserved.
 
 ### Core fields
 | Field | Presence | Field type | Meaning |
@@ -132,6 +147,66 @@ A Document's lifecycle stage — nascent to active, with `archived` as the retir
 *It is not spelled `none`. `none`, `null` and `nil` are absence words in one language or another, so a value that looks like a null gets conflated with one — and `lifecycle_status: none`, an empty value that YAML reads as null, and the field being absent are three states that look alike to a reader and differ to a parser.*
 
 The field is named `lifecycle_status` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field.
+
+## Survival
+**How much you should expect this to last.** Not *how long* — that is far harder
+to answer, and nobody can — and not *will it continue indefinitely*, which is
+harder still. Default (when absent): `intended`.
+
+| Value | Meaning |
+|---|---|
+| `experimental` | **No intentions.** It is out in the world to find out whether it earns its keep, and many experiments do not. Do not fall in love with it. |
+| `intended` | **It is meant to exist and to stick around. Nothing is promised.** (Default.) |
+| `promised` | **Committed to.** Withdrawing it is an event rather than an edit. |
+
+**`intended` is the ordinary case, and a producer MAY leave it unwritten.** A
+value that is honest for nineteen things in twenty is one nobody should have to
+write nineteen times, which is what the default is for. Declaring it is equally
+valid, and a producer who wants the record explicit SHOULD feel free.
+
+**Where the field tends to earn its keep is at the two ends** — a warning, or an
+undertaking. Both are deliberate, and both say something silence does not.
+
+*That is an observation about how the values fall in practice, not a rule. This
+specification does not say when a producer should declare a field.*
+
+**Being used does not change it.** Somebody relying on an experiment has taken a
+risk they were warned about, and their use creates no undertaking nobody gave.
+**Only the publisher moves this value**, and only deliberately.
+
+**Neither this field nor `lifecycle_status` ([Lifecycle](#lifecycle)) is an input to the other**, and
+each is useful alone: a Document may declare `survival` and no lifecycle, or the
+reverse, and a consumer reading one need not look for the other.
+
+They are orthogonal in the sense [`verified` and trust tiers](#verified-and-trust-tiers) gives the word for trust. A Document can
+be `stable` and not expected to last — reliable now, and dying soon — or
+`provisional` with its survival `promised`, because the undertaking was given
+early and the journey is not far along.
+
+### Why it has a default at all
+
+**Future intent is frequently and legitimately undecided**, and *we mean to keep
+this and have promised nothing* is both the honest answer and the common one. A
+default that states what a reader already infers from silence costs nothing and
+hides nothing.
+
+**The name was chosen for how it degrades.** A neglected Document saying
+`intended` is out of date rather than untrue — where `maintained` or `supported`
+would be making a false claim to everybody who reads it, and neglect is exactly
+the state nobody returns to correct.
+
+### Moving between values
+
+| | |
+|---|---|
+| `experimental` → `intended` | the moment you would be reluctant to delete it. `experimental` means *no intentions*, so the transition is when intentions form |
+| `intended` → `promised` | the moment somebody else's work breaks if you withdraw it |
+
+Neither is a matter of degree, and both are answerable by asking the publisher
+one question.
+
+**A Document that has been retired did not survive**, whatever it last intended.
+That is a fact about what happened rather than a contradiction of the field.
 
 ## Provenance and trust
 ### `created` and `modified`
@@ -222,7 +297,7 @@ All links are by human-readable **slug/path** (LKF has no id-links):
   > parent: "[[topic-ml]]"    # → "[[topic-ml]]"   a string, as intended
   > ```
   >
-  > A validator ([Validation — a suggested framework, not a contract](#validation--a-suggested-framework-not-a-contract)) catches this as a value whose shape does not match its declared `field_type`, but nothing else will — the document stays conformant, and a consumer simply never resolves the link. Producers writing frontmatter wikilinks MUST quote them.
+  > A validator ([Validation](#validation)) catches this as a value whose shape does not match its declared `field_type`, but nothing else will — the document stays conformant, and a consumer simply never resolves the link. Producers writing frontmatter wikilinks MUST quote them.
 
 **Assets use ordinary markdown links.** `[[…]]` links a Document; `[…](…)` links anything else — an Asset, or an external address:
 
@@ -245,7 +320,7 @@ The body is CommonMark. Producers SHOULD favor structural markdown (headings, li
 ## Type extensions
 Any `type` MAY declare a **contract** for its Documents — which fields they carry and what shape those fields take — so producers and consumers can discover exactly what, say, a `lab_result` expects, and tools MAY validate against it. This is how LKF stays a small core with an open, extensible edge.
 
-Nothing in this section is a conformance requirement. A Type Definition publishes *intent*; [Validation — a suggested framework, not a contract](#validation--a-suggested-framework-not-a-contract) describes a suggested way to check it; [Frontmatter layout and conformance](#frontmatter-layout-and-conformance) remains the only hard rule.
+Nothing in this section is a conformance requirement. A Type Definition publishes *intent*; [Validation](#validation) describes a suggested way to check it; [Frontmatter layout and conformance](#frontmatter-layout-and-conformance) remains the only hard rule.
 
 ### Type Definitions
 A `type` is declared by a **Type Definition** — an ordinary Document with `type: type_definition`, living in the bundle's reserved `_types/` directory. Because a Type Definition is itself a Document, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
@@ -414,7 +489,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   A `type` published beyond the Bundle that wrote it SHOULD therefore be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
-### Validation — a suggested framework, not a contract
+### Validation
 Validation is **entirely optional.** LKF never requires a validator, and no validator's opinion changes whether a file conforms ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)). The rules below are a **recommended, consistent behavior** for tools that choose to offer validation — nothing more. By default, validation **never rejects**; a `--strict` mode is an opt-in that escalates real violations to errors.
 
 | What a validator finds | Default | `--strict` |
@@ -435,7 +510,7 @@ Two deliberate choices: a `deprecated` field stays a *warning* even under `--str
 ### Discovery
 Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
 
-### `matches`, declared by `policy` and `workflow`
+### `matches`
 **Not a core field.** Two of the built-in types declare it, and no other Document carries it.
 
 **The two kinds that carry a trigger are the two that act on you** — a rule that binds, and a procedure you run. Background does not act; it is reached *through* the things that do. Rationale has no moment either: it is wanted when somebody wonders *why*, and wondering is not a trigger. A concept whose subject genuinely arises somewhere is already reachable from the policy or workflow that arises there, and advertising it separately makes it compete with them for attention.
@@ -560,7 +635,7 @@ unrelated domain data ([Frontmatter layout and conformance](#frontmatter-layout-
 |---|---|---|---|
 | `preload` | a core field: when a Document should be placed in front of a reader | `v0.0.12` | nothing — delivery is a consumer's decision, derived ([Field presence](#field-presence)) |
 | `compliance` | a field grading how strongly a rule obliged compliance | never specified; invented and withdrawn in the estate during `v0.0.13` | nothing — a `policy` binds by being one, and `on_violation` says what happens when it does not |
-| `applies_to` | the field naming what makes a Document surface | `v0.0.15` | `matches` ([`matches`, declared by `policy` and `workflow`](#matches-declared-by-policy-and-workflow)) |
+| `applies_to` | the field naming what makes a Document surface | `v0.0.15` | `matches` ([`matches`](#matches)) |
 | `index.md` | a reserved file: derived per-directory navigation | `v0.0.14` | nothing — see [Reserved files](#reserved-files) |
 | `concept` | a Document type for background | `v0.0.10` | `document` |
 | `entry_point` | the Bundle field naming where a reader should start | `v0.0.17` | `entrypoint` ([`BUNDLE.md`](#bundlemd)) |
@@ -583,63 +658,3 @@ even though nothing currently uses it — a Bundle that adopted the free name fo
 its own purposes would silently acquire the specification's meaning.
 
 > Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).
-
-## Survival
-**How much you should expect this to last.** Not *how long* — that is far harder
-to answer, and nobody can — and not *will it continue indefinitely*, which is
-harder still. Default (when absent): `intended`.
-
-| Value | Meaning |
-|---|---|
-| `experimental` | **No intentions.** It is out in the world to find out whether it earns its keep, and many experiments do not. Do not fall in love with it. |
-| `intended` | **It is meant to exist and to stick around. Nothing is promised.** (Default.) |
-| `promised` | **Committed to.** Withdrawing it is an event rather than an edit. |
-
-**`intended` is the ordinary case, and a producer MAY leave it unwritten.** A
-value that is honest for nineteen things in twenty is one nobody should have to
-write nineteen times, which is what the default is for. Declaring it is equally
-valid, and a producer who wants the record explicit SHOULD feel free.
-
-**Where the field tends to earn its keep is at the two ends** — a warning, or an
-undertaking. Both are deliberate, and both say something silence does not.
-
-*That is an observation about how the values fall in practice, not a rule. This
-specification does not say when a producer should declare a field.*
-
-**Being used does not change it.** Somebody relying on an experiment has taken a
-risk they were warned about, and their use creates no undertaking nobody gave.
-**Only the publisher moves this value**, and only deliberately.
-
-**Neither this field nor `lifecycle_status` ([Lifecycle](#lifecycle)) is an input to the other**, and
-each is useful alone: a Document may declare `survival` and no lifecycle, or the
-reverse, and a consumer reading one need not look for the other.
-
-They are orthogonal in the sense [`verified` and trust tiers](#verified-and-trust-tiers) gives the word for trust. A Document can
-be `stable` and not expected to last — reliable now, and dying soon — or
-`provisional` with its survival `promised`, because the undertaking was given
-early and the journey is not far along.
-
-### Why it has a default at all
-
-**Future intent is frequently and legitimately undecided**, and *we mean to keep
-this and have promised nothing* is both the honest answer and the common one. A
-default that states what a reader already infers from silence costs nothing and
-hides nothing.
-
-**The name was chosen for how it degrades.** A neglected Document saying
-`intended` is out of date rather than untrue — where `maintained` or `supported`
-would be making a false claim to everybody who reads it, and neglect is exactly
-the state nobody returns to correct.
-
-### Moving between values is an act, not a feeling
-
-| | |
-|---|---|
-| `experimental` → `intended` | the moment you would be reluctant to delete it. `experimental` means *no intentions*, so the transition is when intentions form |
-| `intended` → `promised` | the moment somebody else's work breaks if you withdraw it |
-
-Neither is a matter of degree, and both are answerable by asking the publisher
-one question.
-
-**A Document that has been retired did not survive**, whatever it last intended.
-That is a fact about what happened rather than a contradiction of the field.
