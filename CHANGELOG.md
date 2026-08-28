@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Added
+- **`survival` — a core field for whether a Document is expected to last** (§5.1, §14). `experimental | intended | promised`, optional, default `intended`.
+  **It exists so a reader knows how much to lean on something.** Nothing said whether a thing would still be here. A reader could learn how settled a Document was and how much its shape might change, and could not learn the simplest thing: is anybody keeping this, or is it out in the world to find out whether it earns its keep?
+  **The question is deliberately the easy one.** Not *how long will this last*, which nobody can answer, and not *will it continue indefinitely*, which is harder still. Just: does it survive? `experimental` says there are no intentions and many experiments do not; `intended` says it is meant to stick around and nothing is promised; `promised` says withdrawing it is an event rather than an edit.
+  **`intended` is the default and usually goes unwritten**, which is the point — most things are meant to last and carry no undertaking beyond that, so writing it would cost a line per file to tell a reader what they already inferred. **The field earns its place at the two ends**: a warning, or an undertaking.
+  **It has a default because future intent is frequently and legitimately undecided**, and *we mean to keep this and have promised nothing* is the honest common answer. A default that states what a reader already infers from silence costs nothing and hides nothing.
+  **The name was chosen for how it degrades.** A neglected Document saying `intended` is out of date rather than untrue — where `maintained` or `supported` would make a false claim to everyone reading it, and neglect is exactly the state nobody returns to correct.
+  **Neither it nor `lifecycle_status` is an input to the other**, and each is useful alone — a Document may declare either without the other. They are orthogonal in the sense §7.2 already gives the word for trust: a Document can be `stable` and not expected to last, or `provisional` with its survival `promised`. Both corners are populated, which is what makes these two axes rather than one ladder.
+  **Being used does not change it.** Somebody relying on an experiment took a risk they were warned about, and their use creates no undertaking nobody gave — only the publisher moves this value.
+  *Migration:* **none.** The field is optional and its default is the common case, so every existing Document is already correct without being touched.
+
 ### Changed
 - **`entry_point` is now `entrypoint`** *(breaking)*. One word, so that the same word names the same thing at every level it appears — a Bundle says where to start reading, and a consumer wanting the same idea one level up or down should not have to learn a second spelling for it.
   **The underscore was carrying a distinction that does not exist.** Every other multi-word field here names two different things joined — `field_presence`, `on_violation`, `lkf_version`. *Entrypoint* is one idea with one name, and writing it as two words invited exactly the collision it caused: a consumer building a project-level entrypoint read `entry_point` as *a different concept that happens to share a word*.

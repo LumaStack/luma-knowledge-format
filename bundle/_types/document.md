@@ -7,6 +7,7 @@ fields:
   description:      { field_presence: optional,    field_type: text,               desc: "One-sentence summary; used by indexes and search." }
   tags:             { field_presence: optional,    field_type: list of text,       desc: "Categorization, typically nested via / (e.g. ml/generative)." }
   lifecycle_status: { field_presence: optional,    field_type: enum,               values: [draft, provisional, stable, archived], desc: "§6." }
+  survival:         { field_presence: optional,    field_type: enum,               values: [experimental, intended, promised], desc: "Whether this is expected to last. Default intended, usually unwritten. §14." }
   created:          { field_presence: optional,    field_type: actor_event,        desc: "Original author and creation time. Immutable. §7.1." }
   modified:         { field_presence: recommended, field_type: actor_event,        desc: "Last editor and last meaningful change. Advances on edit. §7.1." }
   verified:         { field_presence: optional,    field_type: list of actor_event, desc: "Independent confirmation events. §7.2." }
