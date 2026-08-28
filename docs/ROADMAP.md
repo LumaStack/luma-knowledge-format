@@ -7,7 +7,7 @@ Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` de
 The three questions to answer next, in no particular order. Two are detailed
 under *Undecided* below; the third is new.
 
-1. **`extends: source`** — needs a ruling. §10.1's example Type Definition
+1. **`extends: source`** — needs a ruling. *Type Definitions*'s example Type Definition
    inherits from `source`, which is not a built-in and is defined nowhere.
 
    *Reading of the evidence, not yet a decision.* A third possibility beats the
@@ -15,10 +15,10 @@ under *Undecided* below; the third is new.
    parent type from an earlier design that carried provenance — `author`,
    `last_modified`, where a thing came from — which is exactly what a
    `lab_result` would have wanted to inherit. Those fields are now **core**
-   (§5.1 `created`, `modified`, `verified`, `sources`) and arrive through the
+   (*Core fields* `created`, `modified`, `verified`, `sources`) and arrive through the
    root, so a `source` parent has nothing left to supply.
 
-   Note also that §7.3's `sources` is a *field* — a list of `{id, resource,
+   Note also that *`sources`*'s `sources` is a *field* — a list of `{id, resource,
    title, author, last_modified}` — not a type. Semantically a lab result is not
    a source: it is a measurement, and the thing it derives from is the source.
    So `extends: source` reads backwards even on its own terms.
@@ -31,8 +31,8 @@ under *Undecided* below; the third is new.
 
    What would settle it: whether `source` was ever intended as a type, or only
    ever the `sources` field. Check the v0.0.1 history before deciding.
-2. **Type Definition `version`** — §12 refers to "a Type Definition's own
-   `version`", which §10.1 never declares. The `semver` field type now exists to
+2. **Type Definition `version`** — *Versioning* refers to "a Type Definition's own
+   `version`", which *Type Definitions* never declares. The `semver` field type now exists to
    hold it, so the remaining questions are whether a Type Definition carries one
    at all and what a bump means for copies already vendored elsewhere.
 3. **~~Whether `concept` should carry fields of its own.~~** Resolved by removing
@@ -72,9 +72,9 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
 ## Undecided — needs a decision before it can be specified
 
-- **Field-level ratification** — confirm the working-default levels in `SPEC.md` §5.1 (`title`, `description`, `tags`, `verified`, `sources`).
-- **Type-extension rules** (§10) — property-type vocabulary, `extends`/inheritance and conflict resolution, tool-default vs. bundle precedence, validator severities.
-- **Type Definition `version` — declared in `0.0.11`, semantics still open.** §10.1 now permits one and §12's dangling reference has something to point at. **What a bump *means* is deliberately undefined**: it is a label, not a promise, so a consumer compares for equality and infers nothing from the tier. Still to settle — whether the tiers in `bundle-versioning` carry over to types, and whether bumping a type forces a bump of the Bundle shipping it.
+- **Field-level ratification** — confirm the working-default levels in `SPEC.md` *Core fields* (`title`, `description`, `tags`, `verified`, `sources`).
+- **Type-extension rules** — property-type vocabulary, `extends`/inheritance and conflict resolution, tool-default vs. bundle precedence, validator severities.
+- **Type Definition `version` — declared in `0.0.11`, semantics still open.** *Type Definitions* now permits one and *Versioning*'s dangling reference has something to point at. **What a bump *means* is deliberately undefined**: it is a label, not a promise, so a consumer compares for equality and infers nothing from the tier. Still to settle — whether the tiers in `bundle-versioning` carry over to types, and whether bumping a type forces a bump of the Bundle shipping it.
 
   **This was the pressure behind wanting one repository per shared type**, and splitting would never have fixed it — a repository has one version too. Declaring the version on the type is what removes it: a consumer that vendored one type out of six no longer sees a bump caused by the other five.
 - **~~Should `lifecycle_status` carry `unknown`, as its default?~~ Yes.** Shipped in `0.0.11`. `unknown` is not a stage — it says the value was not filled in — and it is the default because both real defaults would be wrong guesses.
@@ -82,11 +82,11 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **What is not solved is reachability.** A rule nobody loads still governs nothing. The answer is something always present naming the rules that exist, and nothing does that yet.
 
-- **Vendored-type provenance** — §10.4 makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, §7.3, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
+- **Vendored-type provenance** — *Resolution and namespacing* makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, *`sources`*, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 
-  **This now has a real consumer and is the highest-value item here.** A shared type library — the thing §10.4 already contemplates when it says types are shared *by vendoring* — is only safe if drift is loud. Without provenance, the choice for a widely-used type is between an unprefixed built-in the format did not want and copies that disagree silently. **Provenance is what makes the namespaced-and-vendored path viable**, and it is what keeps the built-in list short.
+  **This now has a real consumer and is the highest-value item here.** A shared type library — the thing *Resolution and namespacing* already contemplates when it says types are shared *by vendoring* — is only safe if drift is loud. Without provenance, the choice for a widely-used type is between an unprefixed built-in the format did not want and copies that disagree silently. **Provenance is what makes the namespaced-and-vendored path viable**, and it is what keeps the built-in list short.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
-- **`extends: source` in §10.1** — the example Type Definition inherits from `source`, which is neither a reserved built-in (§10.4) nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
+- **`extends: source` in *Type Definitions*** — the example Type Definition inherits from `source`, which is neither a reserved built-in nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
 - **~~Whether `concept` survives.~~ It does not.** Removed in `0.0.10`.
 
   The argument that had held it here was that removing a name and re-adding it
@@ -102,8 +102,8 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   *Re-open only if a durable knowledge base turns out to need fields a `document`
   cannot give it, which is what would have justified the type in the first place.*
-- **Reserved-file formats** — the exact structure of `index.md` and `LOG.md` (§11).
-- **How many names the format claims at a Bundle root.** §11 reserves four — `BUNDLE.md`, `index.md`, `LOG.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
+- **Reserved-file formats** — the exact structure of `index.md` and `LOG.md`.
+- **How many names the format claims at a Bundle root.** *Reserved files* reserves four — `BUNDLE.md`, `index.md`, `LOG.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
 
   The alternative is to claim **one** name and nest everything reserved beneath it:
 
@@ -121,13 +121,13 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **Timing:** this is a Bundle-layout change, which the `v0.1.0` criteria above name specifically as something that must have stopped moving — and it is a migration for every Bundle in existence once any exist. Cheap now.
 
-  *Settled in passing, recorded so it is not re-argued:* `_types/` keeps its name if consolidation does not happen. `.types/` was rejected because hidden directories are skipped by `ls`, default-ignored by search tools, and read as "tooling artifact" — all of which fight §10.6, where discovery is the entire point. `lkf-types/` and `luma-types/` were rejected on the vendor-name argument above. `_schema/` was rejected because *schema* means validate-or-reject, which is precisely what §10.5 refuses. The leading underscore stays because it has real prior art for framework-reserved directories, sorts ahead of letters, remains visible, and avoids colliding with the `types/` that TypeScript projects genuinely use.
-- **Where `_types/` resolves.** §10.4 looks in exactly two places: the built-ins, and *a Bundle's* `_types/`. That ties type resolution to Bundles, and the first real consumer has already outgrown it — `luma-catalog` publishes a `type: catalog` document at the root of a directory that is deliberately not a Bundle (no version, never copied wholesale, and it contains Bundles), and that type needs somewhere to live.
+  *Settled in passing, recorded so it is not re-argued:* `_types/` keeps its name if consolidation does not happen. `.types/` was rejected because hidden directories are skipped by `ls`, default-ignored by search tools, and read as "tooling artifact" — all of which fight *Discovery*, where discovery is the entire point. `lkf-types/` and `luma-types/` were rejected on the vendor-name argument above. `_schema/` was rejected because *schema* means validate-or-reject, which is precisely what *Validation — a suggested framework, not a contract* refuses. The leading underscore stays because it has real prior art for framework-reserved directories, sorts ahead of letters, remains visible, and avoids colliding with the `types/` that TypeScript projects genuinely use.
+- **Where `_types/` resolves.** *Resolution and namespacing* looks in exactly two places: the built-ins, and *a Bundle's* `_types/`. That ties type resolution to Bundles, and the first real consumer has already outgrown it — `luma-catalog` publishes a `type: catalog` document at the root of a directory that is deliberately not a Bundle (no version, never copied wholesale, and it contains Bundles), and that type needs somewhere to live.
 
   Working around it means either declaring the directory a Bundle, which makes Bundles-inside-Bundles a concept the format then owes an answer for, or letting the consumer invent its own lookup — which is how two tools end up disagreeing about where a type lives, and resolution fails quietly.
 
   The likely fix is to stop keying resolution on *Bundle* and key it on the directory root a Document is found under, whatever that root is. Decide whether `_types/` is Bundle-specific or root-specific, and if the latter, what constitutes a root.
-- **Whether reserved manifests should be markdown at all.** §11.1 makes `BUNDLE.md` a markdown Document carrying a frontmatter manifest. That is right when the body carries something a reader wants and it is a YAML file with a misleading extension when the body is empty — which is the state a pure manifest tends toward.
+- **Whether reserved manifests should be markdown at all.** *`BUNDLE.md`* makes `BUNDLE.md` a markdown Document carrying a frontmatter manifest. That is right when the body carries something a reader wants and it is a YAML file with a misleading extension when the body is empty — which is the state a pure manifest tends toward.
 
   Evidence from the first consumer, and it cuts both ways. A Bundle's body has real work to do: what this Bundle is, when to reach for it, what it assumes. `luma-catalog`'s equivalent manifest ended up a short instance note over frontmatter once its general prose moved into the Type Definition where it belonged. **The two may deserve different answers**, and assuming one format for every manifest is what makes that hard to see.
 
@@ -142,7 +142,7 @@ Reading without writing. Using a fraction of it. Elapsed time.
 - **`obligation: conditional`** — a field that is mandatory *only when* a stated condition holds, carrying a `when:` predicate (ISO 19115-style). Deferred from v0.0.1; `field_presence` was chosen as the field-declaration key partly so this can be added later without a rename.
 - **User-defined composite field types** — LKF ships the built-in `actor` and `actor_event` field types; arbitrary/user-defined nested object shapes are deferred.
 
-  **No longer hypothetical.** The first consumer hit it immediately: `luma-catalog` declares a `type: catalog` whose `requires` is a list of five-key records (`bundle`, `field_presence`, `version`, `by`, `tags`) and whose `starters` is a map of named lists of records. Neither is expressible, so both are declared with an obligation and a description and **no `field_type`** — legal, since §10.2 permits up to four keys and requires only `values` for enums, but it means the two fields carrying all the meaning are the two the contract says nothing about.
+  **No longer hypothetical.** The first consumer hit it immediately: `luma-catalog` declares a `type: catalog` whose `requires` is a list of five-key records (`bundle`, `field_presence`, `version`, `by`, `tags`) and whose `starters` is a map of named lists of records. Neither is expressible, so both are declared with an obligation and a description and **no `field_type`** — legal, since *Field declarations* permits up to four keys and requires only `values` for enums, but it means the two fields carrying all the meaning are the two the contract says nothing about.
 
   Worth noting what the gap does and does not cost. Discovery still works: a reader finds the definition, sees the fields exist, and reads the shapes from the body prose. What is lost is machine checking of exactly the parts most likely to be got wrong. That is a tolerable trade for one consumer and a poor one at ten.
 
@@ -162,9 +162,9 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   Whether strictness is set *on* a type, or whether you get it by declaring a different type that is always strict, is open. *"I'm assuming the new-type route is best, but not sure."*
 
-  **The seam it would use already exists, and §4 is not in the way.** §4's `MUST NOT reject` governs **conformance** — whether a file *is* a Document. It says nothing about whether a tool will *act* on one. The specification already relies on that gap: `preload: mandatory` says a consumer that cannot load the Document **refuses rather than proceeding**, which is a consumer failing without rejecting anything as non-conformant. **A strict mode is that same move, generalised** — the file stays a valid Document and the work stops.
+  **The seam it would use already exists, and *Frontmatter layout and conformance* is not in the way.** *Frontmatter layout and conformance*'s `MUST NOT reject` governs **conformance** — whether a file *is* a Document. It says nothing about whether a tool will *act* on one. The specification already relies on that gap: `preload: mandatory` says a consumer that cannot load the Document **refuses rather than proceeding**, which is a consumer failing without rejecting anything as non-conformant. **A strict mode is that same move, generalised** — the file stays a valid Document and the work stops.
 
-  **It may need no new vocabulary.** §5 says obligation *"describes intent. Whether and how a tool checks it is a suggested validation framework, not a rule."* On that reading **strict mode is simply the switch that turns published intent into an enforced contract** — the contract is already fully specified in the Type Definition and merely unbinding. If that is all it is, nothing new is declared and the question becomes who throws the switch.
+  **It may need no new vocabulary.** *Field presence* says obligation *"describes intent. Whether and how a tool checks it is a suggested validation framework, not a rule."* On that reading **strict mode is simply the switch that turns published intent into an enforced contract** — the contract is already fully specified in the Type Definition and merely unbinding. If that is all it is, nothing new is declared and the question becomes who throws the switch.
 
   **Where it should live is the real question, and there is precedent cutting both ways.** Against putting it on the artifact: obligation is deliberately *not* a property of a bundle, because *"the same bundle is mandatory at one organization and merely available everywhere else — the publisher declares it; the artifact does not carry it."* The same argument says a `decision` type might warrant strictness at a bank and not at a startup. For putting it on the artifact: the idea explicitly wants producers to be able to *signal* exactness, which a consumer-side setting cannot do.
 
@@ -172,7 +172,7 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **The always-strict-type route has one property the flag does not:** strictness travels with the name and cannot be quietly turned off. That is also its cost — no deployment can relax it, and the type vocabulary doubles if every strict thing needs a strict twin. Whether inheritance could carry it instead (`extends` some strict root) runs into single inheritance and into using a field mechanism for a non-field property.
 
-  Evaluating it would have to settle: **what counts as a failure** — unknown keys, unresolved links, a missing `recommended`, a value outside an enum are four very different bars, and §4 currently forgives all of them; whether strictness is all-or-nothing or per-check; and **what a strict consumer does with a non-strict type**, and vice versa, since a Bundle will hold both.
+  Evaluating it would have to settle: **what counts as a failure** — unknown keys, unresolved links, a missing `recommended`, a value outside an enum are four very different bars, and *Frontmatter layout and conformance* currently forgives all of them; whether strictness is all-or-nothing or per-check; and **what a strict consumer does with a non-strict type**, and vice versa, since a Bundle will hold both.
 
   ### The corruption half may be a second feature, and a smaller one
 
@@ -182,7 +182,7 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **The obvious design is ruled out by an argument already made here.** An in-document `content_hash` is maintained by whoever edits the file, and the person it guards against is exactly that person — the same reason `adopted.toml`'s checksum *"lives nowhere near a file you are invited to edit"*. It is also self-referential and stale after every legitimate change.
 
-  **So the shape worth considering is a declaration rather than a digest**, because the format already makes immutability claims and enforces none of them: §11 says a `LOG.md` writer **MUST append rather than rewrite**, and a `stable` decision is *frozen*. Rules, stated, unchecked.
+  **So the shape worth considering is a declaration rather than a digest**, because the format already makes immutability claims and enforces none of them: *Reserved files* says a `LOG.md` writer **MUST append rather than rewrite**, and a `stable` decision is *frozen*. Rules, stated, unchecked.
 
   ```yaml
   type: type_definition
@@ -207,4 +207,4 @@ Reading without writing. Using a fraction of it. Elapsed time.
   - A **link title** is portable but visible on hover; an **adjacent HTML comment** is invisible but tied to the link only by adjacency.
   - Raw-HTML tags are stripped by sanitizers such as GitHub's; Pandoc-style `{#…}` attributes render literally outside the flavors that support them; zero-width Unicode breaks diffs and human readability.
 
-  Evaluating it would have to settle: whether targets gain ids at all (an id on a link does nothing without one on the target — see **Stable identifiers**), how that sits with §3's requirement that block ids be human-readable rather than generated hashes, and whether the problem is pressing given that renames are already handled by tooling rewrites (§3) and unresolved links are legal (§8).
+  Evaluating it would have to settle: whether targets gain ids at all (an id on a link does nothing without one on the target — see **Stable identifiers**), how that sits with *Document ID*'s requirement that block ids be human-readable rather than generated hashes, and whether the problem is pressing given that renames are already handled by tooling rewrites and unresolved links are legal.

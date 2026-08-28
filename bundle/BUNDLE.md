@@ -7,7 +7,7 @@ description: The Luma Knowledge Format — its specification, and the built-in t
 # Luma Knowledge Format — built-in types
 
 This directory is a Bundle: the built-in Type Definitions, expressed in the
-format they define. It is what §10.4 means by vendoring — copy the
+format they define. It is what *Resolution and namespacing* means by vendoring — copy the
 `_types/*.md` you want into your own bundle.
 
 It sits in its own directory so that it *is* the unit of distribution. The

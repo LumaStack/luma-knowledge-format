@@ -3,7 +3,7 @@ type: type_definition
 defines: policy
 extends: document
 fields:
-  matches:      { field_presence: optional, field_type: list_or_keyword, values: [always, nothing], desc: "What makes this Document surface — always, nothing, or a list of triggers. Absent means nothing. §10.7." }
+  matches:      { field_presence: optional, field_type: list_or_keyword, values: [always, nothing], desc: "What makes this Document surface — always, nothing, or a list of triggers. Absent means nothing.." }
   on_violation: { field_presence: optional, field_type: enum, values: [allow, audit, warn, require_reason, require_approval, block], desc: "What a consumer SHOULD do when this policy is not complied with. Intent, never a guarantee — see below." }
 ---
 
@@ -43,7 +43,7 @@ ordered by how much reaches the actor:
 | `require_approval` | stops until a third party approves |
 | `block` | stops; there is no path through |
 
-**Intent, never a guarantee.** Like everything a type declares (§10.5), this
+**Intent, never a guarantee.** Like everything a type declares, this
 says what the author asked for. A consumer that cannot intercept SHOULD say so
 rather than silently doing the nearest thing it can — a policy that reads as
 enforced and is not is worse than one that never claimed to be.
@@ -55,12 +55,11 @@ stopping power, and nothing else on the ladder offers that.
 ## What a consumer does with it: **is bound by it**
 
 A rule that constrains the consumer's own behaviour rather than informing it.
-That is its place among the three things a consumer can do with a Document
-(§10.4) — a `workflow` you **run**, and a plain `document` you **read**.
+That is its place among the three things a consumer can do with a Document — a `workflow` you **run**, and a plain `document` you **read**.
 
 **Binding is not presence, and this type claims only the first.** Whether a
 policy is in front of anyone is a consumer's decision, derived at most from
-`matches` (§10.7) — and the two are orthogonal: **a policy binds whether or
+`matches` — and the two are orthogonal: **a policy binds whether or
 not it happens to be loaded.**
 
 ## What dispatches on it
