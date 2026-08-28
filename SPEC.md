@@ -517,7 +517,7 @@ description: Health knowledge — lab results, medications, and conditions.
 | `version` | required | semver | this Bundle's version (§10.2) |
 | `published` | recommended | date | when this version was published |
 | `consumers` | optional | list of text | the kinds of consumer that may adopt this Bundle |
-| `entry_point` | optional | text | the Document ID (§3) of where a reader should start |
+| `entrypoint` | optional | text | the Document ID (§3) of where a reader should start |
 | `description` | *inherited* | text | one line on what the Bundle holds — a core field (§5.1), so `optional`; a Bundle SHOULD still carry one |
 
 `version` is required because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` (§12), which is the format-grammar version.
@@ -528,11 +528,11 @@ description: Health knowledge — lab results, medications, and conditions.
 
 It is a list because a Bundle may legitimately apply to more than one kind, and that is the whole reason it is a field. A distributor sorting Bundles into directories by consumer kind can express only one, which forces the *publisher* to answer a question that often belongs to the *adopter*. Omitting `consumers` says nothing — not "no consumers" and not "all consumers" — and consumers MUST NOT reject a Bundle for its absence (§4).
 
-**`entry_point` names where to start reading.** A Bundle of any size gives a newcomer no way to tell which Document is the way in, and every consumer otherwise invents its own answer — first alphabetically, the longest one, the one matching the directory name. It carries a **Document ID** (§3), not a link: `entry_point: recording-decisions`.
+**`entrypoint` names where to start reading.** A Bundle of any size gives a newcomer no way to tell which Document is the way in, and every consumer otherwise invents its own answer — first alphabetically, the longest one, the one matching the directory name. It carries a **Document ID** (§3), not a link: `entrypoint: recording-decisions`.
 
 It is a claim about **reading order** — *start here* — and nothing else. Whether that Document, or any other, is placed in front of a reader is a consumption question the format leaves alone.
 
-`description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entry_point`. A type *may* restate an inherited field to raise its presence (§10.3); `bundle` has no need to, since `description` at `optional` is already what it wants.
+`description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entrypoint`. A type *may* restate an inherited field to raise its presence (§10.3); `bundle` has no need to, since `description` at `optional` is already what it wants.
 
 Consistent with §4, a Bundle missing `BUNDLE.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
@@ -557,6 +557,7 @@ unrelated domain data (§4).
 | `applies_to` | the field naming what makes a Document surface | `v0.0.15` | `matches` (§10.7) |
 | `index.md` | a reserved file: derived per-directory navigation | `v0.0.14` | nothing — see §11 |
 | `concept` | a Document type for background | `v0.0.10` | `document` |
+| `entry_point` | the Bundle field naming where a reader should start | `v0.0.17` | `entrypoint` (§11.1) |
 
 **Why this list exists rather than the same fact scattered through the
 sections that once defined each name.** Three of these were recorded only in

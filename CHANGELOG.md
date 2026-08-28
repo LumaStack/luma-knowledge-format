@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Changed
+- **`entry_point` is now `entrypoint`** *(breaking)*. One word, so that the same word names the same thing at every level it appears — a Bundle says where to start reading, and a consumer wanting the same idea one level up or down should not have to learn a second spelling for it.
+  **The underscore was carrying a distinction that does not exist.** Every other multi-word field here names two different things joined — `field_presence`, `on_violation`, `lkf_version`. *Entrypoint* is one idea with one name, and writing it as two words invited exactly the collision it caused: a consumer building a project-level entrypoint read `entry_point` as *a different concept that happens to share a word*.
+  *Migration:* rename the key in every `BUNDLE.md` that declares one. Nothing else changes — same value, same meaning, same `optional` presence.
+- **§13 records `entry_point` as released.** The name is free; nothing reserves it.
+
 ## [0.0.16] — 2026-08-26
 
 ### Added
