@@ -5,7 +5,7 @@ created: { by: human:benlinton, at: 2026-08-18T00:00:00Z }
 contributors: [human:benlinton, agent:claude-opus-5]
 horizon: later
 scope: project
-lifecycle_status: draft
+lifecycle: draft
 ---
 
 # Should bundle.md be YAML rather than markdown?

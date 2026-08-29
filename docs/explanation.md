@@ -86,7 +86,7 @@ below is added because it earns its place, never because the format demands it.
 type: document
 title: Diffusion Models
 tags: [ml/generative]
-lifecycle_status: stable
+lifecycle: stable
 created:  { by: agent:opus-5, at: 2026-05-02T14:20:00Z }
 modified: { by: human:fsmith, at: 2026-08-01T10:00:00Z }
 verified:
