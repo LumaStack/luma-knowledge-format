@@ -117,7 +117,7 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 | `title` | recommended | text | Human label; may fall back to the filename. |
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
 | `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
-| [`lifecycle_status`](#lifecycle) | optional | enum | `draft \| provisional \| stable \| archived \| unknown`. Default `unknown`. |
+| [`lifecycle`](#lifecycle) | optional | enum | `draft \| provisional \| stable \| archived \| unknown`. Default `unknown`. |
 | [`survival`](#survival) | optional | enum | `experimental \| intended \| promised`. Default `intended`, and often left unwritten. |
 | [`created`](#created-and-modified) | optional | actor_event | Original author + creation time. **Immutable.** |
 | [`modified`](#created-and-modified) | recommended | actor_event | Last editor + last meaningful change. **Advances on edit.** |
@@ -189,7 +189,7 @@ activity**, and the two are unrelated: a heavily-used draft and an untouched
 
 | the event | the field | what is owed |
 |---|---|---|
-| **the shape changes** | `lifecycle_status` | `stable` owes a path across |
+| **the shape changes** | `lifecycle` | `stable` owes a path across |
 | **the thing ends** | `survival` | `promised` owes a process; `intended` owes nothing |
 
 **So `stable` with `survival: intended` is precise rather than contradictory** —
@@ -222,13 +222,13 @@ it means a consumer should re-read the field rather than reading it once.
 
 **`unknown` means not filled in, not unknowable.** Whether the fact is lost or was simply never stated is not this field's business, and collapsing both into one value is what lets a single word serve wherever it is needed — the same sense [Actor convention](#actor-convention) gives it for actors.
 
-**It is the default because both real defaults would be wrong guesses.** Defaulting to `provisional` makes a `draft` thing read as more settled than it is; defaulting the other way makes a `stable` thing read as less. Neither direction is safe, which is the `consumers` case described in [`BUNDLE.md`](#bundlemd) rather than the `lifecycle_status` one — and where no default is safe, the honest answer is to say nobody has declared.
+**It is the default because both real defaults would be wrong guesses.** Defaulting to `provisional` makes a `draft` thing read as more settled than it is; defaulting the other way makes a `stable` thing read as less. Neither direction is safe, which is the `consumers` case described in [`BUNDLE.md`](#bundlemd) rather than the `lifecycle` one — and where no default is safe, the honest answer is to say nobody has declared.
 
 **Absent and explicitly `unknown` mean the same thing**, so nothing is ambiguous. Writing it is worth doing anyway: silence cannot distinguish *considered and undecided* from *never thought about*.
 
-*It is not spelled `none`. `none`, `null` and `nil` are absence words in one language or another, so a value that looks like a null gets conflated with one — and `lifecycle_status: none`, an empty value that YAML reads as null, and the field being absent are three states that look alike to a reader and differ to a parser.*
+*It is not spelled `none`. `none`, `null` and `nil` are absence words in one language or another, so a value that looks like a null gets conflated with one — and `lifecycle: none`, an empty value that YAML reads as null, and the field being absent are three states that look alike to a reader and differ to a parser.*
 
-The field is named `lifecycle_status` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field.
+The field is named `lifecycle` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field.
 
 ## Survival
 **How much you should expect this to last.** Not *how long* — that is far harder
@@ -256,7 +256,7 @@ specification does not say when a producer should declare a field.*
 risk they were warned about, and their use creates no undertaking nobody gave.
 **Only the publisher moves this value**, and only deliberately.
 
-**Neither this field nor `lifecycle_status` ([Lifecycle](#lifecycle)) is an input to the other**, and
+**Neither this field nor `lifecycle` ([Lifecycle](#lifecycle)) is an input to the other**, and
 each is useful alone: a Document may declare `survival` and no lifecycle, or the
 reverse, and a consumer reading one need not look for the other.
 
@@ -321,7 +321,7 @@ verified:
 - verified only by non-`human:` actors ⇒ **machine-confirmed**
 - verified by any `human:<id>` ⇒ **human-reviewed**
 
-Trust tier is **orthogonal** to `lifecycle_status`: a Document can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
+Trust tier is **orthogonal** to `lifecycle`: a Document can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
 
 ### `sources`
 ```yaml
@@ -504,7 +504,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **This is consistent with add-only because presence is not meaning.** The field means exactly what its declaring type said; a subtype only states how strongly *it* expects the field. Nothing becomes non-conformant either — presence describes intent ([Field presence](#field-presence)) and the sole hard requirement remains a non-empty `type` ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) — so a consumer that knows only the parent and one that knows the subtype may reach different completeness verdicts, and each is right at its own level.
 
-  **Without this, a type whose semantics rest on inherited fields cannot state them.** Where a type's growth stage *is* `lifecycle_status` and its age *is* `created` — both `optional` on the root — the type has no way to say that a Document missing either is incomplete, and its own contract calls unremarkable exactly the omissions that break it.
+  **Without this, a type whose semantics rest on inherited fields cannot state them.** Where a type's growth stage *is* `lifecycle` and its age *is* `created` — both `optional` on the root — the type has no way to say that a Document missing either is incomplete, and its own contract calls unremarkable exactly the omissions that break it.
 
 ### Resolution and namespacing
 - **The Bundle is the resolution scope, and that has a consequence worth stating.** Because a contract is found in *this* Bundle's `_types/`, two Bundles may hold different versions of the same type without contradiction — each one's Documents are checked against the copy that travelled with them. This is the scoping mechanism prose does not have, and it is why vendoring a type is safe where duplicating a policy would not be.
