@@ -175,9 +175,9 @@ thing that defines types is itself a type, defined the same way.
 ## Where to go next
 
 - [`SPEC.md`](../SPEC.md) — the rules, in full. Short by design.
-- [`PRINCIPLES.md`](PRINCIPLES.md) — the values a design question is settled by
+- [`principles.md`](principles.md) — the values a design question is settled by
   when the specification is silent.
-- [`ROADMAP.md`](ROADMAP.md) — what is still open, and what `v0.1.0` would mean.
+- [`roadmap.md`](roadmap.md) — what is still open, and what `v0.1.0` would mean.
 
 A warning worth repeating from the readme: this format is in its `0.0.z` tier
 and is explicitly unstable. Breaking changes may ship in a patch release. It has

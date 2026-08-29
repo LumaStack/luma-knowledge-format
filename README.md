@@ -34,15 +34,15 @@ See [[score-based-models]] for the continuous-time formulation.
 
 **Using the format**
 
-- [`EXPLANATION.md`](docs/EXPLANATION.md) — **start here.** How this works and why it matters.
+- [`explanation.md`](docs/explanation.md) — **start here.** How this works and why it matters.
 - [`SPEC.md`](SPEC.md) — the specification. Short by design.
 - [`CHANGELOG.md`](CHANGELOG.md) — what changed between versions, and why.
 
 **Working on the format**
 
-- [`PRINCIPLES.md`](docs/PRINCIPLES.md) — the design principles behind LKF.
-- [`ROADMAP.md`](docs/ROADMAP.md) — open questions and deferred features.
-- [`GUIDELINES.md`](docs/GUIDELINES.md) — how the project is run and released. Read it before cutting a release.
+- [`principles.md`](docs/principles.md) — the design principles behind LKF.
+- [`roadmap.md`](docs/roadmap.md) — open questions and deferred features.
+- [`guidelines.md`](docs/guidelines.md) — how the project is run and released. Read it before cutting a release.
 
 ## License
 

@@ -21,7 +21,7 @@ This is the format's own trust model applied to the project itself: drafting is 
 1. **Propose** — state the change and why. (An issue, or a short note; a `proposals/` process may come later.)
 2. **Decide** — the maintainer accepts, revises, or rejects. The decision and its rationale are recorded in the commit message that lands the change.
 3. **Branch** — make the change on a branch off `main`, never on `main` directly (see [Branching](#branching)).
-4. **Edit** — apply it to `SPEC.md` (and `PRINCIPLES.md` if a principle is affected), and add a `CHANGELOG.md` entry under `## [Unreleased]` for any behavior-affecting change (see [Changelog](#changelog)).
+4. **Edit** — apply it to `SPEC.md` (and `principles.md` if a principle is affected), and add a `CHANGELOG.md` entry under `## [Unreleased]` for any behavior-affecting change (see [Changelog](#changelog)).
 5. **Release** — see [Cutting a release](#cutting-a-release). It is a checklist rather than a sentence because several of its steps are silent when missed.
 
 ## Branching
@@ -111,7 +111,7 @@ An agent working in this repository MUST:
 - **Merge, never squash or rebase.** Squashing collapses the per-commit rationale this project requires be preserved.
 - **Add a `CHANGELOG.md` entry** under `## [Unreleased]` for behavior-affecting changes; omit non-behavioral edits.
 - **Keep changes additive within a minor version;** anything breaking requires a major bump and maintainer sign-off.
-- **Honor the principles** in `PRINCIPLES.md`; if a change appears to violate one, stop and surface the conflict rather than proceeding.
+- **Honor the principles** in `principles.md`; if a change appears to violate one, stop and surface the conflict rather than proceeding.
 - **Follow [Cutting a release](#cutting-a-release) in full** when preparing one. Two versions get bumped, not one, and three of the steps fail silently.
 
 ## Deferred (post-MVP)

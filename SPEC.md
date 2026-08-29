@@ -83,7 +83,7 @@ A Document's **ID** is its file path within the Bundle, with the `.md` suffix re
 
 LKF does not define a separate identifier field; the ID is path-based. Renaming or moving a Document changes its ID, so producers SHOULD perform renames through tooling that rewrites inbound links ([Links](#links)). Consumers MUST tolerate links whose target does not resolve ([Links](#links)).
 
-> Stable opaque identifiers were considered and deferred; see [`PRINCIPLES.md`](docs/PRINCIPLES.md) and the project rationale. Because links are name-based, introducing ids later is additive and optional.
+> Stable opaque identifiers were considered and deferred; see [`principles.md`](docs/principles.md) and the project rationale. Because links are name-based, introducing ids later is additive and optional.
 
 ## Frontmatter layout and conformance
 Core fields defined by this specification appear at the **top level** of the frontmatter, alongside any domain-specific fields (a flat layout — no nesting under a reserved map).
@@ -391,7 +391,7 @@ An Asset link is a path relative to the linking Document, and MUST point inside 
 
 The two forms are distinguishable on sight and neither needs the other's rules — an Asset has no slug and no ID, only a path.
 
-Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Document ID — and how ties between same-slug Documents are broken — is governed by the link-resolution rules, which are not yet specified (see [`ROADMAP.md`](docs/ROADMAP.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling ([Document ID](#document-id)).
+Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Document ID — and how ties between same-slug Documents are broken — is governed by the link-resolution rules, which are not yet specified (see [`roadmap.md`](docs/roadmap.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling ([Document ID](#document-id)).
 
 ## Body conventions
 The body is CommonMark. Producers SHOULD favor structural markdown (headings, lists, tables, code fences) over prose. Two portable extensions are supported:
@@ -530,7 +530,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   The distinction is worth having because it is the one a consumer must act on. Two Documents can be identical prose with identical fields, and one belongs in permanent context while the other belongs behind an invocation. Nothing but the `type` can say which.
 
-- **A type earns its name when a consumer dispatches on it.** LKF does not fix what types exist (`PRINCIPLES.md`). The bar for declaring one — in this list or in a Bundle's own `_types/` — is concrete: **name the consumer, and name what it does differently.** If you cannot name both, the `type` is a label, and a label costs a name every other Bundle must then avoid.
+- **A type earns its name when a consumer dispatches on it.** LKF does not fix what types exist (`principles.md`). The bar for declaring one — in this list or in a Bundle's own `_types/` — is concrete: **name the consumer, and name what it does differently.** If you cannot name both, the `type` is a label, and a label costs a name every other Bundle must then avoid.
 
   Three forms that difference takes:
 
@@ -739,4 +739,4 @@ Document for it.**
 even though nothing currently uses it — a Bundle that adopted the free name for
 its own purposes would silently acquire the specification's meaning.
 
-> Known gaps and deferred features are tracked in [`ROADMAP.md`](docs/ROADMAP.md).
+> Known gaps and deferred features are tracked in [`roadmap.md`](docs/roadmap.md).
