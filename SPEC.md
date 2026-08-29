@@ -130,13 +130,95 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 ## Lifecycle
 A Document's lifecycle stage — nascent to active, with `archived` as the retired terminal, plus the named absence of a stage. Default (when absent): `unknown`.
 
-| Value | Meaning |
-|---|---|
-| `draft` | Work in progress; not ready to rely on. |
-| `provisional` | Usable but not yet ratified — may still change. |
-| `stable` | Ratified and trusted. |
-| `archived` | Retired from active use; kept for the record. (Supersession — "replaced by X" — is a relationship, not this status.) |
-| `unknown` | **Not a stage.** The value was not filled in, so at read time nobody knows it. (Default.) |
+| Value | Who may use it | When the shape changes |
+|---|---|---|
+| `draft` | the maintainers, who are developing it for use | **without notice.** Direction can reverse and nobody is told. |
+| `provisional` | anyone, and nobody should build on it | **with notice.** Direction can still reverse — you will hear about it. |
+| `stable` | anyone, and they may build on it | **with a path.** Direction can still change; you are not left stranded. |
+| `archived` | nobody — retired from active use, kept for the record | **not at all.** The obligation ends here. (Supersession — "replaced by X" — is a relationship, not this status.) |
+| `unknown` | **Not a stage.** The value was not filled in, so at read time nobody knows it. (Default.) | |
+
+### The ladder measures what you are owed when it changes
+
+**One axis, escalating: no obligation, then notice, then a migration path.**
+
+**`stable` does not mean frozen**, which is the reading people arrive with. It
+means **change carries a duty** — a `stable` Document can change direction, and
+its producer owes the reader a way across.
+
+**A migration path means something different for prose than for an interface.**
+For an API it is a shim or an overlap period. For a Document it may be that the
+old term still resolves, that a record names what replaced it, or that both
+readings are honoured for a stated period. **The obligation is that somebody
+thought about the reader**, not that a particular mechanism was used.
+
+**What this ladder deliberately does not say:**
+
+- **How correct it is.** A buggy `stable` Document is a bug report; a `stable`
+  Document that silently changes shape is a broken promise. **Only the second is
+  this field's business.** That a `draft` has had less time to be right is a
+  reasonable inference and not a declaration.
+- **Whether it will still exist.** That is [Survival](#survival), below.
+- **Whether anybody has checked it.** That is `verified` and the trust tiers.
+
+### What moves a Document up the ladder is audience, not use
+
+**Use by its own authors does not promote it.** An author exercising their own
+draft is testing it — that is what a draft is for — and the heaviest possible
+use by the people who wrote it says nothing about whether anybody else should
+rely on it. **A Document can be published, adopted, and used daily by its authors
+while honestly remaining `draft`.**
+
+**`provisional` begins when somebody else can rely on it.** The moment it is
+reachable by people who did not write it — another team, another project, a
+catalog somebody else consumes — the question stops being *is this working for
+us* and becomes *is this safe for them*. That is the change the ladder measures.
+
+**Availability makes the question live; it does not answer it.** Nothing promotes
+itself. **Ask the author at the moment it becomes reachable by somebody else, and
+take their answer** — including *no, still a draft*, which is a legitimate thing
+to publish and says something useful.
+
+**Assuming promotion from use is how a ladder about trust becomes a ladder about
+activity**, and the two are unrelated: a heavily-used draft and an untouched
+`stable` Document are both ordinary.
+
+### Lifecycle and survival answer different events
+
+**They look like they overlap and they do not.** Each owns one event:
+
+| the event | the field | what is owed |
+|---|---|---|
+| **the shape changes** | `lifecycle_status` | `stable` owes a path across |
+| **the thing ends** | `survival` | `promised` owes a process; `intended` owes nothing |
+
+**So `stable` with `survival: intended` is precise rather than contradictory** —
+*the shape will not move under you, and nobody has promised it will be here next
+year.* That describes most well-run software.
+
+**Every combination is meaningful.** Read down for how much it will change, and
+across for whether it will still be there:
+
+| | `experimental` | `intended` | `promised` |
+|---|---|---|---|
+| **`draft`** | finding out whether it is worth having; may change completely and may not survive | **the ordinary state of work in flight** — shape unsettled, meant to be kept | committed to the problem, with no idea yet what the answer looks like |
+| **`provisional`** | yours to try; changes come with notice, and it may still go | usable and not to be built on; meant to be kept, nothing promised | something will answer this; what is here today is not settled |
+| **`stable`** | rock solid, and it may vanish — use it and keep an exit | **most well-run software** — the shape will not move without a path, and nobody promised next year | depend on it: change comes with a path, withdrawal with a process |
+
+**The two corners are what prove the axes independent.** `stable` +
+`experimental` is solid and doomed; `draft` + `promised` is committed and
+unsettled. Neither is a contradiction, and neither is expressible on one ladder.
+
+**`draft` + `promised` sharpens what `promised` commits to.** It is not *this
+shape will persist* — the lifecycle field already governs shape. **It is that
+something will be here answering this**, whatever form it takes. A `promised`
+`draft` may be rewritten beyond recognition without the promise breaking;
+withdrawing it with nothing in its place is what would break it.
+
+**Demoting `promised` to `intended` is itself the announcement.** The promise was
+never *forever* — it is *you will see this field change before anything happens,
+and that change begins the process.* **It makes the commitment observable**, and
+it means a consumer should re-read the field rather than reading it once.
 
 **`unknown` means not filled in, not unknowable.** Whether the fact is lost or was simply never stated is not this field's business, and collapsing both into one value is what lets a single word serve wherever it is needed — the same sense [Actor convention](#actor-convention) gives it for actors.
 
