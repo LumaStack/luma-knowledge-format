@@ -40,7 +40,7 @@ See [[score-based-models]] for the continuous-time formulation.
 
 - [`PRINCIPLES.md`](docs/PRINCIPLES.md) — the design principles behind LKF.
 - [`ROADMAP.md`](docs/ROADMAP.md) — open questions and deferred features.
-- [`GUIDELINES.md`](docs/GUIDELINES.md) — how the project is run **and released**. Read it before cutting a release: the version lives in three files and a release that misses one is not detectable by reading any single file.
+- [`GUIDELINES.md`](docs/GUIDELINES.md) — how the project is run and released. Read it before cutting a release.
 
 ## License
 
