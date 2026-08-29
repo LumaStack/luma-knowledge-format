@@ -17,5 +17,5 @@ described in the same form as everything else, in plain markdown, in git.
 
 **Known gap.** `fields` is a map of field declarations, and LKF has no
 `field_type` for a map — user-defined composite field types are deferred (see
-`docs/ROADMAP.md`). It is declared as `text` here as a placeholder, which is
+`docs/roadmap.md`). It is declared as `text` here as a placeholder, which is
 honest about the gap rather than inventing a vocabulary the spec does not have.

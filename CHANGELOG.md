@@ -2,7 +2,7 @@
 
 Notable **specification** changes to the Luma Knowledge Format, newest first. The point of this file: see what changed *between versions* at a glance, without reading every commit. It records behavior-affecting changes and omits edits that don't change behavior (wording, typos, formatting, examples).
 
-Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). See [`GUIDELINES.md`](docs/GUIDELINES.md) for how this file is maintained.
+Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). See [`guidelines.md`](docs/guidelines.md) for how this file is maintained.
 
 ## [Unreleased]
 
@@ -157,7 +157,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 ### Removed
 - **`concept` is removed as a built-in type** *(breaking).* It extended `document`, declared no fields, and no consumer ever treated it differently from the root — which *Resolution and namespacing*'s own test calls *falsified rather than merely unused*. It was marked *under review* in `0.0.9`; this finishes the job.
   **What kept it was its retrieval mode, and that did not need a type.** *Retrieved when relevant* is what a plain `document` already is, so *Resolution and namespacing* now describes **two** base types rather than three: `workflow` is invoked, `policy` stands, and the third way is the root itself. **A type that names the default dispatches on nothing** — every consumer already treats anything without a more specific type exactly that way. The set is still closed: a further base type would have to name a way of engaging that is neither invoked, nor standing, nor the default.
-  **The name is released rather than reserved.** `ROADMAP.md` had held the type on the grounds that removing a name and re-adding it later collides with every Bundle that defined it privately in between. That cost is real and was accepted, because the deferral had begun costing more: *under review* does not stop adoption, and five Documents across two published Bundles had declared it — none for a reason `document` could not serve. A name that is noise stops being harmless once people use it.
+  **The name is released rather than reserved.** `roadmap.md` had held the type on the grounds that removing a name and re-adding it later collides with every Bundle that defined it privately in between. That cost is real and was accepted, because the deferral had begun costing more: *under review* does not stop adoption, and five Documents across two published Bundles had declared it — none for a reason `document` could not serve. A name that is noise stops being harmless once people use it.
   *Migration:* two forms, and the second is easy to miss.
   **`type: concept` becomes `type: document`.** Nothing else changes — the two were structurally identical, which is why the type went.
   **`extends: concept` in a Type Definition becomes `extends: document`.** `0.0.6` said outright that *"`extends: concept` keeps working unchanged"*, so anyone who read that has it in their type definitions; this release retracts it. **The contract is unaffected either way**: `concept` extended `document` and added nothing, so a type that inherited through it inherits exactly the same fields directly. Dropping the line entirely is equally correct, since every type implicitly extends `document`.

@@ -32,7 +32,7 @@ worse for somebody who adopted it alone. When something is useful only to luma,
 it belongs in a bundle rather than in the specification.
 
 **Changes here are ratified before a tag.** `SPEC.md` is authoritative for the
-version, and `docs/GUIDELINES.md` binds anybody working on it — branch from
+version, and `docs/guidelines.md` binds anybody working on it — branch from
 `develop`, never commit to `main`, never squash or rebase.
 
 ## Status

@@ -49,7 +49,7 @@ jobs:
             echo "  SPEC.md          what the specification is"
             echo "  bundle/BUNDLE.md which specification the built-in types render"
             echo
-            echo "See docs/GUIDELINES.md, 'Cutting a release'."
+            echo "See docs/guidelines.md, 'Cutting a release'."
             exit 1
           fi
 
