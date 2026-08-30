@@ -46,13 +46,13 @@ forward-looking.**
 | what changed in a release, and why | `CHANGELOG.md` |
 | a name the format once defined and no longer does | [`retired.md`](retired.md) |
 
-**And, if the specification is ever versioned, the superseded versions
-themselves** — `luma-knowledge-format/specification/lkf-0.0.19.md` sitting
-beside a newer one. A superseded specification is a record of what was true
-then, and the point of keeping it is that nobody edits it. Until that happens
-there is one specification and it is current, so this line describes a
-possibility rather than a place. (No `v` in the filename: *Field declarations*
-says `v1.2.3` is a tag convention, not a version.)
+**There is one specification file, `luma-knowledge-format/specification/lkf.md`.
+There are no versioned specification filenames, none are planned, and nothing
+supersedes anything.** Multi-versioning would follow from adopters depending on
+different specification versions at once, and that day has not come; the
+question is parked with its re-open trigger in
+[`one-folder-per-specification-version.md`](../.luma/backlog/ideas/one-folder-per-specification-version.md),
+and taking it up would be a maintainer's decision like any other.
 
 **Everywhere else — `README.md`, the rest of `docs/`, `CLAUDE.md`, `.luma/`,
 the Bundle — a sentence that is only true in the past is a defect.** Not untidy:

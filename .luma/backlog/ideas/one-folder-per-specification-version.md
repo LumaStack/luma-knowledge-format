@@ -42,16 +42,26 @@ Flat filenames keep every slug unique and ask nothing of the roadmap.
 
 ## Why neither was chosen
 
+**The condition that would force this has not arrived.** Multi-versioning
+becomes real when **adopters depend on different specification versions at
+once** — somebody pinned to an older release while somebody else tracks the
+newest, and both need the text they are reading to be present. Nobody does yet,
+and the maintainer's position on 2026-08-30 is that this is not expected in the
+foreseeable future.
+
+**This note is not a plan.** It exists so the two shapes and their costs are on
+record if that day comes, and so nobody re-derives them under time pressure.
+
 **There is one version.** Until a second has to be readable alongside it, both
 shapes are speculative and the folder is an empty level that costs a slug
 collision for a companion file that does not exist.
 
 ## Re-open trigger
 
-A second specification version must be readable alongside the current one,
-**or** the first version-scoped companion file is proposed — a grammar, a
-schema, or conformance tests.
+**Adopters depend on different specification versions at once.** That is the
+condition, and everything above is how to answer it when it arrives.
 
-**If it is the companion file that arrives first, take the folder shape and fix
-slug resolution with it**, rather than shipping the collision and hoping the
+**Or** the first version-scoped companion file is proposed — a grammar, a
+schema, conformance tests. **If that arrives first, take the folder shape and
+fix slug resolution with it**, rather than shipping the collision and hoping the
 roadmap catches up.
