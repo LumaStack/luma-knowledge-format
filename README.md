@@ -32,17 +32,17 @@ See [[score-based-models]] for the continuous-time formulation.
 
 ## Contents
 
-**Using the format**
+**Use the format**
 
 - [`SPEC.md`](SPEC.md) — the specification. Short by design.
 
-**Understanding the format**
+**Understand the format**
 
 - [`explanation.md`](docs/explanation.md) — **start here.** How this works and why it matters.
 - [`retired.md`](docs/retired.md) — names the format once defined and no longer does.
 - [`CHANGELOG.md`](CHANGELOG.md) — what changed between versions, and why.
 
-**Working on the format**
+**Work on the format**
 
 - [`principles.md`](docs/principles.md) — the design principles behind LKF.
 - [`roadmap.md`](docs/roadmap.md) — open questions and deferred features.
