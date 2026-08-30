@@ -3,7 +3,7 @@
 **A contract in plain files, read the same way by anyone or any tool.**<br>
 Standardize what matters. Extend the rest however you like.
 
-## Overview
+## Summary
 
 LKF is an open markdown format for representing knowledge, designed to be equally friendly to humans and agents. Its core is small by design — flexible and made to be extended — so it adapts to whatever you need to capture.
 
@@ -46,8 +46,8 @@ See [[score-based-models]] for the continuous-time formulation.
 **Work on the format**
 
 - [`principles.md`](docs/principles.md) — the design principles behind LKF.
-- [`roadmap.md`](docs/roadmap.md) — open questions and deferred features.
 - [`guidelines.md`](docs/guidelines.md) — how the project is run and released. Read it before cutting a release.
+- [`roadmap.md`](docs/roadmap.md) — open questions and deferred features.
 
 ## License
 
