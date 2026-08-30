@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.18] — 2026-08-30
+
 ### Changed
 - **The `bundle/` directory is renamed `luma-knowledge-format/`.** It was named for what it *is* — a Bundle — which every Bundle is, and which said nothing about which one. The directory is the unit of distribution, so its name is what somebody sees after copying it out of this repository, and `bundle/` sitting inside somebody else's project names nothing at all.
   *Migration:* if you vendored built-in Type Definitions from this repository, they are now under `luma-knowledge-format/_types/` rather than `bundle/_types/`. The file contents are unchanged.
@@ -306,7 +308,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.17...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.18...HEAD
+[0.0.18]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.17...v0.0.18
 [0.0.17]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.16...v0.0.17
 [0.0.16]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.15...v0.0.16
 [0.0.15]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.14...v0.0.15
