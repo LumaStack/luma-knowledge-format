@@ -1,6 +1,6 @@
 # What LKF is, and why it exists
 
-An introduction for someone who has just arrived. [`SPEC.md`](../SPEC.md) is the
+An introduction for someone who has just arrived. [The specification](../luma-knowledge-format/specification/lkf.md) is the
 rules; this is the reasoning, with enough examples to see the shape.
 
 ## The problem
@@ -152,29 +152,29 @@ only ever describes what is specific to the domain.
 ## The built-in types
 
 Four types ship with the format, [written in the format
-itself](../bundle/_types/). Reasons to care, rather than a restatement of each
+itself](../luma-knowledge-format/_types/). Reasons to care, rather than a restatement of each
 file:
 
-**[`document`](../bundle/_types/document.md)** — the root every type implicitly
+**[`document`](../luma-knowledge-format/_types/document.md)** — the root every type implicitly
 extends. You will rarely write `type: document` on a real file, and that is
 fine: its value is that every Document you *do* write already has somewhere to
 put provenance, without you declaring anything.
 
-**[`concept`](../bundle/_types/concept.md)** — the ordinary knowledge-base
+**[`concept`](../luma-knowledge-format/_types/concept.md)** — the ordinary knowledge-base
 entry, for a file that is *about* an idea rather than a record of an event.
 Reach for it when writing a wiki page and you have no better word.
 
-**[`bundle`](../bundle/_types/bundle.md)** — makes a directory into something
+**[`bundle`](../luma-knowledge-format/_types/bundle.md)** — makes a directory into something
 you can hand to someone else: a self-contained unit with a version they can pin
 and compare. Matters the moment your knowledge stops being only yours.
 
-**[`type_definition`](../bundle/_types/type_definition.md)** — the extension
+**[`type_definition`](../luma-knowledge-format/_types/type_definition.md)** — the extension
 point, and the reason the core can stay small. It is also self-hosting: the
 thing that defines types is itself a type, defined the same way.
 
 ## Where to go next
 
-- [`SPEC.md`](../SPEC.md) — the rules, in full. Short by design.
+- [`specification/lkf.md`](../luma-knowledge-format/specification/lkf.md) — the rules, in full. Short by design.
 - [`principles.md`](principles.md) — the values a design question is settled by
   when the specification is silent.
 - [`roadmap.md`](roadmap.md) — what is still open, and what `v0.1.0` would mean.

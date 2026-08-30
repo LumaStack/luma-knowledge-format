@@ -6,6 +6,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Changed
+- **The `bundle/` directory is renamed `luma-knowledge-format/`.** It was named for what it *is* — a Bundle — which every Bundle is, and which said nothing about which one. The directory is the unit of distribution, so its name is what somebody sees after copying it out of this repository, and `bundle/` sitting inside somebody else's project names nothing at all.
+  *Migration:* if you vendored built-in Type Definitions from this repository, they are now under `luma-knowledge-format/_types/` rather than `bundle/_types/`. The file contents are unchanged.
+
+- **The specification moved into that Bundle, at `luma-knowledge-format/specification/lkf.md`.** It previously sat at the repository root as `SPEC.md`.
+  **It moved so that it is distributed with the types rather than beside them.** The built-in Type Definitions are a rendering of what the specification says; a consumer holding the types without the prose has the shape of the contract and none of its meaning. The Bundle is the unit of distribution, so the thing being distributed had to be in it.
+  **`SPEC.md` was also the wrong name to keep.** `SPEC.md` and `spec.md` now name the plan for work in progress in agent tooling, which is close to the opposite of a published specification — and inside a Bundle the all-caps form would have claimed a reserved name under *Reserved files*, where the specification is content rather than machinery. The file is lowercase and named for the format.
+  **`specification/` is an ordinary directory and is not reserved.** A Bundle that carries a specification is a Bundle with a Document in it; the format claims no name there, and the layout is a worked example rather than a rule.
+  *Migration:* links to `SPEC.md` at the repository root no longer resolve. Section anchors are unchanged, so a link only needs its path rewritten.
+
+- **The specification is now a Document.** It carries frontmatter — `type: document`, `lkf_version`, `lifecycle: provisional`, `survival: promised` — because every file in a Bundle is either a Document or an Asset, and an Asset carries no frontmatter and is not knowledge. The `Version` header it used to carry in its body is gone: the version is `lkf_version`, which is a field this specification already defines for exactly this claim.
+  **Its links to `docs/` became absolute URLs.** As relative paths they would have pointed outside the Bundle, which *Links* forbids for the same reason self-containment exists — a link reaching out of a Bundle breaks the property that lets it be copied whole. An external address is permitted and is what these now are.
+
+- **`BUNDLE.md` declares `entrypoint: specification/lkf`.** A reader arriving at the Bundle is pointed at the specification rather than left to guess, which is what the field was added for in `v0.0.17`.
+
 ## [0.0.17] — 2026-08-29
 
 ### Changed
@@ -47,7 +62,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 ### Removed
 - **`SPEC.md` no longer carries any history, and the *Released names* section is gone from it.** The list of names the format once defined moved to [`docs/retired.md`](docs/retired.md), along with the three passages that recorded the same thing in prose — the `preload` note in *Field presence*, the `applies_to` note in *`matches`*, and the `index.md` withdrawal note in *Reserved files*.
   **"Released" was the wrong word and it collided with the thing it sounds like.** A *release* in this project is a published, tagged version; the section used the same word for a name the format gave up. The word is now **retired**, in one place, and `SPEC.md` never uses *released* for a name.
-  **`SPEC.md` states the current specification and nothing else.** Its reader is increasingly an agent holding the whole file in context, and such a reader cannot reliably tell a live rule from an obituary — it emits the dead one, which is how `organizing-a-bundle` came to teach `preload` for two releases after its removal. Rationale for rules in force stays; sentences only true in the past do not. The rule is written down in [`guidelines.md`](docs/guidelines.md#what-specmd-may-contain).
+  **`SPEC.md` states the current specification and nothing else.** Its reader is increasingly an agent holding the whole file in context, and such a reader cannot reliably tell a live rule from an obituary — it emits the dead one, which is how `organizing-a-bundle` came to teach `preload` for two releases after its removal. Rationale for rules in force stays; sentences only true in the past do not. The rule is written down in [`guidelines.md`](docs/guidelines.md#what-the-specification-may-contain).
   **One rule from that section was current rather than historical and stayed in `SPEC.md`:** re-reserving a name the specification previously defined is a breaking change, now a bullet under *Versioning*.
   *Migration:* none. Nothing changes about any Document, and no name's status changed — only where it is written down.
 

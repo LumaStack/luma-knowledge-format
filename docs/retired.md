@@ -2,12 +2,12 @@
 
 **Names this specification once defined and no longer does.** A retired name is
 **free**: nothing reserves it, no consumer reads it, and a producer may use it
-for unrelated domain data — the open-vocabulary rule in `SPEC.md`,
-[Frontmatter layout and conformance](../SPEC.md#frontmatter-layout-and-conformance),
+for unrelated domain data — the open-vocabulary rule in the specification,
+[Frontmatter layout and conformance](../luma-knowledge-format/specification/lkf.md#frontmatter-layout-and-conformance),
 applies to it like any other unrecognised name.
 
 **This file is history, not specification.** Nothing here is normative and no
-`SPEC.md` rule depends on it. It exists to answer one question — *is `preload`
+rule in the specification depends on it. It exists to answer one question — *is `preload`
 still a thing?* — without a reader having to diff releases or search prose for
 a name that, by definition, is no longer written anywhere.
 
@@ -22,9 +22,9 @@ cannot mean *shipped* and *given up* in the same repository.
 | `concept` | a Document type for background | `v0.0.10` | `document` |
 | `preload` | a core field: when a Document should be placed in front of a reader | `v0.0.12` | nothing — delivery is a consumer's decision, derived |
 | `compliance` | a field grading how strongly a rule obliged compliance | never specified; invented and withdrawn in the estate during `v0.0.13` | nothing — a `policy` binds by being one, and `on_violation` says what happens when it does not |
-| `index.md` | a reserved file: derived per-directory navigation | `v0.0.14` | nothing — see [Reserved files](../SPEC.md#reserved-files) |
-| `applies_to` | the field naming what makes a Document surface | `v0.0.15` | [`matches`](../SPEC.md#matches) |
-| `entry_point` | the Bundle field naming where a reader should start | `v0.0.17` | [`entrypoint`](../SPEC.md#bundlemd) |
+| `index.md` | a reserved file: derived per-directory navigation | `v0.0.14` | nothing — see [Reserved files](../luma-knowledge-format/specification/lkf.md#reserved-files) |
+| `applies_to` | the field naming what makes a Document surface | `v0.0.15` | [`matches`](../luma-knowledge-format/specification/lkf.md#matches) |
+| `entry_point` | the Bundle field naming where a reader should start | `v0.0.17` | [`entrypoint`](../luma-knowledge-format/specification/lkf.md#bundlemd) |
 
 ## Why each was retired
 
@@ -58,7 +58,7 @@ concept that happened to share a word.
 ## What a retired name means for a tool
 
 A retired name appearing in a published Document is **not a conformance
-question.** `SPEC.md` stands: such a Document is valid, and a consumer
+question.** The specification stands: such a Document is valid, and a consumer
 **MUST NOT** reject it. But a retired name in a Document's *prose* is usually a
 rule still instructing authors to declare something nothing reads — which has
 happened here, where `organizing-a-bundle` taught `preload` for two releases
@@ -67,5 +67,5 @@ after its removal. A consumer **MAY** report it.
 **A retired name may be reserved again, and doing so is a breaking change** even
 though nothing currently uses it — a Bundle that had adopted the free name for
 its own purposes would silently acquire the specification's meaning. That rule
-is stated in [Versioning](../SPEC.md#versioning); it is repeated here because
+is stated in [Versioning](../luma-knowledge-format/specification/lkf.md#versioning); it is repeated here because
 this is the list a reader consults before reusing one of these names.
