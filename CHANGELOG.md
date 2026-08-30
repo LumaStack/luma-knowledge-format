@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.17] — 2026-08-29
+
 ### Changed
 - **`lifecycle_status` is renamed to `lifecycle`** *(breaking)*. Same values, same meaning, shorter name.
   **The old name was chosen against `status`, not for `_status`.** The specification's own note says it is named `lifecycle_status` *"so it never collides with a tool's own workflow state"* — a task's `todo | in-progress | done`. **`lifecycle` avoids that collision equally well**, because the word at risk was `status` and this name does not contain it.
@@ -40,7 +42,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 - **`entry_point` is now `entrypoint`** *(breaking)*. One word, so that the same word names the same thing at every level it appears — a Bundle says where to start reading, and a consumer wanting the same idea one level up or down should not have to learn a second spelling for it.
   **The underscore was carrying a distinction that does not exist.** Every other multi-word field here names two different things joined — `field_presence`, `on_violation`, `lkf_version`. *Entrypoint* is one idea with one name, and writing it as two words invited exactly the collision it caused: a consumer building a project-level entrypoint read `entry_point` as *a different concept that happens to share a word*.
   *Migration:* rename the key in every `BUNDLE.md` that declares one. Nothing else changes — same value, same meaning, same `optional` presence.
-- ***Released names* records `entry_point` as released.** The name is free; nothing reserves it.
+- **`entry_point` is recorded in [`retired.md`](docs/retired.md).** The name is free; nothing reserves it.
+
+### Removed
+- **`SPEC.md` no longer carries any history, and the *Released names* section is gone from it.** The list of names the format once defined moved to [`docs/retired.md`](docs/retired.md), along with the three passages that recorded the same thing in prose — the `preload` note in *Field presence*, the `applies_to` note in *`matches`*, and the `index.md` withdrawal note in *Reserved files*.
+  **"Released" was the wrong word and it collided with the thing it sounds like.** A *release* in this project is a published, tagged version; the section used the same word for a name the format gave up. The word is now **retired**, in one place, and `SPEC.md` never uses *released* for a name.
+  **`SPEC.md` states the current specification and nothing else.** Its reader is increasingly an agent holding the whole file in context, and such a reader cannot reliably tell a live rule from an obituary — it emits the dead one, which is how `organizing-a-bundle` came to teach `preload` for two releases after its removal. Rationale for rules in force stays; sentences only true in the past do not. The rule is written down in [`guidelines.md`](docs/guidelines.md#what-specmd-may-contain).
+  **One rule from that section was current rather than historical and stayed in `SPEC.md`:** re-reserving a name the specification previously defined is a breaking change, now a bullet under *Versioning*.
+  *Migration:* none. Nothing changes about any Document, and no name's status changed — only where it is written down.
 
 ## [0.0.16] — 2026-08-26
 
@@ -282,7 +291,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.16...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.17...HEAD
+[0.0.17]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.16...v0.0.17
 [0.0.16]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.15...v0.0.16
 [0.0.15]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.14...v0.0.15
 [0.0.14]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.13...v0.0.14

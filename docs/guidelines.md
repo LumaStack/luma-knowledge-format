@@ -36,6 +36,40 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 > **`develop` is retired.** It was a long-lived second branch accumulating anything, and it rotted: thirty-one commits behind `main` and unused since `v0.0.10`. A branch named for the release it is building is finite, says what it is for, and disappears when it is done. `develop` said only *later*.
 
+## What `SPEC.md` may contain
+
+**`SPEC.md` states the current specification and nothing else.** No history, no
+record of what a field used to be called, no note explaining why something was
+removed. A reader — and increasingly a reader is an agent with the whole file in
+its context — should be able to take every sentence in it as currently true.
+
+**History muddies exactly the file that can least afford it.** A paragraph
+saying *`applies_to` was this field's name through `v0.0.13`* teaches a name
+nobody should write, in the one document whose job is to say what to write. An
+agent reading the spec to produce a Document cannot reliably tell a live rule
+from an obituary, and it will occasionally emit the dead one — which happened:
+`organizing-a-bundle` taught `preload` for two releases after its removal.
+
+Each kind of history has a home already:
+
+| what | where |
+|---|---|
+| what changed in a release, and why | `CHANGELOG.md` |
+| a name the format gave up | [`retired.md`](retired.md) |
+| why a decision went the way it did | the commit message that landed it |
+| something not decided yet | [`roadmap.md`](roadmap.md) |
+
+**Design rationale is not history and stays in `SPEC.md`.** *Why this field is
+optional*, *why this vocabulary is closed* — those explain a rule that is
+currently in force, and stripping them would leave rules nobody can argue with.
+The test is tense, not tone: **if a sentence is only true in the past, it does
+not belong in `SPEC.md`.**
+
+**Never call it "released".** A *release* in this project is a published, tagged
+version. A name the format gave up is **retired**, and it is listed in
+[`retired.md`](retired.md) — one word cannot mean *shipped* and *given up* in
+the same repository.
+
 ## Changelog
 
 `CHANGELOG.md` lets a reader see **what changed between versions at a glance** — without diffing commits — and lets them skip minor edits that don't affect behavior.
@@ -79,6 +113,12 @@ The tag, the release commit and the GitHub Release all carry the same bare versi
 
 The upgrade section is not a duplicate of the changelog's *Migration:* notes. Those are per-change and written as the change lands; this is the whole upgrade in one place, written once the release is known.
 
+**The body never opens with a heading.** ⚠️ **Do not paste the changelog section in whole** — it carries `## [x.y.z] — YYYY-MM-DD` at its top, which GitHub renders directly beneath the release title that already says the version. That is the same second title [A release is titled with its version and nothing else](#a-release-is-titled-with-its-version-and-nothing-else) exists to prevent, moved one line down — and the rule is not satisfied by fixing the title afterwards, which is what has had to happen. **The first `##` in the body is a change group or `Upgrading`,** never the version.
+
+**A paste is also how the `Upgrading` section goes missing** — the changelog has no such section to copy, so pasting produces notes without the one part written for the person deciding whether to upgrade. `v0.0.14`, `v0.0.15` and `v0.0.16` all shipped this way. The body is **written from** the changelog, not **copied from** it.
+
+**Section references must be resolved.** The changelog and the spec cross-reference by section name; a body pasted from an older changelog can carry `§13`-style numbers this specification stopped using when [sections became named rather than numbered](#what-specmd-may-contain). Read the body once as a stranger would before publishing.
+
 ### The version lives in two files, and both have to
 
 - `SPEC.md` — the `Version` header. The specification's version.
@@ -105,7 +145,9 @@ The upgrade section is not a duplicate of the changelog's *Migration:* notes. Th
 ## Rules for agents working on the format
 
 An agent working in this repository MUST:
+- **Read this file in full before cutting a release.** Not skim it, not recall it — open it. The evidence that this is not happening: `v0.0.12` and `v0.0.13` are tagged with no GitHub Release at all (step 7), and `v0.0.14`, `v0.0.15` and `v0.0.16` each shipped a body pasted whole from the changelog — duplicate heading, no `Upgrading` section — leaving the maintainer to correct the titles by hand.
 - **Not change `SPEC.md` normatively without a ratified decision.** Drafting a proposal is fine; merging it into the spec as settled is not.
+- **Not put history in `SPEC.md`** — see [What `SPEC.md` may contain](#what-specmd-may-contain). A retired name goes in [`retired.md`](retired.md), a rationale goes in the commit message.
 - **Record the rationale in the commit message** for every accepted change, so the "why" is never lost. (When commit-log spelunking gets painful, graduate to an append-only `DECISIONS.md`.)
 - **Work on a branch off `main`, never commit directly to `main`** (except a ratified critical hotfix) — `main` stays equal to the latest release.
 - **Merge, never squash or rebase.** Squashing collapses the per-commit rationale this project requires be preserved.
