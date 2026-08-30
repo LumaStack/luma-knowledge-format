@@ -151,7 +151,7 @@ only ever describes what is specific to the domain.
 
 ## The built-in types
 
-Four types ship with the format, [written in the format
+The built-in types ship with the format, [written in the format
 itself](../luma-knowledge-format/_types/). Reasons to care, rather than a restatement of each
 file:
 
@@ -160,9 +160,16 @@ extends. You will rarely write `type: document` on a real file, and that is
 fine: its value is that every Document you *do* write already has somewhere to
 put provenance, without you declaring anything.
 
-**[`concept`](../luma-knowledge-format/_types/concept.md)** — the ordinary knowledge-base
-entry, for a file that is *about* an idea rather than a record of an event.
-Reach for it when writing a wiki page and you have no better word.
+**[`workflow`](../luma-knowledge-format/_types/workflow.md)** — a procedure a
+consumer *runs* rather than reads, projected into whatever form does the
+running. Nothing else in a Bundle makes that claim, which is why the type
+exists rather than a tag.
+
+**[`policy`](../luma-knowledge-format/_types/policy.md)** — a rule that
+constrains the consumer's own behaviour instead of informing it. Two Documents
+can be identical prose with identical fields, and one belongs in permanent
+context while the other belongs behind an invocation; nothing but the `type`
+can say which.
 
 **[`bundle`](../luma-knowledge-format/_types/bundle.md)** — makes a directory into something
 you can hand to someone else: a self-contained unit with a version they can pin

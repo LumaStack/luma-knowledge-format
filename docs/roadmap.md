@@ -35,10 +35,6 @@ under *Undecided* below; the third is new.
    `version`", which *Type Definitions* never declares. The `semver` field type now exists to
    hold it, so the remaining questions are whether a Type Definition carries one
    at all and what a bump means for copies already vendored elsewhere.
-3. **~~Whether `concept` should carry fields of its own.~~** Resolved by removing
-   the type — see the `0.0.10` entry in `CHANGELOG.md`. The observation that
-   made it a question (`type: concept` and `type: document` were structurally
-   identical) turned out to be the answer.
 
 ## What `v0.1.0` would mean
 
@@ -87,21 +83,6 @@ Reading without writing. Using a fraction of it. Elapsed time.
   **This now has a real consumer and is the highest-value item here.** A shared type library — the thing *Resolution and namespacing* already contemplates when it says types are shared *by vendoring* — is only safe if drift is loud. Without provenance, the choice for a widely-used type is between an unprefixed built-in the format did not want and copies that disagree silently. **Provenance is what makes the namespaced-and-vendored path viable**, and it is what keeps the built-in list short.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in *Type Definitions*** — the example Type Definition inherits from `source`, which is neither a reserved built-in nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
-- **~~Whether `concept` survives.~~ It does not.** Removed in `0.0.10`.
-
-  The argument that had held it here was that removing a name and re-adding it
-  later collides with every Bundle that defined it privately in between. **That
-  cost is real and was accepted**, because the deferral had started costing more:
-  a type marked *under review* still gets adopted, and five Documents across two
-  published Bundles had declared it, none of them for a reason a `document` could
-  not serve. **A name that is noise is not harmless once people begin using it.**
-
-  Its retrieval mode did not need rescuing. *Retrieved when relevant* is what a
-  plain `document` already is, so the mode survives the type — it simply lives on
-  the root, where it always was.
-
-  *Re-open only if a durable knowledge base turns out to need fields a `document`
-  cannot give it, which is what would have justified the type in the first place.*
 - **Reserved-file formats** — the exact structure of `index.md` and `LOG.md`.
 - **How many names the format claims at a Bundle root.** *Reserved files* reserves four — `BUNDLE.md`, `index.md`, `LOG.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
 
