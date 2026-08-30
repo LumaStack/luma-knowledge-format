@@ -61,28 +61,34 @@ on what it found. `concept` was retired in `v0.0.10` and `docs/` was still
 teaching it as a shipping built-in eight releases later, linking to a file that
 had not existed the whole time.
 
-### Citing the past is not living in it
+### A rule may rest on the past and still be current
 
-**The rule bans teaching a dead thing, not remembering one.** A retired name
-presented as usable is the defect. A past event cited as the evidence for a rule
-now in force is the rule's justification, and removing it would leave rules
-nobody can argue with.
+**History is a record of what is no longer true. A rule that cites what produced
+it is not that.** The sentence is doing present work — its claim is live, and
+the past is the evidence. **Nothing here is in tension, so nothing needs an
+exception**, and a rule that appeared to require one would be the wrong rule.
 
-The two read differently at a glance:
+Three sentences, and only the last is a defect:
 
 | | |
 |---|---|
-| **teaching** — a defect | *`concept` is the ordinary knowledge-base entry; reach for it when writing a wiki page* |
-| **citing** — keep it | *`README.md` stated the version and went stale three times, which is why it no longer does* |
+| **history** — belongs in the two files | *`concept` was a Document type for background, retired in `v0.0.10`* |
+| **a live rule with its evidence** — belongs wherever the rule does | *`README.md` stated the version and went stale three times, which is why it no longer does* |
+| **teaching something dead** — a defect anywhere | *`concept` is the ordinary knowledge-base entry; reach for it when writing a wiki page* |
 
-**The test is what a reader would do with the sentence.** One tells them to
-write something nothing reads. The other tells them why a rule exists. This file
-is largely built of the second kind and should stay that way.
+**The test is the claim, not the tense.** *What is this sentence asking a reader
+to do?* Follow a rule in force — keep it, however much past it carries. Reach
+for something nothing reads — that is the defect, however briefly it is
+mentioned.
 
-**Design rationale is not history either.** *Why this field is optional*, *why
-this vocabulary is closed* — those explain a rule currently in force. **The test
-is tense, not tone: if a sentence is only true in the past, and it is not
-evidence for something that is true now, it does not belong.**
+**This is why the rule costs nothing.** A document built on its own history is
+already current: every rule in this file arrived from something that went wrong,
+and saying so is what makes the rules arguable rather than arbitrary. **Strip
+that and you get assertions nobody can weigh** — a worse document, in service of
+a rule that was never aimed at it.
+
+**Design rationale is the same shape.** *Why this field is optional*, *why this
+vocabulary is closed* — the claim is a rule in force, so it stays.
 
 **Two homes that are not files.** Why a decision went the way it did lives in
 **the commit message that landed it**; something not decided yet lives in
@@ -112,11 +118,13 @@ from an obituary, and it will occasionally emit the dead one — which happened:
 lives](#where-history-lives): *why this field is optional*, *why this vocabulary
 is closed* explain a rule currently in force.
 
-**What the specification does not get is the citing exception.** Elsewhere a
-past incident may justify a rule. Here it may not — the file is read to produce
-Documents, by readers holding all of it at once, and a cautionary tale about a
-dead field is indistinguishable from the field at the moment it is acted on.
-Rationale in `lkf.md` argues from the rule, never from its history.
+**What `lkf.md` may not do is name a retired thing at all**, even in service of
+a live rule. Elsewhere the evidence for a rule can safely include what it
+replaced. Here it cannot: the file is read to *produce* Documents, by readers
+holding all of it at once, and a dead field named anywhere in it is a dead field
+in the reader's context. **The rule is the same; only the margin for error is
+different.** Rationale in `lkf.md` argues from what the rule achieves, never
+from what preceded it.
 
 ## Changelog
 
@@ -271,7 +279,7 @@ skip a version — the size decides the tier, not whether there is one.
 An agent working in this repository MUST:
 - **Read this file in full before cutting a release.** Not skim it, not recall it — open it. The evidence that this is not happening: `v0.0.12` and `v0.0.13` are tagged with no GitHub Release at all (step 7), and `v0.0.14`, `v0.0.15` and `v0.0.16` each shipped a body pasted whole from the changelog — duplicate heading, no `Upgrading` section — leaving the maintainer to correct the titles by hand.
 - **Not change the specification normatively without a ratified decision.** Drafting a proposal is fine; merging it into the spec as settled is not.
-- **Not put history anywhere but `CHANGELOG.md` and [`retired.md`](retired.md)** — see [Where history lives](#where-history-lives). A retired name goes in `retired.md`, what changed in a release goes in the changelog, a rationale goes in the commit message. Elsewhere a past incident may be cited as evidence for a rule in force; **in the specification it may not** ([What the specification may contain](#what-the-specification-may-contain)).
+- **Not put history anywhere but `CHANGELOG.md` and [`retired.md`](retired.md)** — see [Where history lives](#where-history-lives). A retired name goes in `retired.md`, what changed in a release goes in the changelog, a rationale goes in the commit message. A rule may cite what produced it and stays current by doing so; **the specification alone may not name a retired thing even then** ([What the specification may contain](#what-the-specification-may-contain)).
 - **Not leave a retired name behind when one is retired.** Removing it from the specification is half the job — sweep `README.md`, `docs/`, `CLAUDE.md` and `.luma/` in the same change. `concept` was taught in `docs/` for eight releases after removal, and `index.md` for four.
 - **Record the rationale in the commit message** for every accepted change, so the "why" is never lost. (When commit-log spelunking gets painful, graduate to an append-only `DECISIONS.md`.)
 - **Work on a branch off `main`, never commit directly to `main`** (except a ratified critical hotfix) — `main` stays equal to the latest release.
