@@ -52,7 +52,8 @@ supersedes anything.** Multi-versioning would follow from adopters depending on
 different specification versions at once, and that day has not come; the
 question is parked with its re-open trigger in
 [`one-folder-per-specification-version.md`](../.luma/backlog/ideas/one-folder-per-specification-version.md),
-and taking it up would be a maintainer's decision like any other.
+and taking it up would be a deliberate decision with real obligations
+attached rather than a filing change.
 
 **Everywhere else — `README.md`, the rest of `docs/`, `CLAUDE.md`, `.luma/`,
 the Bundle — a sentence that is only true in the past is a defect.** Not untidy:

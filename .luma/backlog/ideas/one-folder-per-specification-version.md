@@ -56,6 +56,35 @@ record if that day comes, and so nobody re-derives them under time pressure.
 shapes are speculative and the folder is an empty level that costs a slug
 collision for a companion file that does not exist.
 
+## Why it would not be a light decision
+
+**The layout is the small part.** Choosing flat or folder is an afternoon.
+What follows it is not, and the note above should not be read as though the
+question were where to put files.
+
+**Every version kept becomes a standing obligation.** Publishing an old
+specification alongside the current one says it stays readable, stays unedited,
+and stays correct about what it described. That is a promise to whoever pinned
+it, and it does not expire on its own.
+
+**It is a migration-path commitment in this format's own vocabulary.** *Lifecycle*
+defines `stable` as change that **owes the reader a way across**, and keeping
+old versions readable is one of the ways that obligation is honoured. The
+format is `0.0.z` and says outright it has not earned `v0.1.0` — taking on a
+`stable`-shaped duty before then is making a promise the project has explicitly
+declined to make.
+
+**It breaks the version invariant.** `guidelines.md` pins `BUNDLE.md`'s
+`version` to the specification's, and CI refuses a mismatch. A Bundle carrying
+two specification versions has no single version to track, so `version` becomes
+the Bundle's own and `lkf_version` states the grammar. That is a change to how
+this repository is released, not to where a file sits.
+
+**And it commits to supporting adopters who stay behind**, which is a support
+posture rather than a directory. The question to answer first is not *flat or
+folder* but *what do we owe somebody pinned to an old version, and for how
+long*.
+
 ## Re-open trigger
 
 **Adopters depend on different specification versions at once.** That is the
