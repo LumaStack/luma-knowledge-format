@@ -3,14 +3,6 @@ type: luma/project
 title: luma-knowledge-format
 disclosure_level: public
 description: The LKF specification itself — open it for frontmatter fields, the type system, conformance rules, or what a Bundle is. Not for anything written in the format.
-owns:
-  - the specification
-  - built-in type definitions
-  - conformance rules and the format's version
-must_not_own:
-  - tooling that reads or writes the format
-  - knowledge written in the format
-  - any organization's content or conventions
 ---
 
 ## Why it exists
