@@ -74,29 +74,26 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **This was the pressure behind wanting one repository per shared type**, and splitting would never have fixed it — a repository has one version too. Declaring the version on the type is what removes it: a consumer that vendored one type out of six no longer sees a bump caused by the other five.
 - **~~Should `lifecycle` carry `unknown`, as its default?~~ Yes.** Shipped in `0.0.11`. `unknown` is not a stage — it says the value was not filled in — and it is the default because both real defaults would be wrong guesses.
-- **~~`policy` and `preload` answer overlapping questions.~~ Resolved in `0.0.11`.** They were on the same axis: all three engagement modes were written in loading vocabulary, so two collided with a loading field. Redefined by what a consumer *does* — run it, be bound by it, read it — they are orthogonal, and a `policy` with `preload: optional` stops reading as a contradiction.
-
-  **What is not solved is reachability.** A rule nobody loads still governs nothing. The answer is something always present naming the rules that exist, and nothing does that yet.
+- **Reachability of rules.** A rule nobody loads still governs nothing. *Resolution and namespacing* names the problem and declines to solve it: the answer is something always present naming the rules that exist — an index costs a line where the rule costs a page — and nothing does that yet.
 
 - **Vendored-type provenance** — *Resolution and namespacing* makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, *`sources`*, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 
   **This now has a real consumer and is the highest-value item here.** A shared type library — the thing *Resolution and namespacing* already contemplates when it says types are shared *by vendoring* — is only safe if drift is loud. Without provenance, the choice for a widely-used type is between an unprefixed built-in the format did not want and copies that disagree silently. **Provenance is what makes the namespaced-and-vendored path viable**, and it is what keeps the built-in list short.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in *Type Definitions*** — the example Type Definition inherits from `source`, which is neither a reserved built-in nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
-- **Reserved-file formats** — the exact structure of `index.md` and `LOG.md`.
-- **How many names the format claims at a Bundle root.** *Reserved files* reserves four — `BUNDLE.md`, `index.md`, `LOG.md`, `_types/` — and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
+- **Reserved-file formats** — the exact structure of `LOG.md`.
+- **How many names the format claims at a Bundle root.** *Reserved files* reserves `BUNDLE.md`, `LOG.md` and `_types/`, and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
 
   The alternative is to claim **one** name and nest everything reserved beneath it:
 
   ```
   _lkf/
     types/
-    index.md
     log.md
   bundle.md        ← arguably stays at root, since it names the thing itself
   ```
 
-  One namespace to defend rather than four, and future reserved names cost nothing to add. It is the same move made twice elsewhere for the same reason — a catalog's content under one subtree, a project's store under `.luma/`.
+  One namespace to defend rather than one per name, and future reserved names cost nothing to add. It is the same move made twice elsewhere for the same reason — a catalog's content under one subtree, a project's store under `.luma/`.
 
   **What blocks it is the name.** `_lkf/` stamps the format's own initials into every Bundle's directory structure, which bets the format will always be the thing reading them; a format meant to outlive its origin should not announce whose idea it was in every path. No generic single word has survived: `_meta/` names a category rather than a job, `_reserved/` is honest and ugly. That is the open part.
 
@@ -143,13 +140,13 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   Whether strictness is set *on* a type, or whether you get it by declaring a different type that is always strict, is open. *"I'm assuming the new-type route is best, but not sure."*
 
-  **The seam it would use already exists, and *Frontmatter layout and conformance* is not in the way.** *Frontmatter layout and conformance*'s `MUST NOT reject` governs **conformance** — whether a file *is* a Document. It says nothing about whether a tool will *act* on one. The specification already relies on that gap: `preload: mandatory` says a consumer that cannot load the Document **refuses rather than proceeding**, which is a consumer failing without rejecting anything as non-conformant. **A strict mode is that same move, generalised** — the file stays a valid Document and the work stops.
+  **The seam it would use already exists, and *Frontmatter layout and conformance* is not in the way.** *Frontmatter layout and conformance*'s `MUST NOT reject` governs **conformance** — whether a file *is* a Document. It says nothing about whether a tool will *act* on one. The specification already relies on that gap: *Validation*'s `--strict` escalates real violations to errors while conformance is untouched — a consumer refusing to proceed without rejecting anything as non-conformant. **A strict mode is that same move, generalised** — the file stays a valid Document and the work stops.
 
   **It may need no new vocabulary.** *Field presence* says obligation *"describes intent. Whether and how a tool checks it is a suggested validation framework, not a rule."* On that reading **strict mode is simply the switch that turns published intent into an enforced contract** — the contract is already fully specified in the Type Definition and merely unbinding. If that is all it is, nothing new is declared and the question becomes who throws the switch.
 
   **Where it should live is the real question, and there is precedent cutting both ways.** Against putting it on the artifact: obligation is deliberately *not* a property of a bundle, because *"the same bundle is mandatory at one organization and merely available everywhere else — the publisher declares it; the artifact does not carry it."* The same argument says a `decision` type might warrant strictness at a bank and not at a startup. For putting it on the artifact: the idea explicitly wants producers to be able to *signal* exactness, which a consumer-side setting cannot do.
 
-  **The shape that satisfies both is probably the `preload: mandatory` one** — the author declares the claim, the consumer decides whether to honour it, and what is refused is the work rather than the document.
+  **The shape that satisfies both is probably the published-intent one** — the author declares the claim in the Type Definition, the consumer decides whether to enforce it, and what is refused is the work rather than the document.
 
   **The always-strict-type route has one property the flag does not:** strictness travels with the name and cannot be quietly turned off. That is also its cost — no deployment can relax it, and the type vocabulary doubles if every strict thing needs a strict twin. Whether inheritance could carry it instead (`extends` some strict root) runs into single inheritance and into using a field mechanism for a non-field property.
 
