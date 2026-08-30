@@ -36,9 +36,67 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 > **`develop` is retired.** It was a long-lived second branch accumulating anything, and it rotted: thirty-one commits behind `main` and unused since `v0.0.10`. A branch named for the release it is building is finite, says what it is for, and disappears when it is done. `develop` said only *later*.
 
+## Where history lives
+
+**Two files hold history. Every other file in this repository is current or
+forward-looking.**
+
+| what | where |
+|---|---|
+| what changed in a release, and why | `CHANGELOG.md` |
+| a name the format once defined and no longer does | [`retired.md`](retired.md) |
+
+**And, if the specification is ever versioned, the superseded versions
+themselves** — `luma-knowledge-format/specification/lkf-0.0.19.md` sitting
+beside a newer one. A superseded specification is a record of what was true
+then, and the point of keeping it is that nobody edits it. Until that happens
+there is one specification and it is current, so this line describes a
+possibility rather than a place. (No `v` in the filename: *Field declarations*
+says `v1.2.3` is a tag convention, not a version.)
+
+**Everywhere else — `README.md`, the rest of `docs/`, `CLAUDE.md`, `.luma/`,
+the Bundle — a sentence that is only true in the past is a defect.** Not untidy:
+a defect. A reader cannot tell a live rule from an obituary, and an agent acts
+on what it found. `concept` was retired in `v0.0.10` and `docs/` was still
+teaching it as a shipping built-in eight releases later, linking to a file that
+had not existed the whole time.
+
+### Citing the past is not living in it
+
+**The rule bans teaching a dead thing, not remembering one.** A retired name
+presented as usable is the defect. A past event cited as the evidence for a rule
+now in force is the rule's justification, and removing it would leave rules
+nobody can argue with.
+
+The two read differently at a glance:
+
+| | |
+|---|---|
+| **teaching** — a defect | *`concept` is the ordinary knowledge-base entry; reach for it when writing a wiki page* |
+| **citing** — keep it | *`README.md` stated the version and went stale three times, which is why it no longer does* |
+
+**The test is what a reader would do with the sentence.** One tells them to
+write something nothing reads. The other tells them why a rule exists. This file
+is largely built of the second kind and should stay that way.
+
+**Design rationale is not history either.** *Why this field is optional*, *why
+this vocabulary is closed* — those explain a rule currently in force. **The test
+is tense, not tone: if a sentence is only true in the past, and it is not
+evidence for something that is true now, it does not belong.**
+
+**Two homes that are not files.** Why a decision went the way it did lives in
+**the commit message that landed it**; something not decided yet lives in
+[`roadmap.md`](roadmap.md), which is forward-looking and therefore not an
+exception to any of this.
+
+**Never call it "released".** A *release* in this project is a published, tagged
+version. A name the format gave up is **retired** — one word cannot mean
+*shipped* and *given up* in the same repository.
+
 ## What the specification may contain
 
-**`lkf.md` states the current specification and nothing else.** No history, no
+**The strictest instance of [Where history lives](#where-history-lives).**
+`lkf.md` **states the current specification and nothing else.** No history, no
 record of what a field used to be called, no note explaining why something was
 removed. A reader — and increasingly a reader is an agent with the whole file in
 its context — should be able to take every sentence in it as currently true.
@@ -50,25 +108,15 @@ agent reading the spec to produce a Document cannot reliably tell a live rule
 from an obituary, and it will occasionally emit the dead one — which happened:
 `organizing-a-bundle` taught `preload` for two releases after its removal.
 
-Each kind of history has a home already:
+**Design rationale stays**, on the test in [Where history
+lives](#where-history-lives): *why this field is optional*, *why this vocabulary
+is closed* explain a rule currently in force.
 
-| what | where |
-|---|---|
-| what changed in a release, and why | `CHANGELOG.md` |
-| a name the format gave up | [`retired.md`](retired.md) |
-| why a decision went the way it did | the commit message that landed it |
-| something not decided yet | [`roadmap.md`](roadmap.md) |
-
-**Design rationale is not history and stays in the specification.** *Why this field is
-optional*, *why this vocabulary is closed* — those explain a rule that is
-currently in force, and stripping them would leave rules nobody can argue with.
-The test is tense, not tone: **if a sentence is only true in the past, it does
-not belong in the specification.**
-
-**Never call it "released".** A *release* in this project is a published, tagged
-version. A name the format gave up is **retired**, and it is listed in
-[`retired.md`](retired.md) — one word cannot mean *shipped* and *given up* in
-the same repository.
+**What the specification does not get is the citing exception.** Elsewhere a
+past incident may justify a rule. Here it may not — the file is read to produce
+Documents, by readers holding all of it at once, and a cautionary tale about a
+dead field is indistinguishable from the field at the moment it is acted on.
+Rationale in `lkf.md` argues from the rule, never from its history.
 
 ## Changelog
 
@@ -223,7 +271,8 @@ skip a version — the size decides the tier, not whether there is one.
 An agent working in this repository MUST:
 - **Read this file in full before cutting a release.** Not skim it, not recall it — open it. The evidence that this is not happening: `v0.0.12` and `v0.0.13` are tagged with no GitHub Release at all (step 7), and `v0.0.14`, `v0.0.15` and `v0.0.16` each shipped a body pasted whole from the changelog — duplicate heading, no `Upgrading` section — leaving the maintainer to correct the titles by hand.
 - **Not change the specification normatively without a ratified decision.** Drafting a proposal is fine; merging it into the spec as settled is not.
-- **Not put history in the specification** — see [What the specification may contain](#what-the-specification-may-contain). A retired name goes in [`retired.md`](retired.md), a rationale goes in the commit message.
+- **Not put history anywhere but `CHANGELOG.md` and [`retired.md`](retired.md)** — see [Where history lives](#where-history-lives). A retired name goes in `retired.md`, what changed in a release goes in the changelog, a rationale goes in the commit message. Elsewhere a past incident may be cited as evidence for a rule in force; **in the specification it may not** ([What the specification may contain](#what-the-specification-may-contain)).
+- **Not leave a retired name behind when one is retired.** Removing it from the specification is half the job — sweep `README.md`, `docs/`, `CLAUDE.md` and `.luma/` in the same change. `concept` was taught in `docs/` for eight releases after removal, and `index.md` for four.
 - **Record the rationale in the commit message** for every accepted change, so the "why" is never lost. (When commit-log spelunking gets painful, graduate to an append-only `DECISIONS.md`.)
 - **Work on a branch off `main`, never commit directly to `main`** (except a ratified critical hotfix) — `main` stays equal to the latest release.
 - **Merge, never squash or rebase.** Squashing collapses the per-commit rationale this project requires be preserved.
