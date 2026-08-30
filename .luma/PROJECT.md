@@ -32,11 +32,6 @@ worse for somebody who adopted it alone. When something is useful only to luma,
 it belongs in a bundle rather than in the specification.
 
 **Changes here are ratified before a tag.** `SPEC.md` is authoritative for the
-version, and `docs/guidelines.md` binds anybody working on it — branch from
-`develop`, never commit to `main`, never squash or rebase.
-
-## Status
-
-`v0.0.9`, unstable. Breaking changes may ship in a patch until `v0.1.0`, which
-would be a claim the format has been run for real in more than one place — and
-has not earned yet.
+version, and `docs/guidelines.md` binds anybody working on it — read it in full
+before cutting a release. Work accumulates on a branch named for the release it
+is building; never commit to `main`, never squash or rebase.

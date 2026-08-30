@@ -108,7 +108,7 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule ([Validation](#validation)), and nothing about presence changes whether a file is conformant ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)). The sole hard requirement remains a non-empty `type`.
 
-**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** A field named `preload` did, through `v0.0.12`, and it was the one place this specification described how a Document should be *consumed* rather than what it is. **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`](#matches)) is not its replacement in that sense: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there. **The name `preload` is released** and is no longer reserved.
+**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`](#matches)) is not a stand-in for it: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there.
 
 ### Core fields
 | Field | Presence | Field type | Meaning |
@@ -630,10 +630,6 @@ matches: nothing                # nothing surfaces it; it is fetched deliberatel
 
 **An unknown kind is a Document that never arises**, which is indistinguishable from one whose subject has not come up. A consumer SHOULD report it rather than ignore it, and MUST NOT reject the Document for it ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)).
 
-**`applies_to` was this field's name through `v0.0.13` and is gone.** It is not deprecated and consumers do not read it — a name nobody writes is not compatibility, it is a second spelling every reader has to know about. **The name is released** and is no longer reserved.
-
-*Why the rename: the old name obliged an author to write a false sentence. `applies_to: everything` claims a Document governs everything, and none does — what a rule governs is stated in its body, and no frontmatter value widens or narrows it. The field says what makes a Document **surface**, which is a smaller and honest claim. The vocabulary had also outgrown the name: `path` is a target, but `event` is a moment, and nothing about a moment is a resource a rule scopes over.*
-
 **It says nothing about loading.** What a consumer does with knowing *when a subject arises* — put the Document in front of a reader then, keep it always, do nothing — is the consumer's business (see the note at the end of [Field presence](#field-presence)).
 
 **`policy` also declares `on_violation`; `workflow` does not.** A rule can be broken at a moment and something can act on that. The only way to fail a procedure is not to run it, which is the **absence** of an action — detecting absence needs state no consumer is obliged to keep, so the format does not ask for it.
@@ -660,8 +656,6 @@ Directories are outside the rule and keep their own convention. `_types/` alread
 - **`BUNDLE.md`** — the Bundle's own Document, at its root, with `type: bundle`. It is how a Bundle describes itself; see below. Recommended.
 - **`LOG.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
 - **`_types/`** — Type Definitions ([Type extensions](#type-extensions)).
-
-> **Withdrawn:** `index.md` previously reserved *derived navigation for a directory; a rebuildable cache, not a source of truth.* Its structure was never specified, nothing implemented it, and the name is one static site generators resolve in lowercase — so keeping it would have been this rule's only exception. The name is released. A future reservation for derived navigation should take a name of its own.
 
 ### `BUNDLE.md`
 A Bundle SHOULD describe itself in a `BUNDLE.md` at its root — an ordinary Document with `type: bundle`, carrying the Bundle's own metadata rather than any file's:
@@ -706,37 +700,8 @@ Consistent with [Frontmatter layout and conformance](#frontmatter-layout-and-con
 ## Versioning
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
 - Published versions are **git tags**; the newest tag is the current version.
+- **Reserving a name this specification previously defined is a breaking change**, even though nothing currently uses it — a Bundle that had adopted the free name for its own purposes would silently acquire this specification's meaning. Names it has given up are listed in [`retired.md`](docs/retired.md).
 - A Bundle MAY declare an `lkf_version` on its root `BUNDLE.md` ([`BUNDLE.md`](#bundlemd)); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, [`BUNDLE.md`](#bundlemd)), not a file's content version (git's job), and not a Type Definition's own `version`.
 
-## Released names
-**Names this specification once defined and no longer does.** A name here is
-free: nothing reserves it, no consumer reads it, and a producer may use it for
-unrelated domain data ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)).
-
-| name | was | released in | replaced by |
-|---|---|---|---|
-| `preload` | a core field: when a Document should be placed in front of a reader | `v0.0.12` | nothing — delivery is a consumer's decision, derived ([Field presence](#field-presence)) |
-| `compliance` | a field grading how strongly a rule obliged compliance | never specified; invented and withdrawn in the estate during `v0.0.13` | nothing — a `policy` binds by being one, and `on_violation` says what happens when it does not |
-| `applies_to` | the field naming what makes a Document surface | `v0.0.15` | `matches` ([`matches`](#matches)) |
-| `index.md` | a reserved file: derived per-directory navigation | `v0.0.14` | nothing — see [Reserved files](#reserved-files) |
-| `concept` | a Document type for background | `v0.0.10` | `document` |
-| `entry_point` | the Bundle field naming where a reader should start | `v0.0.17` | `entrypoint` ([`BUNDLE.md`](#bundlemd)) |
-
-**Why this list exists rather than the same fact scattered through the
-sections that once defined each name.** Three of these were recorded only in
-the prose of the section that removed them, in three different phrasings, and
-one — `compliance` — was never recorded here at all, because it never reached
-the specification. **A reader asking "is `preload` still a thing?" had to read
-three paragraphs and know about a fourth name that is absent.**
-
-**It is also the list a tool can read.** A retired name appearing in a published
-Document's *prose* is not a conformance question — [Frontmatter layout and conformance](#frontmatter-layout-and-conformance) stands, and such a Document
-is valid — but it is usually a rule still instructing authors to declare
-something nothing reads. **A consumer MAY report that; it MUST NOT reject the
-Document for it.**
-
-**A released name may be reserved again**, and doing so is a breaking change
-even though nothing currently uses it — a Bundle that adopted the free name for
-its own purposes would silently acquire the specification's meaning.
-
 > Known gaps and deferred features are tracked in [`roadmap.md`](docs/roadmap.md).
+> Names this specification once defined and no longer does are listed in [`retired.md`](docs/retired.md).
