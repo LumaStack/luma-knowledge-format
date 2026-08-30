@@ -1,6 +1,6 @@
 # Luma Knowledge Format (LKF)
 
-**A contract in plain files, read the same way by anyone or any tool.**<br>
+**A [contract](luma-knowledge-format/specification/lkf.md) in plain files, read the same way by anyone or any tool.**<br>
 Standardize what matters. Extend the rest however you like.
 
 ## Summary
