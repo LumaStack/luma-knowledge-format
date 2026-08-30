@@ -1,12 +1,14 @@
 name: check
 
-# The version lives in three files, and GUIDELINES says the trap out loud: **a
+# Two files state the current version, and GUIDELINES says the trap out loud: **a
 # release that misses one is not detectable by reading any single file.** That
 # sentence describes a check rather than a checklist item, and the checklist
 # lost twice to it — `README.md` sat two releases behind before anybody noticed.
 #
-# So this reads all three and refuses a mismatch. It is the whole workflow: a
-# specification has nothing to build and nothing to test, and a check that
+# So this reads both and refuses a mismatch. It also refuses a Bundle whose
+# `entrypoint` names nothing: a specification is now shipped inside the Bundle,
+# and a pointer to a file that moved fails as quietly as a stale version does.
+# A specification has nothing to build and nothing to test, and a check that
 # exists to catch a silent failure should not be padded with checks that catch
 # loud ones.
 
@@ -17,6 +19,10 @@ on:
 
 permissions:
   contents: read
+
+env:
+  SPEC: luma-knowledge-format/specification/lkf.md
+  BUNDLE: luma-knowledge-format/BUNDLE.md
 
 jobs:
   version:
@@ -29,25 +35,30 @@ jobs:
         run: |
           set -eu
 
-          spec=$(sed -n 's/^- \*\*Version:\*\* `v\(.*\)`$/\1/p' SPEC.md | head -1)
-          bundle=$(sed -n 's/^version: *\(.*\)$/\1/p' bundle/BUNDLE.md | head -1)
+          # Read only the frontmatter block. A key matched anywhere in the file
+          # would sooner or later match an example in the prose, which is the
+          # same class of quiet wrongness this workflow exists to prevent.
+          fm() { awk -v k="^$2: *" 'NR==1&&/^---$/{f=1;next} f&&/^---$/{exit} f&&$0~k{sub(k,"");print;exit}' "$1"; }
 
-          printf 'SPEC.md          %s\n' "${spec:-(not found)}"
-          printf 'bundle/BUNDLE.md %s\n' "${bundle:-(not found)}"
+          spec=$(fm "$SPEC" lkf_version)
+          bundle=$(fm "$BUNDLE" version)
+
+          printf '%-46s %s\n' "$SPEC"   "${spec:-(not found)}"
+          printf '%-46s %s\n' "$BUNDLE" "${bundle:-(not found)}"
 
           # Absent is a failure, not a pass. A regex that stops matching after a
-          # reformat would otherwise report agreement between three empty
+          # reformat would otherwise report agreement between two empty
           # strings, which is the shape of dishonesty this check exists to
           # prevent.
           for v in "$spec" "$bundle"; do
-            [ -n "$v" ] || { echo; echo "A version could not be read — the file moved or the line was reformatted."; exit 1; }
+            [ -n "$v" ] || { echo; echo "A version could not be read — the file moved or the frontmatter was reformatted."; exit 1; }
           done
 
           if [ "$spec" != "$bundle" ]; then
             echo
             echo "These must agree. Each states something different that a stale number makes false:"
-            echo "  SPEC.md          what the specification is"
-            echo "  bundle/BUNDLE.md which specification the built-in types render"
+            echo "  $SPEC    what the specification is"
+            echo "  $BUNDLE  which specification the built-in types render"
             echo
             echo "See docs/guidelines.md, 'Cutting a release'."
             exit 1
@@ -56,10 +67,26 @@ jobs:
           echo
           echo "v$spec, consistently."
 
+      - name: The Bundle's entrypoint resolves
+        run: |
+          set -eu
+
+          entrypoint=$(awk -v k='^entrypoint: *' 'NR==1&&/^---$/{f=1;next} f&&/^---$/{exit} f&&$0~k{sub(k,"");print;exit}' "$BUNDLE")
+          [ -n "$entrypoint" ] || { echo "$BUNDLE declares no entrypoint."; exit 1; }
+
+          # A Document ID is a path within the Bundle with the .md removed.
+          target="luma-knowledge-format/$entrypoint.md"
+          if [ -f "$target" ]; then
+            echo "entrypoint: $entrypoint -> $target"
+          else
+            echo "$BUNDLE says 'entrypoint: $entrypoint', which resolves to $target — and nothing is there."
+            exit 1
+          fi
+
       - name: A released version has a dated changelog section
         run: |
           set -eu
-          spec=$(sed -n 's/^- \*\*Version:\*\* `v\(.*\)`$/\1/p' SPEC.md | head -1)
+          spec=$(awk -v k='^lkf_version: *' 'NR==1&&/^---$/{f=1;next} f&&/^---$/{exit} f&&$0~k{sub(k,"");print;exit}' "$SPEC")
 
           # Only meaningful on `main`, where the version is by definition
           # released. On a draft branch the section is dated at release time —
@@ -72,7 +99,7 @@ jobs:
           if grep -q "^## \[$spec\] — " CHANGELOG.md; then
             echo "CHANGELOG.md has a dated section for $spec."
           else
-            echo "SPEC.md says v$spec, and CHANGELOG.md has no dated '## [$spec] — …' section."
+            echo "$SPEC says v$spec, and CHANGELOG.md has no dated '## [$spec] — …' section."
             echo "Either the release was never dated, or the version moved without one."
             exit 1
           fi

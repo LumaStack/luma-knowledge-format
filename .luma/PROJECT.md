@@ -23,7 +23,7 @@ assumption that a consumer is `luma-foreman`, nothing that would make the format
 worse for somebody who adopted it alone. When something is useful only to luma,
 it belongs in a bundle rather than in the specification.
 
-**Changes here are ratified before a tag.** `SPEC.md` is authoritative for the
-version, and `docs/guidelines.md` binds anybody working on it — read it in full
+**Changes here are ratified before a tag.** `luma-knowledge-format/specification/lkf.md`
+is authoritative for the version, and `docs/guidelines.md` binds anybody working on it — read it in full
 before cutting a release. Work accumulates on a branch named for the release it
 is building; never commit to `main`, never squash or rebase.

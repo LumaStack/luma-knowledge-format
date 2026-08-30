@@ -9,7 +9,7 @@ LKF is an open markdown format for representing knowledge, designed to be equall
 
 Knowledge lives in plain files with YAML frontmatter at the top, which you can create and maintain however you like. LKF is built to share knowledge across teams, tools, or organizations, and it is designed to require minimal tooling.
 
-> **Status: unstable.** Breaking changes may ship in a patch release until `v0.1.0`, which is a claim the format has been run for real in more than one place and has not earned yet. Expect field renames. **This file deliberately states no version number** — `SPEC.md` is authoritative, and the current release is whatever the newest tag says. See [Releases](https://github.com/LumaStack/luma-knowledge-format/releases).
+> **Status: unstable.** Breaking changes may ship in a patch release until `v0.1.0`, which is a claim the format has been run for real in more than one place and has not earned yet. Expect field renames. **This file deliberately states no version number** — [the specification](luma-knowledge-format/specification/lkf.md) is authoritative, and the current release is whatever the newest tag says. See [Releases](https://github.com/LumaStack/luma-knowledge-format/releases).
 
 ## Example
 
@@ -34,7 +34,8 @@ See [[score-based-models]] for the continuous-time formulation.
 
 **Use the format**
 
-- [`SPEC.md`](SPEC.md) — the specification. Short by design.
+- [`specification/lkf.md`](luma-knowledge-format/specification/lkf.md) — the specification. Short by design.
+- [`luma-knowledge-format/`](luma-knowledge-format/) — the Bundle it ships in, carrying the specification and the built-in types.
 
 **Understand the format**
 

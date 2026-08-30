@@ -1,6 +1,13 @@
+---
+type: document
+title: Luma Knowledge Format — Specification
+lkf_version: 0.0.18
+lifecycle: provisional
+survival: promised
+---
+
 # Luma Knowledge Format — Specification
 
-- **Version:** `v0.0.17`
 - **Status:** Released. Pre-1.0 — the `0.0.z` tier is unstable; breaking changes may still ship until `1.0.0`.
 
 ## Abstract
@@ -83,7 +90,7 @@ A Document's **ID** is its file path within the Bundle, with the `.md` suffix re
 
 LKF does not define a separate identifier field; the ID is path-based. Renaming or moving a Document changes its ID, so producers SHOULD perform renames through tooling that rewrites inbound links ([Links](#links)). Consumers MUST tolerate links whose target does not resolve ([Links](#links)).
 
-> Stable opaque identifiers were considered and deferred; see [`principles.md`](docs/principles.md) and the project rationale. Because links are name-based, introducing ids later is additive and optional.
+> Stable opaque identifiers were considered and deferred; see [`principles.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/principles.md) and the project rationale. Because links are name-based, introducing ids later is additive and optional.
 
 ## Frontmatter layout and conformance
 Core fields defined by this specification appear at the **top level** of the frontmatter, alongside any domain-specific fields (a flat layout — no nesting under a reserved map).
@@ -391,7 +398,7 @@ An Asset link is a path relative to the linking Document, and MUST point inside 
 
 The two forms are distinguishable on sight and neither needs the other's rules — an Asset has no slug and no ID, only a path.
 
-Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Document ID — and how ties between same-slug Documents are broken — is governed by the link-resolution rules, which are not yet specified (see [`roadmap.md`](docs/roadmap.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling ([Document ID](#document-id)).
+Both forms resolve through the consuming tool's index. How a bare slug resolves to a full Document ID — and how ties between same-slug Documents are broken — is governed by the link-resolution rules, which are not yet specified (see [`roadmap.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/roadmap.md)). **Unresolved links are legal** — a missing target MAY simply represent not-yet-written knowledge. Renames rewrite inbound links atomically via tooling ([Document ID](#document-id)).
 
 ## Body conventions
 The body is CommonMark. Producers SHOULD favor structural markdown (headings, lists, tables, code fences) over prose. Two portable extensions are supported:
@@ -511,7 +518,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **A Document outside every Bundle has no such scope.** Nothing prevents a Document living beside Bundles rather than inside one — describing a repository, or a place Bundles are published from. Such a Document declares a `type` like any other, and the format offers no rule for where its contract is found: there is no Bundle to look in. **Whoever puts a Document there owes it an answer**, and where two Bundles disagree about that type, nothing decides between them.
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `workflow`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `bundle/` directory — itself a Bundle, so that the unit of distribution is exactly the types and not the project around them — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `workflow`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `luma-knowledge-format/` directory — itself a Bundle, so that the unit of distribution is the format itself rather than the project around it — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
 - **Built-in names.** The names `document`, `workflow`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
 - **Two base types, because the third thing a consumer can do is the root itself.** `workflow` and `policy` declare no fields between them. They are not labels for subjects — they name **what a consumer does with the content**:
 
@@ -700,8 +707,8 @@ Consistent with [Frontmatter layout and conformance](#frontmatter-layout-and-con
 ## Versioning
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
 - Published versions are **git tags**; the newest tag is the current version.
-- **Reserving a name this specification previously defined is a breaking change**, even though nothing currently uses it — a Bundle that had adopted the free name for its own purposes would silently acquire this specification's meaning. Names it has given up are listed in [`retired.md`](docs/retired.md).
+- **Reserving a name this specification previously defined is a breaking change**, even though nothing currently uses it — a Bundle that had adopted the free name for its own purposes would silently acquire this specification's meaning. Names it has given up are listed in [`retired.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/retired.md).
 - A Bundle MAY declare an `lkf_version` on its root `BUNDLE.md` ([`BUNDLE.md`](#bundlemd)); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, [`BUNDLE.md`](#bundlemd)), not a file's content version (git's job), and not a Type Definition's own `version`.
 
-> Known gaps and deferred features are tracked in [`roadmap.md`](docs/roadmap.md).
-> Names this specification once defined and no longer does are listed in [`retired.md`](docs/retired.md).
+> Known gaps and deferred features are tracked in [`roadmap.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/roadmap.md).
+> Names this specification once defined and no longer does are listed in [`retired.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/retired.md).

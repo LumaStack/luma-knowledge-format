@@ -1,6 +1,6 @@
 # LKF Roadmap
 
-Open questions and deferred features for the Luma Knowledge Format. `SPEC.md` describes only what is settled; this file tracks what is not.
+Open questions and deferred features for the Luma Knowledge Format. The specification describes only what is settled; this file tracks what is not.
 
 ## Next steps
 
@@ -72,7 +72,7 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
 ## Undecided — needs a decision before it can be specified
 
-- **Field-level ratification** — confirm the working-default levels in `SPEC.md` *Core fields* (`title`, `description`, `tags`, `verified`, `sources`).
+- **Field-level ratification** — confirm the working-default levels in the specification's *Core fields* (`title`, `description`, `tags`, `verified`, `sources`).
 - **Type-extension rules** — property-type vocabulary, `extends`/inheritance and conflict resolution, tool-default vs. bundle precedence, validator severities.
 - **Type Definition `version` — declared in `0.0.11`, semantics still open.** *Type Definitions* now permits one and *Versioning*'s dangling reference has something to point at. **What a bump *means* is deliberately undefined**: it is a label, not a promise, so a consumer compares for equality and infers nothing from the tier. Still to settle — whether the tiers in `bundle-versioning` carry over to types, and whether bumping a type forces a bump of the Bundle shipping it.
 

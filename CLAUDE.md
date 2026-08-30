@@ -8,9 +8,11 @@ repo, human or agent, and which you must read before cutting a release.
 Nothing else is repeated here. A rule stated twice is a rule that will disagree
 with itself.
 
-## `SPEC.md` is different from every other file
+## The specification is different from every other file
 
-It is the product. It states the **current specification and nothing else** — no
+It lives at [`luma-knowledge-format/specification/lkf.md`](luma-knowledge-format/specification/lkf.md),
+inside the Bundle it defines. It is the product. It states the **current
+specification and nothing else** — no
 history, no former names, no removal notes — so that every sentence in it can be
 read as currently true. Anything you would add that is only true in the past
 belongs somewhere else; `README.md` says where.
