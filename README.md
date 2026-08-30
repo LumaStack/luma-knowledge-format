@@ -34,10 +34,13 @@ See [[score-based-models]] for the continuous-time formulation.
 
 **Using the format**
 
-- [`explanation.md`](docs/explanation.md) — **start here.** How this works and why it matters.
 - [`SPEC.md`](SPEC.md) — the specification. Short by design.
-- [`CHANGELOG.md`](CHANGELOG.md) — what changed between versions, and why.
+
+**Understanding the format**
+
+- [`explanation.md`](docs/explanation.md) — **start here.** How this works and why it matters.
 - [`retired.md`](docs/retired.md) — names the format once defined and no longer does.
+- [`CHANGELOG.md`](CHANGELOG.md) — what changed between versions, and why.
 
 **Working on the format**
 
