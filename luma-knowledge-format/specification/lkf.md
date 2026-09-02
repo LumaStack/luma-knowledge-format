@@ -1,8 +1,8 @@
 ---
 type: document
 title: Luma Knowledge Format — Specification
-lkf_version: 0.0.19
-lifecycle: provisional
+lkf_version: 0.0.20
+stage: provisional
 survival: promised
 matches: eager
 ---
@@ -125,8 +125,8 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 | `title` | recommended | text | Human label; may fall back to the filename. |
 | `description` | optional | text | One-sentence summary; used by indexes and search. |
 | `tags` | optional | list of text | Categorization; typically nested via `/` (e.g. `ml/generative`). Kept intentionally loose — organizations define their own tag conventions. |
-| [`lifecycle`](#lifecycle) | optional | enum | `draft \| provisional \| stable \| archived \| unknown`. Default `unknown`. |
-| [`survival`](#survival) | optional | enum | `experimental \| intended \| promised`. Default `intended`, and often left unwritten. |
+| [`stage`](#stage) | optional | enum | `draft \| provisional \| stable \| archived \| unknown`. Default `unknown`. |
+| [`survival`](#survival) | optional | enum | `temporary \| probationary \| intended \| promised`. Default `intended`, and often left unwritten. |
 | [`created`](#created-and-modified) | optional | actor_event | Original author + creation time. **Immutable.** |
 | [`modified`](#created-and-modified) | recommended | actor_event | Last editor + last meaningful change. **Advances on edit.** |
 | [`verified`](#verified-and-trust-tiers) | optional | list of actor_event | Independent confirmation events. |
@@ -136,8 +136,8 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 
 > Some presence values above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
 
-## Lifecycle
-A Document's lifecycle stage — nascent to active, with `archived` as the retired terminal, plus the named absence of a stage. Default (when absent): `unknown`.
+## Stage
+A Document's stage — nascent to active, with `archived` as the retired terminal, plus the named absence of a stage. Default (when absent): `unknown`.
 
 | Value | Who may use it | When the shape changes |
 |---|---|---|
@@ -192,13 +192,13 @@ to publish and says something useful.
 activity**, and the two are unrelated: a heavily-used draft and an untouched
 `stable` Document are both ordinary.
 
-### Lifecycle and survival answer different events
+### Stage and survival answer different events
 
 **They look like they overlap and they do not.** Each owns one event:
 
 | the event | the field | what is owed |
 |---|---|---|
-| **the shape changes** | `lifecycle` | `stable` owes a path across |
+| **the shape changes** | `stage` | `stable` owes a path across |
 | **the thing ends** | `survival` | `promised` owes a process; `intended` owes nothing |
 
 **So `stable` with `survival: intended` is precise rather than contradictory** —
@@ -208,18 +208,18 @@ year.* That describes most well-run software.
 **Every combination is meaningful.** Read down for how much it will change, and
 across for whether it will still be there:
 
-| | `experimental` | `intended` | `promised` |
-|---|---|---|---|
-| **`draft`** | finding out whether it is worth having; may change completely and may not survive | **the ordinary state of work in flight** — shape unsettled, meant to be kept | committed to the problem, with no idea yet what the answer looks like |
-| **`provisional`** | yours to try; changes come with notice, and it may still go | usable and not to be built on; meant to be kept, nothing promised | something will answer this; what is here today is not settled |
-| **`stable`** | rock solid, and it may vanish — use it and keep an exit | **most well-run software** — the shape will not move without a path, and nobody promised next year | depend on it: change comes with a path, withdrawal with a process |
+| | `temporary` | `probationary` | `intended` | `promised` |
+|---|---|---|---|---|
+| **`draft`** | working notes — meant to be discarded when their moment passes | finding out whether it is worth having; may change completely and may not survive | **the ordinary state of work in flight** — shape unsettled, meant to be kept | committed to the problem, with no idea yet what the answer looks like |
+| **`provisional`** | a stopgap that says so — usable now, and going when its moment passes | yours to try; changes come with notice, and the verdict may retire it | usable and not to be built on; meant to be kept, nothing promised | something will answer this; what is here today is not settled |
+| **`stable`** | rock solid and meant to end — use it and plan your exit | solid and on trial — earning its place, and it may not | **most well-run software** — the shape will not move without a path, and nobody promised next year | depend on it: change comes with a path, withdrawal with a process |
 
-**The two corners are what prove the axes independent.** `stable` +
-`experimental` is solid and doomed; `draft` + `promised` is committed and
+**The corners are what prove the axes independent.** `stable` +
+`temporary` is solid and ending; `draft` + `promised` is committed and
 unsettled. Neither is a contradiction, and neither is expressible on one ladder.
 
 **`draft` + `promised` sharpens what `promised` commits to.** It is not *this
-shape will persist* — the lifecycle field already governs shape. **It is that
+shape will persist* — the stage field already governs shape. **It is that
 something will be here answering this**, whatever form it takes. A `promised`
 `draft` may be rewritten beyond recognition without the promise breaking;
 withdrawing it with nothing in its place is what would break it.
@@ -231,42 +231,61 @@ it means a consumer should re-read the field rather than reading it once.
 
 **`unknown` means not filled in, not unknowable.** Whether the fact is lost or was simply never stated is not this field's business, and collapsing both into one value is what lets a single word serve wherever it is needed — the same sense [Actor convention](#actor-convention) gives it for actors.
 
-**It is the default because both real defaults would be wrong guesses.** Defaulting to `provisional` makes a `draft` thing read as more settled than it is; defaulting the other way makes a `stable` thing read as less. Neither direction is safe, which is the `consumers` case described in [`BUNDLE.md`](#bundlemd) rather than the `lifecycle` one — and where no default is safe, the honest answer is to say nobody has declared.
+**It is the default because both real defaults would be wrong guesses.** Defaulting to `provisional` makes a `draft` thing read as more settled than it is; defaulting the other way makes a `stable` thing read as less. Neither direction is safe, which is the `consumers` case described in [`BUNDLE.md`](#bundlemd) rather than the `stage` one — and where no default is safe, the honest answer is to say nobody has declared.
 
 **Absent and explicitly `unknown` mean the same thing**, so nothing is ambiguous. Writing it is worth doing anyway: silence cannot distinguish *considered and undecided* from *never thought about*.
 
-*It is not spelled `none`. `none`, `null` and `nil` are absence words in one language or another, so a value that looks like a null gets conflated with one — and `lifecycle: none`, an empty value that YAML reads as null, and the field being absent are three states that look alike to a reader and differ to a parser.*
+*It is not spelled `none`. `none`, `null` and `nil` are absence words in one language or another, so a value that looks like a null gets conflated with one — and `stage: none`, an empty value that YAML reads as null, and the field being absent are three states that look alike to a reader and differ to a parser.*
 
-The field is named `lifecycle` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field.
+The field is named `stage` (not `status`) so it never collides with a tool's own workflow state (e.g. a task's `todo | in-progress | done`), which is often a separate, tool-defined field. It names a position in the ladder rather than the ladder's axis, deliberately: the stage definitions carry the semantics, and a name that claimed an axis would have to claim the right one.
 
 ## Survival
 **How much you should expect this to last.** Not *how long* — that is far harder
 to answer, and nobody can — and not *will it continue indefinitely*, which is
 harder still. Default (when absent): `intended`.
 
-| Value | Meaning |
-|---|---|
-| `experimental` | **No intentions.** It is out in the world to find out whether it earns its keep, and many experiments do not. Do not fall in love with it. |
-| `intended` | **It is meant to exist and to stick around. Nothing is promised.** (Default.) |
-| `promised` | **Committed to.** Withdrawing it is an event rather than an edit. |
+| Value | The publisher has… | What is owed |
+|---|---|---|
+| `temporary` | **decided to end it.** It is meant not to last. | **an ending** |
+| `probationary` | **put it on trial.** It is out in the world to find out whether it earns its keep, and many trials end badly. Do not fall in love with it. | **a verdict** |
+| `intended` | **decided to keep it, short of a promise.** It is meant to exist and to stick around; nothing is promised. (Default.) | **nothing** |
+| `promised` | **bound themselves to keep it.** Withdrawing it is an event rather than an edit. | **a process** |
+
+**Every value is a decision the publisher made**, and the ladder orders what
+each one owes. The line between the bottom two is whether the ending has been
+decided: an experiment with a kill date is `temporary`; an experiment awaiting
+its verdict is `probationary`.
+
+**`probationary` is the one value that expires.** A trial is supposed to end,
+so a Document that has sat `probationary` for years is a publisher overdue on
+a decision rather than a fact about the world. `stale_after`
+([Core fields](#core-fields)) is how a producer schedules the review; what a
+consumer does about an overdue verdict is its own business.
+
+**`temporary` carries no date.** It is the stance that the ending is decided,
+not a schedule; where a date matters, that is `stale_after` or the Document's
+own prose.
 
 **`intended` is the ordinary case, and a producer MAY leave it unwritten.** A
 value that is honest for nineteen things in twenty is one nobody should have to
 write nineteen times, which is what the default is for. Declaring it is equally
 valid, and a producer who wants the record explicit SHOULD feel free.
 
-**Where the field tends to earn its keep is at the two ends** — a warning, or an
-undertaking. Both are deliberate, and both say something silence does not.
+**Where the field tends to earn its keep is away from its default** — a warning
+(`temporary`, `probationary`) or an undertaking (`promised`). All three are
+deliberate, and all say something silence does not.
 
 *That is an observation about how the values fall in practice, not a rule. This
 specification does not say when a producer should declare a field.*
 
-**Being used does not change it.** Somebody relying on an experiment has taken a
-risk they were warned about, and their use creates no undertaking nobody gave.
-**Only the publisher moves this value**, and only deliberately.
+**Being used does not change it.** Somebody relying on a `probationary`
+Document has taken a risk they were warned about, and their use creates no
+undertaking nobody gave. **Only the publisher moves this value**, and only
+deliberately — a trial's verdict is the publisher's reading of its results,
+never the bare fact of use.
 
-**Neither this field nor `lifecycle` ([Lifecycle](#lifecycle)) is an input to the other**, and
-each is useful alone: a Document may declare `survival` and no lifecycle, or the
+**Neither this field nor `stage` ([Stage](#stage)) is an input to the other**, and
+each is useful alone: a Document may declare `survival` and no stage, or the
 reverse, and a consumer reading one need not look for the other.
 
 They are orthogonal in the sense [`verified` and trust tiers](#verified-and-trust-tiers) gives the word for trust. A Document can
@@ -290,7 +309,7 @@ the state nobody returns to correct.
 
 | | |
 |---|---|
-| `experimental` → `intended` | the moment you would be reluctant to delete it. `experimental` means *no intentions*, so the transition is when intentions form |
+| `probationary` → `intended` | the verdict, in the thing's favour — the moment you would be reluctant to delete it, which is when intentions form |
 | `intended` → `promised` | the moment somebody else's work breaks if you withdraw it |
 
 Neither is a matter of degree, and both are answerable by asking the publisher
@@ -330,7 +349,7 @@ verified:
 - verified only by non-`human:` actors ⇒ **machine-confirmed**
 - verified by any `human:<id>` ⇒ **human-reviewed**
 
-Trust tier is **orthogonal** to `lifecycle`: a Document can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
+Trust tier is **orthogonal** to `stage`: a Document can be `provisional` yet human-reviewed, or `stable` yet only machine-confirmed.
 
 ### `sources`
 ```yaml
@@ -513,7 +532,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **This is consistent with add-only because presence is not meaning.** The field means exactly what its declaring type said; a subtype only states how strongly *it* expects the field. Nothing becomes non-conformant either — presence describes intent ([Field presence](#field-presence)) and the sole hard requirement remains a non-empty `type` ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) — so a consumer that knows only the parent and one that knows the subtype may reach different completeness verdicts, and each is right at its own level.
 
-  **Without this, a type whose semantics rest on inherited fields cannot state them.** Where a type's growth stage *is* `lifecycle` and its age *is* `created` — both `optional` on the root — the type has no way to say that a Document missing either is incomplete, and its own contract calls unremarkable exactly the omissions that break it.
+  **Without this, a type whose semantics rest on inherited fields cannot state them.** Where a type's growth stage *is* `stage` and its age *is* `created` — both `optional` on the root — the type has no way to say that a Document missing either is incomplete, and its own contract calls unremarkable exactly the omissions that break it.
 
 ### Resolution and namespacing
 - **The Bundle is the resolution scope, and that has a consequence worth stating.** Because a contract is found in *this* Bundle's `_types/`, two Bundles may hold different versions of the same type without contradiction — each one's Documents are checked against the copy that travelled with them. This is the scoping mechanism prose does not have, and it is why vendoring a type is safe where duplicating a policy would not be.

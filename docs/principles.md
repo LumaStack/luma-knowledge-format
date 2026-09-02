@@ -22,7 +22,7 @@ A largely machine-written corpus is only useful if a reader can judge what they 
 - **Provenance** — where did this come from, and who checked it?
 - **Trust** — how much should I rely on it?
 - **Freshness** — is it still true?
-- **Lifecycle** — is this the current version?
+- **Stage** — is this the current version?
 
 ## Small core, open edge
 

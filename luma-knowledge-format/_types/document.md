@@ -6,8 +6,8 @@ fields:
   title:            { field_presence: recommended, field_type: text,               desc: "Human label; may fall back to the filename." }
   description:      { field_presence: optional,    field_type: text,               desc: "One-sentence summary; used by indexes and search." }
   tags:             { field_presence: optional,    field_type: list of text,       desc: "Categorization, typically nested via / (e.g. ml/generative)." }
-  lifecycle: { field_presence: optional,    field_type: enum,               values: [draft, provisional, stable, archived], desc: "." }
-  survival:         { field_presence: optional,    field_type: enum,               values: [experimental, intended, promised], desc: "How much you should expect this to last. Default intended, and often left unwritten." }
+  stage:            { field_presence: optional,    field_type: enum,               values: [draft, provisional, stable, archived, unknown], desc: "What a change owes a reader — nothing, notice, or a path. Default unknown." }
+  survival:         { field_presence: optional,    field_type: enum,               values: [temporary, probationary, intended, promised], desc: "How much you should expect this to last. Default intended, and often left unwritten." }
   created:          { field_presence: optional,    field_type: actor_event,        desc: "Original author and creation time. Immutable.." }
   modified:         { field_presence: recommended, field_type: actor_event,        desc: "Last editor and last meaningful change. Advances on edit.." }
   verified:         { field_presence: optional,    field_type: list of actor_event, desc: "Independent confirmation events.." }
