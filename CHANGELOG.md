@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.20] — 2026-09-02
+
 ### Changed
 - **`lifecycle` is renamed `stage`** *(breaking)*. The old word is the one every neighbouring system wants — the things being built around the format have lifecycles of their own, and the estate has already had to coin `lifecycle_event` to route around this field once. `stage` is the definition's own word: the field's opening line called the value *a Document's lifecycle stage*, so the rename drops the collision-prone modifier rather than coining a name — and `lifecycle_stage` had already been weighed at the `v0.0.12` rename, losing to brevity rather than to fitness. It avoids `status` exactly as well as the old name, which was the recorded reason the field is not `status`. And it names a position rather than an axis, deliberately: the ladder measures what a reader is owed on change — a consumer obligation — which is why **`maturity` was considered and rejected** despite being the term of art and the word the estate's own prose reaches for. Maturity is a producer property, the axis the `v0.0.10` redefinition moved away from (the same argument that kept `stable` over `mature` there), and the word is half-reserved for a possible proven-ness-through-use field. `standing`, `footing`, and `station` were weighed and not taken; `stage`'s own risk — genericness — was checked against the work now starting before ratification.
   *Migration:* rename `lifecycle:` to `stage:` in frontmatter. Same values, same meaning, same `unknown` default. A consumer that has not updated finds the field absent rather than misread, which fails visibly. The specification's `event` vocabulary already speaks of *a lifecycle point*, which the rename leaves free to mean exactly that.
@@ -337,7 +339,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.19...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.20...HEAD
+[0.0.20]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.19...v0.0.20
 [0.0.19]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.18...v0.0.19
 [0.0.18]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.17...v0.0.18
 [0.0.17]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.16...v0.0.17
