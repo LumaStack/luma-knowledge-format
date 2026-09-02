@@ -3,7 +3,6 @@ type: type_definition
 defines: policy
 extends: document
 fields:
-  matches:      { field_presence: optional, field_type: list_or_keyword, values: [always, nothing], desc: "What makes this Document surface — always, nothing, or a list of triggers. Absent means nothing.." }
   on_violation: { field_presence: optional, field_type: enum, values: [allow, audit, warn, require_reason, require_approval, block], desc: "What a consumer SHOULD do when this policy is not complied with. Intent, never a guarantee — see below." }
 ---
 
@@ -55,7 +54,7 @@ stopping power, and nothing else on the ladder offers that.
 ## What a consumer does with it: **is bound by it**
 
 A rule that constrains the consumer's own behaviour rather than informing it.
-That is its place among the three things a consumer can do with a Document — a `workflow` you **run**, and a plain `document` you **read**.
+That is its place among the three things a consumer can do with a Document — a `procedure` you **run**, and a plain `document` you **read**.
 
 **Binding is not presence, and this type claims only the first.** Whether a
 policy is in front of anyone is a consumer's decision, derived at most from
@@ -64,7 +63,7 @@ not it happens to be loaded.**
 
 ## What dispatches on it
 
-**A policy binds; a workflow is run.** A consumer assembling what an agent
+**A policy binds; a procedure is run.** A consumer assembling what an agent
 should know treats a policy as a constraint on its own behaviour — these are the
 rules in force — where a procedure is something it carries out when asked. Same
 prose, opposite handling.

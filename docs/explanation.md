@@ -160,7 +160,7 @@ extends. You will rarely write `type: document` on a real file, and that is
 fine: its value is that every Document you *do* write already has somewhere to
 put provenance, without you declaring anything.
 
-**[`workflow`](../luma-knowledge-format/_types/workflow.md)** — a procedure a
+**[`procedure`](../luma-knowledge-format/_types/procedure.md)** — a procedure a
 consumer *runs* rather than reads, projected into whatever form does the
 running. Nothing else in a Bundle makes that claim, which is why the type
 exists rather than a tag.

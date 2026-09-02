@@ -13,6 +13,7 @@ fields:
   verified:         { field_presence: optional,    field_type: list of actor_event, desc: "Independent confirmation events.." }
   sources:          { field_presence: optional,    field_type: list,               desc: "Materials the content derives from (bespoke shape).." }
   stale_after:      { field_presence: optional,    field_type: date,               desc: "The content SHOULD be re-checked after this date." }
+  matches:          { field_presence: optional,    field_type: list_or_keyword,    values: [eager, nothing], desc: "What makes this Document surface — eager, nothing, or a list of conditions. Absent means nothing." }
 ---
 
 # document
@@ -26,7 +27,8 @@ fields, because it is where the core fields come from.
 `document` is a real type as well as the root: a file with nothing more specific
 to say may declare `type: document` rather than inventing a name for it.
 
-**The root declares nothing about when a Document is wanted.** `matches` is
-declared by `policy` and `workflow` and by nothing else — the two kinds
-that act on a consumer. Background does not act; it is reached through the
-things that do.
+**The root declares `matches`, so any Document may say what surfaces it.**
+It mostly earns its keep on `policy` and `procedure` — the two kinds that
+act on a consumer. Background usually does not act; it is normally reached
+through the things that do, so a Document that neither binds nor runs
+declares it only where its subject genuinely arises on its own.
