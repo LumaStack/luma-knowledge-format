@@ -27,6 +27,7 @@ fields, because it is where the core fields come from.
 to say may declare `type: document` rather than inventing a name for it.
 
 **The root declares nothing about when a Document is wanted.** `matches` is
-declared by `policy` and `workflow` and by nothing else — the two kinds
-that act on a consumer. Background does not act; it is reached through the
-things that do.
+declared by `policy` and `procedure` — the two kinds that act on a
+consumer — and any type may declare or carry it where its subject genuinely
+arises on its own. Background usually does not act; it is normally reached
+through the things that do.

@@ -6,6 +6,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+### Changed
+- **The built-in type `workflow` is renamed `procedure`** *(breaking)*. The type names written steps a consumer runs, and consumers project it into whatever their harness invokes — a skill in one, a command in another, someday something that composes several. The old name claimed the word software at large uses for orchestrated multi-step processes, which this type is not; the new name is the invariant across every rendering, and it frees `workflow` for a composing construct if one ever earns specification. Same contract; no fields change.
+  *Migration:* rename `type: workflow` to `type: procedure`, and `workflow/` directories where a bundle uses that layout. Consumers dispatch on `procedure`; a Document still declaring the old type reads as an ordinary `document` — the safe direction — and SHOULD be reported.
+
+- **The `matches` value `always` is renamed `eager`** *(breaking)*. The value's reach is set by containment — a Document surfaces when whatever holds it is in play, and a Document inside a Bundle nobody opened is not surfaced by any value of this field. The old word claimed every session; the new one claims *as soon as possible, from where I sit*, which is what the field can keep.
+  *Migration:* rename `matches: always` to `matches: eager`. A Document still declaring the old value surfaces nothing — the safe direction — and SHOULD be reported.
+
+- **`matches` may be declared by any type and carried by any Document.** The built-in `policy` and `procedure` still declare it; a Document that neither binds nor runs may carry it where its subject genuinely arises on its own — a reference worth surfacing by topic — and a consumer SHOULD honour it wherever it appears. The guidance stands that background is normally reached through the things that act, so a trigger short of a real one competes with the policies and procedures for attention.
+  *Migration:* none. Nothing existing changes meaning.
+
+### Added
+- **`INDEX.md` joins the reserved files** — a generated rendering of the Bundle for a reader deciding what to open: what the Bundle is for, each Document's `description` and `matches`, and what must be read before acting. Derived and discardable — regenerating it from the frontmatter loses nothing, a consumer MUST NOT parse it as data, and a listing that disagrees with the frontmatter is a defect of that copy. Recommended for distributed Bundles; generating it is the distributor's business. The retired lowercase `index.md` (derived per-directory navigation, `v0.0.14`) is a different name under the casing rule and stays free.
+
+### Removed
+- **The `bundle` field `entrypoint` is gone** *(breaking)*. A start-here claim now travels on the Document it is about — the Document that must be read first declares `matches: eager` and surfaces the moment its Bundle is in play — and finer reading order is prose in `BUNDLE.md`'s body. One declaration instead of two places to disagree about where reading starts. Removed rather than deprecated on the `v0.0.15` rule: deprecation is a cost paid for adopters who exist, and outside this estate there are none.
+  *Migration:* delete `entrypoint` from `BUNDLE.md` and declare `matches: eager` on the Document it pointed at. A consumer meeting the old field finds an unknown field, which conformance already tolerates.
+
 ## [0.0.18] — 2026-08-30
 
 ### Changed

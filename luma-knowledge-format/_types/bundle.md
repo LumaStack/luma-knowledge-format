@@ -6,7 +6,6 @@ fields:
   version:     { field_presence: required,   field_type: semver,       desc: "This Bundle's content version.." }
   published:   { field_presence: recommended, field_type: date,         desc: "When this version was published." }
   consumers:   { field_presence: optional,    field_type: list of text, desc: "Kinds of consumer that may adopt this Bundle. Open vocabulary.." }
-  entrypoint: { field_presence: optional,    field_type: text,         desc: "Document ID of where a reader should start.." }
 ---
 
 # bundle

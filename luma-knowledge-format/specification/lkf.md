@@ -1,9 +1,10 @@
 ---
 type: document
 title: Luma Knowledge Format — Specification
-lkf_version: 0.0.18
+lkf_version: 0.0.19
 lifecycle: provisional
 survival: promised
+matches: eager
 ---
 
 # Luma Knowledge Format — Specification
@@ -115,7 +116,7 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule ([Validation](#validation)), and nothing about presence changes whether a file is conformant ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)). The sole hard requirement remains a non-empty `type`.
 
-**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`](#matches)) is not a stand-in for it: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — only `policy` and `workflow` declare it, for the reason given there.
+**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`](#matches)) is not a stand-in for it: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — the built-in `policy` and `procedure` declare it, any type may carry it, and the reasons are given there.
 
 ### Core fields
 | Field | Presence | Field type | Meaning |
@@ -518,13 +519,13 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **A Document outside every Bundle has no such scope.** Nothing prevents a Document living beside Bundles rather than inside one — describing a repository, or a place Bundles are published from. Such a Document declares a `type` like any other, and the format offers no rule for where its contract is found: there is no Bundle to look in. **Whoever puts a Document there owes it an answer**, and where two Bundles disagree about that type, nothing decides between them.
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `workflow`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `luma-knowledge-format/` directory — itself a Bundle, so that the unit of distribution is the format itself rather than the project around it — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
-- **Built-in names.** The names `document`, `workflow`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
-- **Two base types, because the third thing a consumer can do is the root itself.** `workflow` and `policy` declare no fields between them. They are not labels for subjects — they name **what a consumer does with the content**:
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `procedure`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `luma-knowledge-format/` directory — itself a Bundle, so that the unit of distribution is the format itself rather than the project around it — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Built-in names.** The names `document`, `procedure`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
+- **Two base types, because the third thing a consumer can do is the root itself.** `procedure` and `policy` declare no fields between them. They are not labels for subjects — they name **what a consumer does with the content**:
 
   | type | what a consumer does with it |
   |---|---|
-  | `workflow` | **runs it.** A procedure, projected into whatever form the consumer executes |
+  | `procedure` | **runs it.** A procedure, projected into whatever form the consumer executes |
   | `policy` | **is bound by it.** A rule that constrains the consumer's own behaviour, rather than informing it |
 
   **The third thing — reads it — needs no type, because it is what `document` already is.** Naming that would be naming the default, and **a type that names the default dispatches on nothing**: every consumer already treats anything without a more specific type exactly that way.
@@ -544,7 +545,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
   | | the consumer | what it does differently |
   |---|---|---|
   | **checked** | a validator | has a contract to check the Document against — `decision` requires a `decided` date, and nothing can enforce that without the type |
-  | **transformed** | whatever converts Documents into another form | `workflow` is projected into a harness; no other Document in a Bundle is |
+  | **transformed** | whatever converts Documents into another form | `procedure` is projected into a harness; no other Document in a Bundle is |
   | **consulted** | the format's own machinery | reads it to decide how to handle *other* Documents — `type_definition` and `bundle` are both of this kind |
 
   **Enumeration is not enough.** *"Show me every Document of this kind"* works for any type at all, so admitting it as a reason would grow the list without limit.
@@ -562,7 +563,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **A built-in is the format's only mandatory surface.** Everything else here is permissive by law ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) — unknown types tolerated, missing fields tolerated, unresolved links tolerated, and no consumer may reject a Document for any of it. This list is the one place the format *requires* something of every implementation.
 
-  **So the question is never whether a type is important. It is whether a consumer that ignored it would fail to read a conformant Document, or engage with one in a way this specification says is wrong.** Both count, and they fail differently: without `bundle` or `type_definition` there is no Document ID and no way to obtain a contract, so nothing can be read at all; without `workflow` or `policy` a Document parses perfectly and is then read as information when it is a rule that binds, or a procedure to run — a distinction this specification draws and the consumer got wrong.
+  **So the question is never whether a type is important. It is whether a consumer that ignored it would fail to read a conformant Document, or engage with one in a way this specification says is wrong.** Both count, and they fail differently: without `bundle` or `type_definition` there is no Document ID and no way to obtain a contract, so nothing can be read at all; without `procedure` or `policy` a Document parses perfectly and is then read as information when it is a rule that binds, or a procedure to run — a distinction this specification draws and the consumer got wrong.
 
   ***My tooling would break* is the wrong kind of broken.** It is true of every domain type ever written. A consumer ignoring one still reads the Document correctly — as a plain `document`, which is what it is — and merely does not participate in something built on top of the format. **That is the format working, not failing.**
 
@@ -574,7 +575,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **That asymmetry is a tiebreaker, not an entry route.** It applies only to a candidate that has already cleared the checks above and is still genuinely balanced — there, admitting now and deprecating later is the cheaper error. It is not a reason to admit something that failed them, because a namespace costs nothing and is available immediately.
 
-- **Namespacing.** **Unprefixed means the format defines it; a prefix means somebody else does.** That is the whole convention, and it lets a reader tell a type's origin from its name without a lookup — `workflow` is LKF's, `acme/deploy_check` is an organization's.
+- **Namespacing.** **Unprefixed means the format defines it; a prefix means somebody else does.** That is the whole convention, and it lets a reader tell a type's origin from its name without a lookup — `procedure` is LKF's, `acme/deploy_check` is an organization's.
 
   A `type` published beyond the Bundle that wrote it SHOULD therefore be namespaced — typically by domain (`health/lab_result`, `finance/invoice`) or organization. At larger scale a team or department dimension MAY be added to disambiguate (e.g. `sales/report`, `engineering/report`). These are examples, not a mandated scheme: namespace however fits your context, or not at all.
 
@@ -600,14 +601,14 @@ Two deliberate choices: a `deprecated` field stays a *warning* even under `--str
 Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
 
 ### `matches`
-**Not a core field.** Two of the built-in types declare it, and no other Document carries it.
+**Not a core field.** The built-in `policy` and `procedure` declare it; any type MAY declare it, and a Document MAY carry it whatever its type. A consumer SHOULD honour it wherever it appears.
 
-**The two kinds that carry a trigger are the two that act on you** — a rule that binds, and a procedure you run. Background does not act; it is reached *through* the things that do. Rationale has no moment either: it is wanted when somebody wonders *why*, and wondering is not a trigger. A concept whose subject genuinely arises somewhere is already reachable from the policy or workflow that arises there, and advertising it separately makes it compete with them for attention.
+**The two built-ins that declare it are the two that act on you** — a rule that binds, and a procedure you run. Background does not act; it is normally reached *through* the things that do, and rationale has no moment: it is wanted when somebody wonders *why*, and wondering is not a trigger. So a Document that neither binds nor runs SHOULD declare `matches` only when its subject genuinely arises on its own — a reference worth surfacing by topic is real, and every self-advertisement short of that competes with the policies and procedures for a reader's attention.
 
 **What makes this Document surface.** Three forms, and each reads as a sentence:
 
 ```yaml
-matches: always                 # nothing gates it
+matches: eager                  # surfaces as soon as what holds it is in play
 ```
 ```yaml
 matches:                        # these situations do — any one of them
@@ -627,9 +628,11 @@ matches: nothing                # nothing surfaces it; it is fetched deliberatel
 | `event` | a lifecycle point is reached — `session-start`, `session-end`, `before-commit`, `before-push`, `before-merge`, `before-release` |
 | `topic` | the work is *about* something, recognised by meaning rather than by pattern |
 
-**`always` and `nothing` are values of the field, never members of that list.** A kind narrows; these two decline to. As a list member `always` could sit beside a condition it renders dead — `[always, path: "src/**"]` parses, validates and silently ignores the path under OR semantics — and a form whose invalid state cannot be written needs no rule forbidding it.
+**`eager` and `nothing` are values of the field, never members of that list.** A kind narrows; these two decline to. As a list member `eager` could sit beside a condition it renders dead — `[eager, path: "src/**"]` parses, validates and silently ignores the path under OR semantics — and a form whose invalid state cannot be written needs no rule forbidding it.
 
-*The field's declared `field_type` is `list_or_keyword`, which is new. `field_type` is an open vocabulary ([Field declarations](#field-declarations)), so this adds a name rather than a mechanism, and it is declared where a validator will look for it: the built-in `policy` and `workflow` Type Definitions.*
+**`eager` claims only what containment can deliver.** It says a Document surfaces the moment whatever holds it is in play — its Bundle is opened, or sits somewhere itself surfaced eagerly. It is not a claim to be present in every session: a Document inside a Bundle nobody has opened is not surfaced, and no value of this field could make it be. The value is named for the reach it actually has.
+
+*The field's declared `field_type` is `list_or_keyword`, which is new. `field_type` is an open vocabulary ([Field declarations](#field-declarations)), so this adds a name rather than a mechanism, and it is declared where a validator will look for it: the built-in `policy` and `procedure` Type Definitions.*
 
 **Absent means `nothing`.** A Document that declares no `matches` is one nothing surfaces on its own behalf, and a consumer MUST NOT read the omission as a claim to be delivered unconditionally. **The expensive reading is the one that has to be asked for**, because a Document acquiring a permanent claim on a reader's attention by an author forgetting a field is the costliest possible default.
 
@@ -639,7 +642,7 @@ matches: nothing                # nothing surfaces it; it is fetched deliberatel
 
 **It says nothing about loading.** What a consumer does with knowing *when a subject arises* — put the Document in front of a reader then, keep it always, do nothing — is the consumer's business (see the note at the end of [Field presence](#field-presence)).
 
-**`policy` also declares `on_violation`; `workflow` does not.** A rule can be broken at a moment and something can act on that. The only way to fail a procedure is not to run it, which is the **absence** of an action — detecting absence needs state no consumer is obliged to keep, so the format does not ask for it.
+**`policy` also declares `on_violation`; `procedure` does not.** A rule can be broken at a moment and something can act on that. The only way to fail a procedure is not to run it, which is the **absence** of an action — detecting absence needs state no consumer is obliged to keep, so the format does not ask for it.
 
 **`event` reaches what the others cannot: a lifecycle point, however it is arrived at.** `command: git commit` catches that literal invocation; `event: before-commit` catches the point itself. A Document may reasonably declare both, and under OR semantics that is redundancy in the useful direction.
 
@@ -661,6 +664,7 @@ Where a name is shared with an outside convention, that convention's casing wins
 Directories are outside the rule and keep their own convention. `_types/` already says *structural rather than content* with its underscore, and a second signal for one meaning is worse than one.
 
 - **`BUNDLE.md`** — the Bundle's own Document, at its root, with `type: bundle`. It is how a Bundle describes itself; see below. Recommended.
+- **`INDEX.md`** — a generated rendering of the Bundle for a reader deciding what to open; see below. Recommended for distributed Bundles.
 - **`LOG.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
 - **`_types/`** — Type Definitions ([Type extensions](#type-extensions)).
 
@@ -683,7 +687,6 @@ description: Health knowledge — lab results, medications, and conditions.
 | `version` | required | semver | this Bundle's version ([Field declarations](#field-declarations)) |
 | `published` | recommended | date | when this version was published |
 | `consumers` | optional | list of text | the kinds of consumer that may adopt this Bundle |
-| `entrypoint` | optional | text | the Document ID ([Document ID](#document-id)) of where a reader should start |
 | `description` | *inherited* | text | one line on what the Bundle holds — a core field ([Core fields](#core-fields)), so `optional`; a Bundle SHOULD still carry one |
 
 `version` is required because a Bundle without one cannot be pinned, compared, or reported as outdated — a consumer can say nothing honest about it. It is the Bundle's *content* version, distinct from `lkf_version` ([Versioning](#versioning)), which is the format-grammar version.
@@ -694,15 +697,20 @@ description: Health knowledge — lab results, medications, and conditions.
 
 It is a list because a Bundle may legitimately apply to more than one kind, and that is the whole reason it is a field. A distributor sorting Bundles into directories by consumer kind can express only one, which forces the *publisher* to answer a question that often belongs to the *adopter*. Omitting `consumers` says nothing — not "no consumers" and not "all consumers" — and consumers MUST NOT reject a Bundle for its absence ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)).
 
-**`entrypoint` names where to start reading.** A Bundle of any size gives a newcomer no way to tell which Document is the way in, and every consumer otherwise invents its own answer — first alphabetically, the longest one, the one matching the directory name. It carries a **Document ID** ([Document ID](#document-id)), not a link: `entrypoint: recording-decisions`.
+**Where to start reading is declared by the Documents, never here.** A Document that must be read before anything else in the Bundle declares `matches: eager` ([`matches`](#matches)) and surfaces the moment the Bundle is in play; finer reading order is prose in this Document's body, which travels with the Bundle like everything else. `BUNDLE.md` is itself an ordinary Document and MAY declare `matches` — which is how a whole Bundle claims eager surfacing wherever it is adopted.
 
-It is a claim about **reading order** — *start here* — and nothing else. Whether that Document, or any other, is placed in front of a reader is a consumption question the format leaves alone.
-
-`description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published`, `consumers` and `entrypoint`. A type *may* restate an inherited field to raise its presence ([Inheritance](#inheritance)); `bundle` has no need to, since `description` at `optional` is already what it wants.
+`description` is inherited rather than declared: it is already a core field, and the built-in `bundle` Type Definition adds only `version`, `published` and `consumers`. A type *may* restate an inherited field to raise its presence ([Inheritance](#inheritance)); `bundle` has no need to, since `description` at `optional` is already what it wants.
 
 Consistent with [Frontmatter layout and conformance](#frontmatter-layout-and-conformance), a Bundle missing `BUNDLE.md` is not thereby invalid — nothing in LKF rejects. Tools that distribute Bundles will reasonably require one.
 
-> **Not yet fully specified:** the exact structure of `LOG.md`.
+### `INDEX.md`
+A distributed Bundle SHOULD ship an `INDEX.md` at its root — **a rendering, never a source of truth**: what the Bundle is for, each Document's `description` and `matches`, and what must be read before acting on anything here, all derived from the Documents' own frontmatter and from `BUNDLE.md`.
+
+**It is derived, and stays discardable.** Regenerating it from the Bundle loses nothing, which is what keeps the files themselves the whole system. A consumer MUST NOT parse `INDEX.md` as data — the frontmatter it renders is the contract — and a listing that disagrees with the frontmatter is a defect of that copy, detectable by regeneration.
+
+**It ships rather than being rebuilt on demand** so that a reader with no tooling — a human in an editor, an agent holding files — still gets the Bundle's own account of what it holds and what to open first. Generating it is the distributor's business, at publish or on edit; LKF reserves the name and states the obligations, and specifies no generator.
+
+> **Not yet fully specified:** the exact structure of `LOG.md`, and the section shape of `INDEX.md` — the name and the obligations above are reserved now; a normative layout may follow from practice.
 
 ## Versioning
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.

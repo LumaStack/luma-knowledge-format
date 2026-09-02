@@ -1,15 +1,15 @@
 ---
 type: bundle
-version: 0.0.18
-entrypoint: specification/lkf
+version: 0.0.19
 description: The Luma Knowledge Format — its specification, and the built-in types as real Type Definitions.
 ---
 
 # Luma Knowledge Format
 
 This directory is a Bundle: the specification, and the built-in Type
-Definitions expressed in the format they define. `entrypoint` names the
-specification, which is where a reader starts.
+Definitions expressed in the format they define. The specification declares
+`matches: eager`, so it surfaces the moment this Bundle is in play — which
+is where a reader starts.
 
 It is what *Resolution and namespacing* means by vendoring — copy the
 `_types/*.md` you want into your own bundle.
