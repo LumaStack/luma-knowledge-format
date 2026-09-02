@@ -116,7 +116,7 @@ Every field — a core field here, or a domain field declared by a Type Definiti
 
 Presence describes *intent*. Whether and how a tool checks it is a suggested validation framework, not a rule ([Validation](#validation)), and nothing about presence changes whether a file is conformant ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)). The sole hard requirement remains a non-empty `type`.
 
-**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`](#matches)) is not a stand-in for it: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is not a core field** — the built-in `policy` and `procedure` declare it, any type may carry it, and the reasons are given there.
+**Nothing here says when a Document should be placed in front of a reader, and that is deliberate.** **Consumption belongs to whatever distributes and loads Bundles**, not to the format that defines them. `matches` ([`matches`](#matches)) is not a stand-in for it: it says what makes a Document **surface**, which is a property of the content, and any decision about loading is one a consumer *derives* from it. **It is a core field, and `optional` like most of them** — any Document may say what surfaces it, and the guidance on using it sparingly outside rules and procedures is given there.
 
 ### Core fields
 | Field | Presence | Field type | Meaning |
@@ -132,6 +132,7 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 | [`verified`](#verified-and-trust-tiers) | optional | list of actor_event | Independent confirmation events. |
 | [`sources`](#sources) | optional | list | Materials the content derives from (bespoke shape). |
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
+| [`matches`](#matches) | optional | list_or_keyword | What makes this Document surface — `eager`, `nothing`, or a list of conditions. Absent means `nothing`. |
 
 > Some presence values above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
 
@@ -521,7 +522,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
 - **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `procedure`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `luma-knowledge-format/` directory — itself a Bundle, so that the unit of distribution is the format itself rather than the project around it — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
 - **Built-in names.** The names `document`, `procedure`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
-- **Two base types, because the third thing a consumer can do is the root itself.** `procedure` and `policy` declare no fields between them. They are not labels for subjects — they name **what a consumer does with the content**:
+- **Two base types, because the third thing a consumer can do is the root itself.** `procedure` declares no fields of its own and `policy` adds only `on_violation`. They are not labels for subjects — they name **what a consumer does with the content**:
 
   | type | what a consumer does with it |
   |---|---|
@@ -601,9 +602,9 @@ Two deliberate choices: a `deprecated` field stays a *warning* even under `--str
 Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
 
 ### `matches`
-**Not a core field.** The built-in `policy` and `procedure` declare it; any type MAY declare it, and a Document MAY carry it whatever its type. A consumer SHOULD honour it wherever it appears.
+**A core field, `optional` everywhere** ([Core fields](#core-fields)). Any Document may declare what surfaces it, and a consumer SHOULD honour it wherever it appears.
 
-**The two built-ins that declare it are the two that act on you** — a rule that binds, and a procedure you run. Background does not act; it is normally reached *through* the things that do, and rationale has no moment: it is wanted when somebody wonders *why*, and wondering is not a trigger. So a Document that neither binds nor runs SHOULD declare `matches` only when its subject genuinely arises on its own — a reference worth surfacing by topic is real, and every self-advertisement short of that competes with the policies and procedures for a reader's attention.
+**The two kinds it mostly serves are the two that act on you** — a rule that binds, and a procedure you run. Background does not act; it is normally reached *through* the things that do, and rationale has no moment: it is wanted when somebody wonders *why*, and wondering is not a trigger. So a Document that neither binds nor runs SHOULD declare `matches` only when its subject genuinely arises on its own — a reference worth surfacing by topic is real, and every self-advertisement short of that competes with the policies and procedures for a reader's attention.
 
 **What makes this Document surface.** Three forms, and each reads as a sentence:
 
@@ -632,7 +633,7 @@ matches: nothing                # nothing surfaces it; it is fetched deliberatel
 
 **`eager` claims only what containment can deliver.** It says a Document surfaces the moment whatever holds it is in play — its Bundle is opened, or sits somewhere itself surfaced eagerly. It is not a claim to be present in every session: a Document inside a Bundle nobody has opened is not surfaced, and no value of this field could make it be. The value is named for the reach it actually has.
 
-*The field's declared `field_type` is `list_or_keyword`, which is new. `field_type` is an open vocabulary ([Field declarations](#field-declarations)), so this adds a name rather than a mechanism, and it is declared where a validator will look for it: the built-in `policy` and `procedure` Type Definitions.*
+*The field's declared `field_type` is `list_or_keyword`, which is new. `field_type` is an open vocabulary ([Field declarations](#field-declarations)), so this adds a name rather than a mechanism, and it is declared where a validator will look for it: the built-in `document` Type Definition, from which every type inherits it.*
 
 **Absent means `nothing`.** A Document that declares no `matches` is one nothing surfaces on its own behalf, and a consumer MUST NOT read the omission as a claim to be delivered unconditionally. **The expensive reading is the one that has to be asked for**, because a Document acquiring a permanent claim on a reader's attention by an author forgetting a field is the costliest possible default.
 

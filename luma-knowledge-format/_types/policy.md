@@ -3,7 +3,6 @@ type: type_definition
 defines: policy
 extends: document
 fields:
-  matches:      { field_presence: optional, field_type: list_or_keyword, values: [eager, nothing], desc: "What makes this Document surface — eager, nothing, or a list of triggers. Absent means nothing.." }
   on_violation: { field_presence: optional, field_type: enum, values: [allow, audit, warn, require_reason, require_approval, block], desc: "What a consumer SHOULD do when this policy is not complied with. Intent, never a guarantee — see below." }
 ---
 

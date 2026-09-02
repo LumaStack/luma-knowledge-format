@@ -2,8 +2,7 @@
 type: type_definition
 defines: procedure
 extends: document
-fields:
-  matches:      { field_presence: optional, field_type: list_or_keyword, values: [eager, nothing], desc: "What makes this Document surface — eager, nothing, or a list of triggers. Absent means nothing.." }
+fields: {}
 ---
 
 # procedure
@@ -42,8 +41,9 @@ For most Documents `description` is a convenience. For a procedure it is what a
 consumer reads to decide **whether this procedure applies at all** — the text
 that selects it, before its body is read.
 
-The root declares `description` as `optional` and inheritance is add-only, so this type cannot strengthen it. Treat it as required in practice: a
-procedure without one is a procedure nothing will ever choose to run.
+The root declares `description` as `optional`, and this type leaves it
+there. Treat it as required in practice: a procedure without one is a
+procedure nothing will ever choose to run.
 
 ## What it does not say
 
