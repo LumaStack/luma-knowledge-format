@@ -706,7 +706,7 @@ Consistent with [Frontmatter layout and conformance](#frontmatter-layout-and-con
 ### `INDEX.md`
 A distributed Bundle SHOULD ship an `INDEX.md` at its root — **a rendering, never a source of truth**: what the Bundle is for, each Document's `description` and `matches`, and what must be read before acting on anything here, all derived from the Documents' own frontmatter and from `BUNDLE.md`.
 
-**It is derived, and stays discardable.** Regenerating it from the Bundle loses nothing, which is what keeps the files themselves the whole system. A consumer MUST NOT parse `INDEX.md` as data — the frontmatter it renders is the contract — and a listing that disagrees with the frontmatter is a defect of that copy, detectable by regeneration.
+**It is derived, and the frontmatter it renders is authoritative.** Regenerating it from the Bundle loses nothing, which is what keeps the files themselves the whole system. A consumer MAY read it mechanically — one file instead of many is a real economy, and an unmodified copy cannot disagree with the frontmatter it was generated from — but where the two disagree the frontmatter wins, the disagreement is a defect of that copy, and a consumer SHOULD report it rather than act on the rendering.
 
 **It ships rather than being rebuilt on demand** so that a reader with no tooling — a human in an editor, an agent holding files — still gets the Bundle's own account of what it holds and what to open first. Generating it is the distributor's business, at publish or on edit; LKF reserves the name and states the obligations, and specifies no generator.
 
