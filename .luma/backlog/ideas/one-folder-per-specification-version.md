@@ -5,7 +5,7 @@ created: { by: human:benlinton, at: 2026-08-30T00:00:00Z }
 contributors: [human:benlinton, agent:claude-opus-5]
 horizon: later
 scope: project
-lifecycle: draft
+stage: draft
 ---
 
 # Should each specification version get its own folder?
@@ -67,7 +67,7 @@ specification alongside the current one says it stays readable, stays unedited,
 and stays correct about what it described. That is a promise to whoever pinned
 it, and it does not expire on its own.
 
-**It is a migration-path commitment in this format's own vocabulary.** *Lifecycle*
+**It is a migration-path commitment in this format's own vocabulary.** *Stage*
 defines `stable` as change that **owes the reader a way across**, and keeping
 old versions readable is one of the ways that obligation is honoured. The
 format is `0.0.z` and says outright it has not earned `v0.1.0` — taking on a

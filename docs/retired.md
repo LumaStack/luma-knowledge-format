@@ -28,6 +28,8 @@ cannot mean *shipped* and *given up* in the same repository.
 | `workflow` | the built-in type for a procedure a consumer runs | `v0.0.19` | `procedure` — the same contract, named for the invariant across every rendering a consumer projects it into |
 | `always` | the `matches` value meaning *nothing gates it* | `v0.0.19` | [`eager`](../luma-knowledge-format/specification/lkf.md#matches) — the same position in the field, named for the reach containment actually gives it |
 | `entrypoint` | the Bundle field naming where a reader should start | `v0.0.19` | `matches: eager` on the Document itself — the start-here claim travels on the thing it is about |
+| `lifecycle` | the core field naming a Document's stage | `v0.0.20` | [`stage`](../luma-knowledge-format/specification/lkf.md#stage) — same values, same meaning; the word freed for the estate's own lifecycles |
+| `experimental` | the `survival` value for a thing published with no intentions about lasting | `v0.0.20` | [`probationary`](../luma-knowledge-format/specification/lkf.md#survival) — the survival is on trial, and a verdict is owed |
 
 ## Why each was retired
 
