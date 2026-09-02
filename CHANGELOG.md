@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.19] — 2026-09-02
+
 ### Changed
 - **The built-in type `workflow` is renamed `procedure`** *(breaking)*. The type names written steps a consumer runs, and consumers project it into whatever their harness invokes — a skill in one, a command in another, someday something that composes several. The old name claimed the word software at large uses for orchestrated multi-step processes, which this type is not; the new name is the invariant across every rendering, and it frees `workflow` for a composing construct if one ever earns specification. Same contract; no fields change.
   *Migration:* rename `type: workflow` to `type: procedure`, and `workflow/` directories where a bundle uses that layout. Consumers dispatch on `procedure`; a Document still declaring the old type reads as an ordinary `document` — the safe direction — and SHOULD be reported.
@@ -325,7 +327,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.18...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.19...HEAD
+[0.0.19]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.18...v0.0.19
 [0.0.18]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.17...v0.0.18
 [0.0.17]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.16...v0.0.17
 [0.0.16]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.15...v0.0.16
