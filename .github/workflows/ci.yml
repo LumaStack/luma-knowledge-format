@@ -5,9 +5,10 @@ name: check
 # sentence describes a check rather than a checklist item, and the checklist
 # lost twice to it — `README.md` sat two releases behind before anybody noticed.
 #
-# So this reads both and refuses a mismatch. It also refuses a Bundle whose
-# `entrypoint` names nothing: a specification is now shipped inside the Bundle,
-# and a pointer to a file that moved fails as quietly as a stale version does.
+# So this reads both and refuses a mismatch. It also refuses a Bundle in
+# which no Document declares `matches: eager`: a specification is shipped
+# inside the Bundle, and a reader left to guess where to start fails as
+# quietly as a stale version does.
 # A specification has nothing to build and nothing to test, and a check that
 # exists to catch a silent failure should not be padded with checks that catch
 # loud ones.
@@ -67,19 +68,18 @@ jobs:
           echo
           echo "v$spec, consistently."
 
-      - name: The Bundle's entrypoint resolves
+      - name: Something in the Bundle declares where reading starts
         run: |
           set -eu
 
-          entrypoint=$(awk -v k='^entrypoint: *' 'NR==1&&/^---$/{f=1;next} f&&/^---$/{exit} f&&$0~k{sub(k,"");print;exit}' "$BUNDLE")
-          [ -n "$entrypoint" ] || { echo "$BUNDLE declares no entrypoint."; exit 1; }
-
-          # A Document ID is a path within the Bundle with the .md removed.
-          target="luma-knowledge-format/$entrypoint.md"
-          if [ -f "$target" ]; then
-            echo "entrypoint: $entrypoint -> $target"
+          # The start-here claim travels on the Document it is about: a
+          # Document that must be read first declares `matches: eager`. A
+          # Bundle shipping a specification and no eager Document leaves a
+          # reader to guess, which fails as quietly as a stale version does.
+          if grep -rl -E '^matches: *eager *$' luma-knowledge-format --include='*.md' | grep -v '_types/'; then
+            echo "An eager Document exists; a reader knows where to start."
           else
-            echo "$BUNDLE says 'entrypoint: $entrypoint', which resolves to $target — and nothing is there."
+            echo "No Document in the Bundle declares 'matches: eager' — nothing says where reading starts."
             exit 1
           fi
 
