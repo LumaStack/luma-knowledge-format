@@ -1,7 +1,8 @@
 ---
 type: type_definition
+type_version: "0.0.1"
 defines: procedure
-version: "0.1.0"
+version: "0.0.1"
 extends: document
 fields: {}
 ---

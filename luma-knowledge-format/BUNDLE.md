@@ -1,5 +1,6 @@
 ---
 type: bundle
+type_version: "0.0.1"
 version: 0.0.21
 description: The Luma Knowledge Format — its specification, and the built-in types as real Type Definitions.
 ---

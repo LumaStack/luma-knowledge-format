@@ -177,6 +177,8 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   *Prior art worth lifting rather than reinventing, if integrity ever does become a format concern: a consumer of this format has already built the layer — algorithm-tagged content hashes so the algorithm can change without breaking the format, a cheap size-and-mtime pre-check before hashing, and a vocabulary distinguishing output that is thin from output that is false. **That it was built downstream without the format's help is also an argument the format does not need it.***
 
+- **An in-band spelling for the version pairs.** `type: type_definition@0.2.0` beside `defines: lab_result@0.4.0` — name-at-version in one token, familiar from npm, Go and pip. Raised while `type_version` was being settled for `0.0.21` and deliberately **not ruled out**; the sibling-field shape won for now because separate fields are easier to work with and roll out with no sequencing, while in-band touches the two values readers dispatch on — every consumer must learn to split before anything may write a version, which is the one migration field-tolerance cannot absorb. If in-band ever wins, `@` is the recorded spelling: it is YAML-safe mid-scalar, where `#` silently opens a comment and a second `:` collides with the structural separator. What would reopen it: the sibling pair proving noisy in practice, or a major version where dispatch code is being retaught anyway.
+
 - **A link that carries a hidden id** — a markdown link whose target is a path by default, but which also carries an identifier no reader sees, so a rename cannot break it. Recorded to be evaluated; neither adopted nor dismissed.
 
   A first look at possible carriers, as observations rather than a shortlist:

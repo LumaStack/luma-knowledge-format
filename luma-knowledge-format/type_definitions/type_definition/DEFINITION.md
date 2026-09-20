@@ -1,7 +1,8 @@
 ---
 type: type_definition
+type_version: "0.0.1"
 defines: type_definition
-version: "0.1.0"
+version: "0.0.1"
 extends: document
 fields:
   defines: { field_presence: required,   field_type: text, desc: "The type name this document governs.." }

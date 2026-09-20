@@ -1,9 +1,11 @@
 ---
 type: type_definition
+type_version: "0.0.1"
 defines: document
-version: "0.1.0"
+version: "0.0.1"
 fields:
   type:             { field_presence: required,   field_type: text,               desc: "What kind of Document this is — the one hard conformance requirement." }
+  type_version:     { field_presence: recommended, field_type: semver,             desc: "The version of this Document's type's Type Definition it was written against. Copied, never minted. Absent means unstated." }
   title:            { field_presence: recommended, field_type: text,               desc: "Human label; may fall back to the filename." }
   description:      { field_presence: optional,    field_type: text,               desc: "One-sentence summary; used by indexes and search." }
   tags:             { field_presence: optional,    field_type: list of text,       desc: "Categorization, typically nested via / (e.g. ml/generative)." }

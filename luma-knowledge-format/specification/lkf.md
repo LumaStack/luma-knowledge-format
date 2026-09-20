@@ -1,5 +1,6 @@
 ---
 type: document
+type_version: "0.0.1"
 title: Luma Knowledge Format — Specification
 lkf_version: 0.0.21
 stage: provisional
@@ -133,6 +134,7 @@ Presence describes *intent*. Whether and how a tool checks it is a suggested val
 | [`sources`](#sources) | optional | list | Materials the content derives from (bespoke shape). |
 | `stale_after` | optional | date | The content SHOULD be re-checked after this date. |
 | [`matches`](#matches) | optional | list_or_keyword | What makes this Document surface — `eager`, `nothing`, or a list of conditions. Absent means `nothing`. |
+| [`type_version`](#type_version) | recommended | semver | The `version` of this Document's type's Type Definition it was written against. Copied from the definition, never minted. Absent means unstated. |
 
 > Some presence values above (`title`, `description`, `tags`, `verified`, `sources`) are working defaults pending final ratification.
 
@@ -498,6 +500,8 @@ version: "1.2.0"
 
 **The built-in types each declare one, independent of the format's `lkf_version`.** They are the copied-type case exactly — vendored into bundles everywhere — so a format release that never touched their contracts must not report every copy as out of date.
 
+**The version a conforming Document cites is [`type_version`](#type_version)** — this field is the number it copies.
+
 #### `vendored_from`
 
 A Type Definition copied from elsewhere SHOULD record where it came from:
@@ -514,6 +518,29 @@ vendored_from:
 **`version` records the Type Definition's own version where it declares one, and the containing Bundle's otherwise.** Say which in the copy if it could be read either way.
 
 **It answers two questions, and the second is easy to miss.** *Is my copy still current?* — compare against `resource` at `version`, on demand. And *do two copies in one place agree?* — two Bundles that vendored the same type at different versions hold two contracts under one name, which [Resolution and namespacing](#resolution-and-namespacing) permits and which nothing else would surface.
+
+### `type_version`
+
+**A core field, `recommended` everywhere** ([Core fields](#core-fields)). A Document records which `version` of its type's Type Definition it was written against:
+
+```yaml
+type: lab_result
+type_version: "0.0.1"
+```
+
+**The value is copied, never minted.** It cites the `version` the Type Definition declares ([`version`](#version)), as of the moment the Document was written or migrated. A type whose definition declares no `version` gives its Documents nothing to cite, and they cite nothing.
+
+**It is written directly beneath `type`.** The two lines are one claim — *a `lab_result`, at `0.0.1`* — and keeping them adjacent is what lets a reader take them in as one. A convention of layout, not of parsing: YAML key order carries no meaning, so a consumer reads the field wherever it sits.
+
+**What it buys is migration by query rather than belief.** When a contract moves, the Documents still on the old version are findable. Without this field, the only way to retire an old spelling is to believe every Document everywhere has been rewritten — which nothing can check, so tolerances for old forms accumulate indefinitely.
+
+- **Absent means unstated.** Not the first version and not the latest: a consumer MUST NOT infer a version from silence, and a Document without the field is as conformant as ever ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)).
+- **It records one version** — the one the Document was last written or migrated against. A Document that happens to satisfy several versions still names one.
+- **Whoever writes the Document writes it**, copying the type's current `version`. A tool that rewrites a file SHOULD keep it true; nothing makes a hand-written Document wait for a tool.
+- **It can disagree with the content** — a Document claiming a version while missing what that version requires. The Document stays readable, and the disagreement is reportable like every finding here ([Validation](#validation)).
+- **It is not provenance.** A migration updates it — that is what it is for. What *created* a record is a different fact with the opposite rule, and one field cannot honour both.
+
+**On a Type Definition it names the `type_definition` contract version, and that is the one place two versions meet.** A Type Definition publishes its own `version` and tracks a `type_version` like any Document, because it is one. The rule that keeps them apart: **bare `version` is what a Document publishes; a qualified `*_version` is what it conforms to** — the same split `BUNDLE.md` carries with `version` beside `lkf_version` ([Versioning](#versioning)). And it is what makes the root of the type system migratable: when `type_definition`'s own contract moves, every Type Definition everywhere is an ordinary Document of a changed type — findable, and migratable, by exactly this field.
 
 ### Field declarations
 Each entry under `fields` declares one field with up to four keys:
@@ -762,7 +789,7 @@ A distributed Bundle SHOULD ship an `INDEX.md` at its root — **a rendering, ne
 - Scheme: **semver `major.minor.patch`**, starting at **0.0.1** (the earliest, most-unstable tier — breaking changes are expected in `0.0.z`). patch = clarifications/errata; minor = backward-compatible additions; major = breaking. Fields are `deprecated` before removal.
 - Published versions are **git tags**; the newest tag is the current version.
 - **Reserving a name this specification previously defined is a breaking change**, even though nothing currently uses it — a Bundle that had adopted the free name for its own purposes would silently acquire this specification's meaning. Names it has given up are listed in [`retired.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/retired.md).
-- A Bundle MAY declare an `lkf_version` on its root `BUNDLE.md` ([`BUNDLE.md`](#bundlemd)); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, [`BUNDLE.md`](#bundlemd)), not a file's content version (git's job), and not a Type Definition's own `version`.
+- A Bundle MAY declare an `lkf_version` on its root `BUNDLE.md` ([`BUNDLE.md`](#bundlemd)); a Document MAY override with its own (file-level wins). This is the *format-grammar* version — not the Bundle's content version (`version`, [`BUNDLE.md`](#bundlemd)), not a file's content version (git's job), not a Type Definition's own `version`, and not a Document's [`type_version`](#type_version). One rule sorts them all: bare `version` is what a Document publishes; a qualified `*_version` is what it conforms to.
 
 > Known gaps and deferred features are tracked in [`roadmap.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/roadmap.md).
 > Names this specification once defined and no longer does are listed in [`retired.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/docs/retired.md).
