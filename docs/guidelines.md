@@ -38,13 +38,21 @@ This is the format's own trust model applied to the project itself: drafting is 
 
 ## Where history lives
 
-**Two files hold history. Every other file in this repository is current or
-forward-looking.**
+**History lives in the files named below. Every other file in this repository
+is current or forward-looking.**
 
 | what | where |
 |---|---|
 | what changed in a release, and why | `CHANGELOG.md` |
+| what changed in a built-in Type Definition, and why | that type's own `CHANGELOG.md`, inside the Bundle — the specification requires one per type, and the built-ins are not special |
 | a name the format once defined and no longer does | [`retired.md`](retired.md) |
+
+A per-type changelog is keyed by the type's own `version` — each built-in
+declares one, independent of `lkf_version` — and names the format release that
+shipped each bump. The two files answer different questions: the release
+changelog says what a format version changed, the type's says what a type
+version changed, and the release reference is the join between them rather
+than a repetition.
 
 **There is one specification file, `luma-knowledge-format/specification/lkf.md`.
 There are no versioned specification filenames, none are planned, and nothing
@@ -219,6 +227,11 @@ now*,** not the use of version numbers.
 **Resist a third live statement.** A new file needing the current version should
 read it from one of the two, or go without.
 
+**A built-in Type Definition's `version` is not a statement of the format's.**
+Each built-in declares its own, independent of `lkf_version` by design — a
+different claim about a different thing, outside this rule. It moves when that
+type's contract changes, not when a release is cut.
+
 ## Versioning & release policy
 
 ### What moves the version
@@ -231,7 +244,7 @@ is inside the thing being distributed.
 **A change to any file in `luma-knowledge-format/` moves the version:**
 
 - the specification, `specification/lkf.md`
-- the built-in Type Definitions, `_types/`
+- the built-in Type Definitions, `type_definitions/`
 - the Bundle's own manifest and behavior, `BUNDLE.md`
 
 **Plus `LICENSE`**, which is the only file beyond the directory that moves the
@@ -280,7 +293,7 @@ skip a version — the size decides the tier, not whether there is one.
 An agent working in this repository MUST:
 - **Read this file in full before cutting a release.** Not skim it, not recall it — open it. The evidence that this is not happening: `v0.0.12` and `v0.0.13` are tagged with no GitHub Release at all (step 7), and `v0.0.14`, `v0.0.15` and `v0.0.16` each shipped a body pasted whole from the changelog — duplicate heading, no `Upgrading` section — leaving the maintainer to correct the titles by hand.
 - **Not change the specification normatively without a ratified decision.** Drafting a proposal is fine; merging it into the spec as settled is not.
-- **Not put history anywhere but `CHANGELOG.md` and [`retired.md`](retired.md)** — see [Where history lives](#where-history-lives). A retired name goes in `retired.md`, what changed in a release goes in the changelog, a rationale goes in the commit message. A rule may cite what produced it and stays current by doing so; **the specification alone may not name a retired thing even then** ([What the specification may contain](#what-the-specification-may-contain)).
+- **Not put history anywhere but the files [Where history lives](#where-history-lives) names** — `CHANGELOG.md`, the per-type changelogs inside the Bundle, and [`retired.md`](retired.md). A retired name goes in `retired.md`, what changed in a release goes in the changelog, a rationale goes in the commit message. A rule may cite what produced it and stays current by doing so; **the specification alone may not name a retired thing even then** ([What the specification may contain](#what-the-specification-may-contain)).
 - **Not leave a retired name behind when one is retired.** Removing it from the specification is half the job — sweep `README.md`, `docs/`, `CLAUDE.md` and `.luma/` in the same change. `concept` was taught in `docs/` for eight releases after removal, and `index.md` for four.
 - **Record the rationale in the commit message** for every accepted change, so the "why" is never lost. (When commit-log spelunking gets painful, graduate to an append-only `DECISIONS.md`.)
 - **Work on a branch off `main`, never commit directly to `main`** (except a ratified critical hotfix) — `main` stays equal to the latest release.

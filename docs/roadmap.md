@@ -31,10 +31,11 @@ under *Undecided* below; the third is new.
 
    What would settle it: whether `source` was ever intended as a type, or only
    ever the `sources` field. Check the v0.0.1 history before deciding.
-2. **Type Definition `version`** — *Versioning* refers to "a Type Definition's own
-   `version`", which *Type Definitions* never declares. The `semver` field type now exists to
-   hold it, so the remaining questions are whether a Type Definition carries one
-   at all and what a bump means for copies already vendored elsewhere.
+2. **Type Definition `version`** — declared in the specification, and since
+   `0.0.21` every built-in carries one of its own, independent of `lkf_version`.
+   The remaining question is what a bump *means* — whether the semver tiers
+   carry over to types, and what one implies for copies already vendored
+   elsewhere.
 
 ## What `v0.1.0` would mean
 
@@ -76,19 +77,19 @@ Reading without writing. Using a fraction of it. Elapsed time.
 - **~~Should `lifecycle` carry `unknown`, as its default?~~ Yes.** Shipped in `0.0.11`. `unknown` is not a stage — it says the value was not filled in — and it is the default because both real defaults would be wrong guesses.
 - **Reachability of rules.** A rule nobody loads still governs nothing. *Resolution and namespacing* names the problem and declines to solve it: the answer is something always present naming the rules that exist — an index costs a line where the rule costs a page — and nothing does that yet.
 
-- **Vendored-type provenance** — *Resolution and namespacing* makes vendoring the only sharing mechanism, but a vendored `_types/*.md` records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, *`sources`*, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
+- **Vendored-type provenance** — *Resolution and namespacing* makes vendoring the only sharing mechanism, but a vendored Type Definition records nothing about where it came from, so copies drift silently with no signal. Decide whether a vendored Type Definition SHOULD carry upstream provenance (`sources`, *`sources`*, alongside a version) so tooling can offer an opt-in staleness check without reintroducing remote resolution.
 
   **This now has a real consumer and is the highest-value item here.** A shared type library — the thing *Resolution and namespacing* already contemplates when it says types are shared *by vendoring* — is only safe if drift is loud. Without provenance, the choice for a widely-used type is between an unprefixed built-in the format did not want and copies that disagree silently. **Provenance is what makes the namespaced-and-vendored path viable**, and it is what keeps the built-in list short.
 - **Link resolution** — the algorithm and slug rules (uniqueness scope within a bundle, ambiguity handling). Reintroduce `aliases` here; alternate-name resolution is meaningless without the resolution rules.
 - **`extends: source` in *Type Definitions*** — the example Type Definition inherits from `source`, which is neither a reserved built-in nor defined anywhere in the spec. Either the built-ins list is incomplete, or the example is showing a bundle-local parent and should say so. Errata either way, but the two readings differ in what they commit the format to.
 - **Reserved-file formats** — the exact structure of `LOG.md`.
-- **How many names the format claims at a Bundle root.** *Reserved files* reserves `BUNDLE.md`, `LOG.md` and `_types/`, and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
+- **How many names the format claims at a Bundle root.** *Reserved files* reserves `BUNDLE.md`, `INDEX.md`, `LOG.md`, `DEFINITION.md` and `type_definitions/`, and each one is a name no Bundle author may use for anything else. *The shape has stopped moving* above states the hazard exactly: a reserved name gets no deprecation courtesy, so claiming one later breaks anyone already using it as an ordinary name, without warning.
 
   The alternative is to claim **one** name and nest everything reserved beneath it:
 
   ```
   _lkf/
-    types/
+    type_definitions/
     log.md
   bundle.md        ← arguably stays at root, since it names the thing itself
   ```
@@ -99,12 +100,12 @@ Reading without writing. Using a fraction of it. Elapsed time.
 
   **Timing:** this is a Bundle-layout change, which the `v0.1.0` criteria above name specifically as something that must have stopped moving — and it is a migration for every Bundle in existence once any exist. Cheap now.
 
-  *Settled in passing, recorded so it is not re-argued:* `_types/` keeps its name if consolidation does not happen. `.types/` was rejected because hidden directories are skipped by `ls`, default-ignored by search tools, and read as "tooling artifact" — all of which fight *Discovery*, where discovery is the entire point. `lkf-types/` and `luma-types/` were rejected on the vendor-name argument above. `_schema/` was rejected because *schema* means validate-or-reject, which is precisely what *Validation — a suggested framework, not a contract* refuses. The leading underscore stays because it has real prior art for framework-reserved directories, sorts ahead of letters, remains visible, and avoids colliding with the `types/` that TypeScript projects genuinely use.
-- **Where `_types/` resolves.** *Resolution and namespacing* looks in exactly two places: the built-ins, and *a Bundle's* `_types/`. That ties type resolution to Bundles, and the first real consumer has already outgrown it — `luma-catalog` publishes a `type: catalog` document at the root of a directory that is deliberately not a Bundle (no version, never copied wholesale, and it contains Bundles), and that type needs somewhere to live.
+  *Settled, recorded so it is not re-argued:* the directory is `type_definitions/` (`v0.0.21`), named for what it holds, and keeps that name if consolidation does not happen. The rejections that survive any future rename: `.types/`-style hidden directories are skipped by `ls`, default-ignored by search tools, and read as "tooling artifact" — all of which fight *Discovery*, where discovery is the entire point. `lkf-types/`, `luma-types/` and `format_types/` fail on the vendor-name argument above. `_schema/` fails because *schema* means validate-or-reject, which is precisely what *Validation — a suggested framework, not a contract* refuses. A bare `types/` collides with the directory TypeScript projects genuinely use, which the longer name avoids without a prefix.
+- **Where `type_definitions/` resolves.** *Resolution and namespacing* looks in exactly two places: the built-ins, and *a Bundle's* `type_definitions/`. That ties type resolution to Bundles, and the first real consumer has already outgrown it — `luma-catalog` publishes a `type: catalog` document at the root of a directory that is deliberately not a Bundle (no version, never copied wholesale, and it contains Bundles), and that type needs somewhere to live.
 
   Working around it means either declaring the directory a Bundle, which makes Bundles-inside-Bundles a concept the format then owes an answer for, or letting the consumer invent its own lookup — which is how two tools end up disagreeing about where a type lives, and resolution fails quietly.
 
-  The likely fix is to stop keying resolution on *Bundle* and key it on the directory root a Document is found under, whatever that root is. Decide whether `_types/` is Bundle-specific or root-specific, and if the latter, what constitutes a root.
+  The likely fix is to stop keying resolution on *Bundle* and key it on the directory root a Document is found under, whatever that root is. Decide whether `type_definitions/` is Bundle-specific or root-specific, and if the latter, what constitutes a root.
 - **Whether reserved manifests should be markdown at all.** *`BUNDLE.md`* makes `BUNDLE.md` a markdown Document carrying a frontmatter manifest. That is right when the body carries something a reader wants and it is a YAML file with a misleading extension when the body is empty — which is the state a pure manifest tends toward.
 
   Evidence from the first consumer, and it cuts both ways. A Bundle's body has real work to do: what this Bundle is, when to reach for it, what it assumes. `luma-catalog`'s equivalent manifest ended up a short instance note over frontmatter once its general prose moved into the Type Definition where it belonged. **The two may deserve different answers**, and assuming one format for every manifest is what makes that hard to see.
@@ -175,6 +176,8 @@ Reading without writing. Using a fraction of it. Elapsed time.
   **The honest third option is nothing.** Git plus `adopted.toml` already cover every case anyone has hit, and *corruption is not tolerated* may be a strict-mode posture rather than a mechanism.
 
   *Prior art worth lifting rather than reinventing, if integrity ever does become a format concern: a consumer of this format has already built the layer — algorithm-tagged content hashes so the algorithm can change without breaking the format, a cheap size-and-mtime pre-check before hashing, and a vocabulary distinguishing output that is thin from output that is false. **That it was built downstream without the format's help is also an argument the format does not need it.***
+
+- **An in-band spelling for the version pairs.** `type: type_definition@0.2.0` beside `defines: lab_result@0.4.0` — name-at-version in one token, familiar from npm, Go and pip. Raised while `type_version` was being settled for `0.0.21` and deliberately **not ruled out**; the sibling-field shape won for now because separate fields are easier to work with and roll out with no sequencing, while in-band touches the two values readers dispatch on — every consumer must learn to split before anything may write a version, which is the one migration field-tolerance cannot absorb. If in-band ever wins, `@` is the recorded spelling: it is YAML-safe mid-scalar, where `#` silently opens a comment and a second `:` collides with the structural separator. What would reopen it: the sibling pair proving noisy in practice, or a major version where dispatch code is being retaught anyway.
 
 - **A link that carries a hidden id** — a markdown link whose target is a path by default, but which also carries an identifier no reader sees, so a rename cannot break it. Recorded to be evaluated; neither adopted nor dismissed.
 

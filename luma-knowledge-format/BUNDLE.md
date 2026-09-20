@@ -1,6 +1,7 @@
 ---
 type: bundle
-version: 0.0.20
+type_version: "0.0.1"
+version: 0.0.21
 description: The Luma Knowledge Format — its specification, and the built-in types as real Type Definitions.
 ---
 
@@ -12,7 +13,7 @@ Definitions expressed in the format they define. The specification declares
 is where a reader starts.
 
 It is what *Resolution and namespacing* means by vendoring — copy the
-`_types/*.md` you want into your own bundle.
+Type Definitions you want out of `type_definitions/` into your own bundle.
 
 **The specification travels with the types because they are one claim.** The
 built-in Type Definitions are a rendering of what the specification says, and a

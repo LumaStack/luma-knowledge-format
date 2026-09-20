@@ -144,38 +144,38 @@ fields:
 One file per incident. Opened when detected, closed when `resolved` is set.
 ```
 
-Drop that in `_types/incident.md` and `type: incident` now has a published
-contract. Note what it does *not* declare: `created`, `modified`, `verified`,
+Drop that in `type_definitions/incident/DEFINITION.md` and `type: incident`
+now has a published contract. Note what it does *not* declare: `created`, `modified`, `verified`,
 `title`. Those arrive automatically from the root type, so a Type Definition
 only ever describes what is specific to the domain.
 
 ## The built-in types
 
 The built-in types ship with the format, [written in the format
-itself](../luma-knowledge-format/_types/). Reasons to care, rather than a restatement of each
+itself](../luma-knowledge-format/type_definitions/). Reasons to care, rather than a restatement of each
 file:
 
-**[`document`](../luma-knowledge-format/_types/document.md)** — the root every type implicitly
+**[`document`](../luma-knowledge-format/type_definitions/document/DEFINITION.md)** — the root every type implicitly
 extends. You will rarely write `type: document` on a real file, and that is
 fine: its value is that every Document you *do* write already has somewhere to
 put provenance, without you declaring anything.
 
-**[`procedure`](../luma-knowledge-format/_types/procedure.md)** — a procedure a
+**[`procedure`](../luma-knowledge-format/type_definitions/procedure/DEFINITION.md)** — a procedure a
 consumer *runs* rather than reads, projected into whatever form does the
 running. Nothing else in a Bundle makes that claim, which is why the type
 exists rather than a tag.
 
-**[`policy`](../luma-knowledge-format/_types/policy.md)** — a rule that
+**[`policy`](../luma-knowledge-format/type_definitions/policy/DEFINITION.md)** — a rule that
 constrains the consumer's own behaviour instead of informing it. Two Documents
 can be identical prose with identical fields, and one belongs in permanent
 context while the other belongs behind an invocation; nothing but the `type`
 can say which.
 
-**[`bundle`](../luma-knowledge-format/_types/bundle.md)** — makes a directory into something
+**[`bundle`](../luma-knowledge-format/type_definitions/bundle/DEFINITION.md)** — makes a directory into something
 you can hand to someone else: a self-contained unit with a version they can pin
 and compare. Matters the moment your knowledge stops being only yours.
 
-**[`type_definition`](../luma-knowledge-format/_types/type_definition.md)** — the extension
+**[`type_definition`](../luma-knowledge-format/type_definitions/type_definition/DEFINITION.md)** — the extension
 point, and the reason the core can stay small. It is also self-hosting: the
 thing that defines types is itself a type, defined the same way.
 

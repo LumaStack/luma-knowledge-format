@@ -30,6 +30,7 @@ cannot mean *shipped* and *given up* in the same repository.
 | `entrypoint` | the Bundle field naming where a reader should start | `v0.0.19` | `matches: eager` on the Document itself — the start-here claim travels on the thing it is about |
 | `lifecycle` | the core field naming a Document's stage | `v0.0.20` | [`stage`](../luma-knowledge-format/specification/lkf.md#stage) — same values, same meaning; the word freed for the estate's own lifecycles |
 | `experimental` | the `survival` value for a thing published with no intentions about lasting | `v0.0.20` | [`probationary`](../luma-knowledge-format/specification/lkf.md#survival) — the survival is on trial, and a verdict is owed |
+| `_types/` | the reserved directory Type Definitions live in | `v0.0.21` | [`type_definitions/`](../luma-knowledge-format/specification/lkf.md#type-extensions) — the same reservation, named for what it holds |
 
 ## Why each was retired
 
@@ -59,6 +60,15 @@ moment, and nothing about a moment is a resource a rule scopes over.
 **`entry_point`** wrote one idea as two words, and invited the collision it
 caused: a consumer building a project-level entrypoint read it as a different
 concept that happened to share a word.
+
+**`_types/`** was the one reserved name that hid what it named: its files
+declare `type: type_definition` and the prose has always called them Type
+Definitions, while the directory led with a signal — the underscore's
+*structural, not content* — that the reservation itself already carries.
+`format_types/` and `lkf_types/` were considered and rejected: everything in a
+bundle is the format's shape, so the qualifier distinguishes nothing, and a
+format's brand embedded in every adopted project's paths is the most expensive
+place to put one while the format may still be renamed.
 
 ## What a retired name means for a tool
 
