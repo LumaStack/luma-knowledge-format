@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.22] — 2026-09-19
+
+### Fixed
+- The specification's examples now model the fields `0.0.21` introduced — the example Type Definition declares `type_version` and `version`, and the example `BUNDLE.md` declares `type_version`. Examples only; no behavior changed.
+
 ## [0.0.21] — 2026-09-19
 
 ### Changed
@@ -356,7 +361,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.21...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.22...HEAD
+[0.0.22]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.21...v0.0.22
 [0.0.21]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.19...v0.0.20
 [0.0.19]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.18...v0.0.19

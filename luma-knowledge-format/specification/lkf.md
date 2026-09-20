@@ -2,7 +2,7 @@
 type: document
 type_version: "0.0.1"
 title: Luma Knowledge Format — Specification
-lkf_version: 0.0.21
+lkf_version: 0.0.22
 stage: provisional
 survival: promised
 matches: eager
@@ -440,7 +440,9 @@ A `type` is declared by a **Type Definition** — an ordinary Document with `typ
 ```yaml
 ---
 type: type_definition
+type_version: "0.0.1"
 defines: lab_result
+version: "0.0.1"
 extends: source
 fields:
   test_name: { field_presence: required,   field_type: text,   desc: "e.g. LDL cholesterol" }
@@ -747,6 +749,7 @@ A Bundle SHOULD describe itself in a `BUNDLE.md` at its root — an ordinary Doc
 ```yaml
 ---
 type: bundle
+type_version: "0.0.1"
 version: 1.2.0
 published: 2026-08-17
 consumers: [patient, clinic]
