@@ -474,7 +474,7 @@ type_definitions/lab_result/
 
 **`DEFINITION.md` is the Type Definition** — the Document this section describes, and the only name in the folder that resolution ever reads. It is the folder's one required file. Everything beside it is material scoped to the type: record, not contract.
 
-**A type is a contract, so its folder SHOULD carry a `CHANGELOG.md`** — what changed in each version, and why, newest first. A contract's consumers are exactly the readers a change surprises, and the folder exists so that this history travels with the type wherever it is vendored. The built-in types carry one like any other; because they are versioned with the format, their entries key on the format's version.
+**A type is a contract, so its folder SHOULD carry a `CHANGELOG.md`** — what changed in each version, and why, newest first. A contract's consumers are exactly the readers a change surprises, and the folder exists so that this history travels with the type wherever it is vendored. The built-in types carry one like any other, keyed — like any other — on the type's own `version`.
 
 - **A Type Definition that keeps prior versions or migrations SHOULD declare `version`** (below) — history has to key on something.
 - **A prior version kept beside the definition is the definition at that version, and is named so: `DEFINITION-1.1.0.md`.** Like `DEFINITION.md` itself — and like `LOG.md` anywhere — the name repeats across folders and is addressed by its path, never by its slug. Only the unversioned `DEFINITION.md` states the contract; a versioned copy is record.
@@ -495,6 +495,8 @@ version: "1.2.0"
 **What a bump *means* is deliberately not defined yet.** Treat it as a label rather than a promise. Semantic versioning is the obvious starting point and the tiers have not been worked through for types, so a consumer SHOULD compare versions for equality and difference and SHOULD NOT infer compatibility from the tier that changed.
 
 **Optional, and absence is ordinary.** A type that only ever ships inside one Bundle has nothing to gain from a second version number.
+
+**The built-in types each declare one, independent of the format's `lkf_version`.** They are the copied-type case exactly — vendored into bundles everywhere — so a format release that never touched their contracts must not report every copy as out of date.
 
 #### `vendored_from`
 
@@ -611,7 +613,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   **The cost of a built-in is a word taken from everyone, permanently.** An unprefixed name belongs to the format for good: every Bundle in every domain must then avoid it, and releasing one later collides with whoever defined it privately in the meantime. So *important to us* is not an argument for this list — **importance is what a namespace is for**, and a namespaced type costs nobody anything.
 
-  **A cheap further check: does it change at the format's rate?** A built-in's contract is versioned with the format. A type that gains fields as somebody's tooling matures drags the format's version along with it, and a specification whose releases track one adopter's roadmap has stopped being a specification.
+  **A cheap further check: does it change at the format's rate?** A built-in carries its own `version`, but it ships in the format's Bundle, so its every change still cuts a format release. A type that gains fields as somebody's tooling matures drags the format's releases along with it, and a specification whose releases track one adopter's roadmap has stopped being a specification.
 
   **Removing a built-in is cheaper than adding one.** Removal costs a deprecation cycle and a frontmatter migration. A late addition costs the same migration *plus* a collision with every Bundle that had already defined the name for itself.
 

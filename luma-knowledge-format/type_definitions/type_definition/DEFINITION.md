@@ -1,11 +1,13 @@
 ---
 type: type_definition
 defines: type_definition
+version: "0.1.0"
 extends: document
 fields:
   defines: { field_presence: required,   field_type: text, desc: "The type name this document governs.." }
   extends: { field_presence: optional,    field_type: text, desc: "A single parent type to inherit from.." }
   fields:  { field_presence: recommended, field_type: text, desc: "The field declarations. *Field declarations*. See the note below on its field type." }
+  version: { field_presence: optional,    field_type: semver, desc: "This Type Definition's own version, independent of the Bundle's and the format's." }
 ---
 
 # type_definition

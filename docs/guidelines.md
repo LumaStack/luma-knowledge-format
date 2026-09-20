@@ -47,9 +47,12 @@ is current or forward-looking.**
 | what changed in a built-in Type Definition, and why | that type's own `CHANGELOG.md`, inside the Bundle — the specification requires one per type, and the built-ins are not special |
 | a name the format once defined and no longer does | [`retired.md`](retired.md) |
 
-A per-type changelog is keyed by format version, because the format is what
-versions the built-ins — which is also what keeps it and the release changelog
-from disagreeing: each entry cites a release the other file already names.
+A per-type changelog is keyed by the type's own `version` — each built-in
+declares one, independent of `lkf_version` — and names the format release that
+shipped each bump. The two files answer different questions: the release
+changelog says what a format version changed, the type's says what a type
+version changed, and the release reference is the join between them rather
+than a repetition.
 
 **There is one specification file, `luma-knowledge-format/specification/lkf.md`.
 There are no versioned specification filenames, none are planned, and nothing
@@ -223,6 +226,11 @@ now*,** not the use of version numbers.
 
 **Resist a third live statement.** A new file needing the current version should
 read it from one of the two, or go without.
+
+**A built-in Type Definition's `version` is not a statement of the format's.**
+Each built-in declares its own, independent of `lkf_version` by design — a
+different claim about a different thing, outside this rule. It moves when that
+type's contract changes, not when a release is cut.
 
 ## Versioning & release policy
 

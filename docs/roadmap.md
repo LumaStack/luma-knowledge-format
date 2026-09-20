@@ -31,10 +31,11 @@ under *Undecided* below; the third is new.
 
    What would settle it: whether `source` was ever intended as a type, or only
    ever the `sources` field. Check the v0.0.1 history before deciding.
-2. **Type Definition `version`** — *Versioning* refers to "a Type Definition's own
-   `version`", which *Type Definitions* never declares. The `semver` field type now exists to
-   hold it, so the remaining questions are whether a Type Definition carries one
-   at all and what a bump means for copies already vendored elsewhere.
+2. **Type Definition `version`** — declared in the specification, and since
+   `0.0.21` every built-in carries one of its own, independent of `lkf_version`.
+   The remaining question is what a bump *means* — whether the semver tiers
+   carry over to types, and what one implies for copies already vendored
+   elsewhere.
 
 ## What `v0.1.0` would mean
 

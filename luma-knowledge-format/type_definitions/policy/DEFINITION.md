@@ -1,6 +1,7 @@
 ---
 type: type_definition
 defines: policy
+version: "0.1.0"
 extends: document
 fields:
   on_violation: { field_presence: optional, field_type: enum, values: [allow, audit, warn, require_reason, require_approval, block], desc: "What a consumer SHOULD do when this policy is not complied with. Intent, never a guarantee — see below." }

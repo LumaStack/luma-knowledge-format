@@ -1,13 +1,14 @@
 # Changelog — `bundle`
 
-The history of the `bundle` Type Definition, newest first. The built-in types
-are versioned with the format, so entries are keyed by format version.
-History before `0.0.21` — when Type Definitions became folders and gained
-changelogs — is recorded in the format's own
+The history of the `bundle` Type Definition, newest first, keyed by the
+type's own `version`. History from before it declared one is recorded in
+the format's own
 [`CHANGELOG.md`](https://github.com/LumaStack/luma-knowledge-format/blob/main/CHANGELOG.md).
 
-## 0.0.21
+## 0.1.0
 
-- Moved to the folder shape: the definition now lives at
-  `type_definitions/bundle/DEFINITION.md`, with this changelog beside it.
-  The contract itself is unchanged.
+- Versioning begins: the type declares its own `version`, independent of
+  the format's `lkf_version`. Shipped with format release `0.0.21`, which
+  moved every Type Definition to the folder shape — this definition now
+  lives at `type_definitions/bundle/DEFINITION.md`, with this changelog
+  beside it. The contract is otherwise unchanged.

@@ -1,6 +1,7 @@
 ---
 type: type_definition
 defines: document
+version: "0.1.0"
 fields:
   type:             { field_presence: required,   field_type: text,               desc: "What kind of Document this is — the one hard conformance requirement." }
   title:            { field_presence: recommended, field_type: text,               desc: "Human label; may fall back to the filename." }

@@ -1,6 +1,7 @@
 ---
 type: type_definition
 defines: bundle
+version: "0.1.0"
 extends: document
 fields:
   version:     { field_presence: required,   field_type: semver,       desc: "This Bundle's content version.." }
