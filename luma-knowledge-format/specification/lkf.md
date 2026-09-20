@@ -474,7 +474,7 @@ type_definitions/lab_result/
 
 **`DEFINITION.md` is the Type Definition** — the Document this section describes, and the only name in the folder that resolution ever reads. It is the folder's one required file. Everything beside it is material scoped to the type: record, not contract.
 
-**A type is a contract, so its folder SHOULD carry a `CHANGELOG.md`** — what changed in each version, and why, newest first. A contract's consumers are exactly the readers a change surprises, and the folder exists so that this history travels with the type wherever it is vendored. The built-in types are the one deliberate absence: they are versioned with the format, so their history is this specification's own changelog and a second copy per type would be free to disagree with it.
+**A type is a contract, so its folder SHOULD carry a `CHANGELOG.md`** — what changed in each version, and why, newest first. A contract's consumers are exactly the readers a change surprises, and the folder exists so that this history travels with the type wherever it is vendored. The built-in types carry one like any other; because they are versioned with the format, their entries key on the format's version.
 
 - **A Type Definition that keeps prior versions or migrations SHOULD declare `version`** (below) — history has to key on something.
 - **A prior version kept beside the definition is the definition at that version, and is named so: `DEFINITION-1.1.0.md`.** Like `DEFINITION.md` itself — and like `LOG.md` anywhere — the name repeats across folders and is addressed by its path, never by its slug. Only the unversioned `DEFINITION.md` states the contract; a versioned copy is record.
