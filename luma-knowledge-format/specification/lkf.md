@@ -1,7 +1,7 @@
 ---
 type: document
 title: Luma Knowledge Format — Specification
-lkf_version: 0.0.20
+lkf_version: 0.0.21
 stage: provisional
 survival: promised
 matches: eager
@@ -433,7 +433,7 @@ Any `type` MAY declare a **contract** for its Documents — which fields they ca
 Nothing in this section is a conformance requirement. A Type Definition publishes *intent*; [Validation](#validation) describes a suggested way to check it; [Frontmatter layout and conformance](#frontmatter-layout-and-conformance) remains the only hard rule.
 
 ### Type Definitions
-A `type` is declared by a **Type Definition** — an ordinary Document with `type: type_definition`, living in the bundle's reserved `_types/` directory. Because a Type Definition is itself a Document, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
+A `type` is declared by a **Type Definition** — an ordinary Document with `type: type_definition`, living in the bundle's reserved `type_definitions/` directory. Because a Type Definition is itself a Document, it is plain markdown, git-committed, and self-documenting (its body carries docs and examples).
 
 ```yaml
 ---
@@ -459,6 +459,28 @@ A single quantitative lab measurement. One file per result.
 - `fields` — the field declarations ([Field declarations](#field-declarations)).
 - `version` — this Type Definition's own version, `semver`. Optional (below).
 - `vendored_from` — where this copy came from, when it is a copy (below).
+
+#### One folder per type
+
+A Type Definition is a **folder**, named for the type it defines:
+
+```
+type_definitions/lab_result/
+  DEFINITION.md          # the contract — the Type Definition itself. Required.
+  CHANGELOG.md           # what changed in each version, and why
+  migrations/            # how to bring a Document up to the current version
+  DEFINITION-1.1.0.md    # a prior version, kept while consumers cross
+```
+
+**`DEFINITION.md` is the Type Definition** — the Document this section describes, and the only name in the folder that resolution ever reads. It is the folder's one required file. Everything beside it is material scoped to the type: record, not contract.
+
+**A type is a contract, so its folder SHOULD carry a `CHANGELOG.md`** — what changed in each version, and why, newest first. A contract's consumers are exactly the readers a change surprises, and the folder exists so that this history travels with the type wherever it is vendored. The built-in types are the one deliberate absence: they are versioned with the format, so their history is this specification's own changelog and a second copy per type would be free to disagree with it.
+
+- **A Type Definition that keeps prior versions or migrations SHOULD declare `version`** (below) — history has to key on something.
+- **A prior version kept beside the definition is the definition at that version, and is named so: `DEFINITION-1.1.0.md`.** Like `DEFINITION.md` itself — and like `LOG.md` anywhere — the name repeats across folders and is addressed by its path, never by its slug. Only the unversioned `DEFINITION.md` states the contract; a versioned copy is record.
+- **`migrations/` MAY hold Documents describing how to bring a Document written against an earlier version up to the current one.** What *runs* a migration is deliberately not specified: the format says where one may live, so that it travels with the type it serves; what reads it — an agent following prose, a tool executing steps — is a consumer's business, like validation and everything else in this section.
+
+> **Not yet fully specified:** the section shape of `CHANGELOG.md` and the layout inside `migrations/`. The folder and its resolved and expected names are reserved now; conventions for their contents may follow from practice, as with `LOG.md` and `INDEX.md` ([Reserved files](#reserved-files)).
 
 #### `version`
 
@@ -535,11 +557,11 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
   **Without this, a type whose semantics rest on inherited fields cannot state them.** Where a type's growth stage *is* `stage` and its age *is* `created` — both `optional` on the root — the type has no way to say that a Document missing either is incomplete, and its own contract calls unremarkable exactly the omissions that break it.
 
 ### Resolution and namespacing
-- **The Bundle is the resolution scope, and that has a consequence worth stating.** Because a contract is found in *this* Bundle's `_types/`, two Bundles may hold different versions of the same type without contradiction — each one's Documents are checked against the copy that travelled with them. This is the scoping mechanism prose does not have, and it is why vendoring a type is safe where duplicating a policy would not be.
+- **The Bundle is the resolution scope, and that has a consequence worth stating.** Because a contract is found in *this* Bundle's `type_definitions/`, two Bundles may hold different versions of the same type without contradiction — each one's Documents are checked against the copy that travelled with them. This is the scoping mechanism prose does not have, and it is why vendoring a type is safe where duplicating a policy would not be.
 
   **A Document outside every Bundle has no such scope.** Nothing prevents a Document living beside Bundles rather than inside one — describing a repository, or a place Bundles are published from. Such a Document declares a `type` like any other, and the format offers no rule for where its contract is found: there is no Bundle to look in. **Whoever puts a Document there owes it an answer**, and where two Bundles disagree about that type, nothing decides between them.
 
-- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `procedure`, `policy`, `bundle`, `type_definition`) and the bundle's **`_types/`** directory. The built-ins ship as real Type Definitions in this repository's `luma-knowledge-format/` directory — itself a Bundle, so that the unit of distribution is the format itself rather than the project around it — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the `_types/*.md` you want into your own bundle), so a bundle is always self-contained.
+- **Resolution.** To find a type's contract, a tool looks in exactly two places: the format's **built-in types** (`document`, `procedure`, `policy`, `bundle`, `type_definition`) and the bundle's **`type_definitions/`** directory — `type_definitions/<name>/DEFINITION.md` ([One folder per type](#one-folder-per-type)). The built-ins ship as real Type Definitions in this repository's `luma-knowledge-format/` directory — itself a Bundle, so that the unit of distribution is the format itself rather than the project around it — so they are both a normative rendering and a worked example; a tool MAY supply them itself rather than requiring every bundle to vendor them. There is no remote lookup — a shared type library is used by **vendoring** (copying the Type Definition folders you want into your own bundle's `type_definitions/`), so a bundle is always self-contained.
 - **Built-in names.** The names `document`, `procedure`, `policy`, `bundle` and `type_definition` belong to the format; a bundle SHOULD NOT redefine them. Doing so is legal — the permissive-conformance law ([Frontmatter layout and conformance](#frontmatter-layout-and-conformance)) means no consumer rejects a bundle for it — but unwise: a redefinition travels inside the bundle while every tool and every other bundle still assumes the format's meaning.
 - **Two base types, because the third thing a consumer can do is the root itself.** `procedure` declares no fields of its own and `policy` adds only `on_violation`. They are not labels for subjects — they name **what a consumer does with the content**:
 
@@ -558,7 +580,7 @@ A **relationship** (a typed edge in the Document graph) is simply a field whose 
 
   The distinction is worth having because it is the one a consumer must act on. Two Documents can be identical prose with identical fields, and one belongs in permanent context while the other belongs behind an invocation. Nothing but the `type` can say which.
 
-- **A type earns its name when a consumer dispatches on it.** LKF does not fix what types exist (`principles.md`). The bar for declaring one — in this list or in a Bundle's own `_types/` — is concrete: **name the consumer, and name what it does differently.** If you cannot name both, the `type` is a label, and a label costs a name every other Bundle must then avoid.
+- **A type earns its name when a consumer dispatches on it.** LKF does not fix what types exist (`principles.md`). The bar for declaring one — in this list or in a Bundle's own `type_definitions/` — is concrete: **name the consumer, and name what it does differently.** If you cannot name both, the `type` is a label, and a label costs a name every other Bundle must then avoid.
 
   Three forms that difference takes:
 
@@ -618,7 +640,7 @@ Validation is **entirely optional.** LKF never requires a validator, and no vali
 Two deliberate choices: a `deprecated` field stays a *warning* even under `--strict` (it is still valid, just discouraged), and unknown fields / undefined types are *never* errors (open vocabulary, never reject).
 
 ### Discovery
-Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `_types/<type>.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
+Because Type Definitions are just files, humans and agents discover a type's contract the same way: read `type_definitions/<type>/DEFINITION.md`. Tooling may wrap that in a lookup command and needs no index to do so — the file *is* the contract, so reading it directly is always available and never stale.
 
 ### `matches`
 **A core field, `optional` everywhere** ([Core fields](#core-fields)). Any Document may declare what surfaces it, and a consumer SHOULD honour it wherever it appears.
@@ -673,7 +695,7 @@ matches: nothing                # nothing surfaces it; it is fetched deliberatel
 
 **In plain terms:** a file in CAPITALS is the folder's own file — it tells you what the folder *is*. Everything in lowercase is one of the things the folder *holds*. The test, when you are unsure: *is this file describing what surrounds it, or is it one of the things surrounded?*
 
-`BUNDLE.md` speaks for its Bundle; `LOG.md` for its directory's history. A Type Definition at `_types/bundle.md` does not — it describes what a Bundle *is*, living inside one thing while being about another. A template at `templates/bundle.md` is a pattern for making one. Both are content and both stay lowercase. **The rule excludes them rather than exempting them**, which is why it needs no list of exceptions.
+`BUNDLE.md` speaks for its Bundle; `LOG.md` for its directory's history. The `DEFINITION.md` at `type_definitions/bundle/DEFINITION.md` speaks for the Type Definition folder that holds it — never for the Bundle that definition is *about*: what a file speaks for is what contains it, not what it describes. A template at `templates/bundle.md` speaks for nothing — it is a pattern for making a Bundle, content like any other, and stays lowercase. **The rule excludes it rather than exempting it**, which is why it needs no list of exceptions.
 
 Where a name is shared with an outside convention, that convention's casing wins. `README.md` and `LICENSE` arrive uppercase anyway.
 
@@ -681,12 +703,14 @@ Where a name is shared with an outside convention, that convention's casing wins
 
 **It is the inverse of why `README.md` can carry no rules.** People edit a README without knowing any exist — universal permission semantics that no specification overturns. An all-caps name cannot be opted into by accident, so its rules bind only somebody who went looking for them. **A consumer MUST NOT depend on the content or structure of `README.md`.**
 
-Directories are outside the rule and keep their own convention. `_types/` already says *structural rather than content* with its underscore, and a second signal for one meaning is worse than one.
+Directories are outside the rule and keep their own convention: a reserved directory is lowercase and named for what it holds — `type_definitions/` holds Type Definitions. The reservation is this specification's to state, and it is stated here rather than signalled in the name.
 
 - **`BUNDLE.md`** — the Bundle's own Document, at its root, with `type: bundle`. It is how a Bundle describes itself; see below. Recommended.
 - **`INDEX.md`** — a generated rendering of the Bundle for a reader deciding what to open; see below. Recommended for distributed Bundles.
 - **`LOG.md`** — append-only history for a directory, newest first. Creating it is optional, but when it exists writers MUST append rather than rewrite.
-- **`_types/`** — Type Definitions ([Type extensions](#type-extensions)).
+- **`DEFINITION.md`** — the Document that is a Type Definition ([One folder per type](#one-folder-per-type)). It speaks for the folder that holds it: the folder is the Type Definition, and this file states its contract. Required, uniquely among these — a Type Definition folder without one defines nothing.
+- **`CHANGELOG.md`** — the version-keyed history of the thing containing it, newest first. Expected in a Type Definition folder ([One folder per type](#one-folder-per-type)); its casing arrives from the outside convention it shares, like `README.md`.
+- **`type_definitions/`** — Type Definitions ([Type extensions](#type-extensions)).
 
 ### `BUNDLE.md`
 A Bundle SHOULD describe itself in a `BUNDLE.md` at its root — an ordinary Document with `type: bundle`, carrying the Bundle's own metadata rather than any file's:

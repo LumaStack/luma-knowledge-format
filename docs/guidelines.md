@@ -231,7 +231,7 @@ is inside the thing being distributed.
 **A change to any file in `luma-knowledge-format/` moves the version:**
 
 - the specification, `specification/lkf.md`
-- the built-in Type Definitions, `_types/`
+- the built-in Type Definitions, `type_definitions/`
 - the Bundle's own manifest and behavior, `BUNDLE.md`
 
 **Plus `LICENSE`**, which is the only file beyond the directory that moves the
