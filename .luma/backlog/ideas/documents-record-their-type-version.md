@@ -35,6 +35,27 @@ tool dispatches on; and if in-band ever wins, `@` is the spelling, on YAML
 safety and npm/Go/pip familiarity. The value would be **copied from the
 `version` the Type Definition already declares**, so nothing new is minted.
 
+## The name, and the two-versions corner (worked 2026-09-19)
+
+**Self-hosting means a Type Definition will carry two version facts**: its own
+`version` (the contract it publishes to its instances) and this field (the
+version of the `type_definition` contract it was written against — because its
+`type` is `type_definition`). The rule that keeps them apart is one the format
+already follows without stating it: **bare `version` is what a document
+publishes; a qualified `*_version` is what it conforms to.** `BUNDLE.md` is
+exactly this shape today — `version` beside `lkf_version` — and Type
+Definitions now match the publishing half.
+
+**`type_version` beats `type_definition_version`** because of that corner, not
+despite it. It qualifies the field `type`, which every document carries, so it
+means the same thing everywhere — on a Type Definition it names the
+`type_definition` contract version, with no special case. The longer spelling
+is the one that invites the misreading: on a Type Definition, "the type
+definition's version" is ambiguous between its own and the one it follows.
+The self-hosting fixed point stays coherent: `type_definition`'s own file has
+`defines: type_definition` and its `type_version` would reference itself, the
+fixed point `defines` already has.
+
 ## What has to be answered before it could ship
 
 - **What a Document without the field means.** Everything written to date lacks
