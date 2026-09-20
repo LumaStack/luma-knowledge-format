@@ -84,6 +84,7 @@ below is added because it earns its place, never because the format demands it.
 ```markdown
 ---
 type: document
+type_version: "0.0.1"
 title: Diffusion Models
 tags: [ml/generative]
 stage: stable
@@ -131,7 +132,9 @@ ignorance, not as a default for tools that never asked.
 ```markdown
 ---
 type: type_definition
+type_version: "0.0.1"
 defines: incident
+version: "0.0.1"
 fields:
   severity:  { field_presence: required,   field_type: enum, values: [sev1, sev2, sev3] }
   detected:  { field_presence: required,   field_type: datetime }
