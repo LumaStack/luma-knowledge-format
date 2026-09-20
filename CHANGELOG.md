@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions follow [
 
 ## [Unreleased]
 
+## [0.0.21] — 2026-09-19
+
 ### Changed
 - **The reserved directory `_types/` is renamed `type_definitions/`** *(breaking)*. The directory was the one place the concept's name hid: its files declare `type: type_definition` and the prose has always called them Type Definitions, so the directory now says what it holds, like every sibling. The underscore's *structural, not content* signal earned nothing the reservation does not already state — the specification reserves the name, and says so where reserved names are listed. `format_types/` and `lkf_types/` were rejected: everything in a Bundle is the format's shape, so the qualifier distinguishes nothing, and a format's brand embedded in every adopted project's paths is the most expensive place to put one while the format is at `v0.0.z`. Plural, matching sibling content directories.
   *Migration:* rename each Bundle's `_types/` directory to `type_definitions/`. File contents are unchanged. A consumer that has not updated finds no `_types/` and resolves no bundle-local types — the safe direction: Documents still read as conformant, their types tolerated as unknown, and the absence SHOULD be reported.
@@ -354,7 +356,8 @@ Initial release.
 - **Provenance & trust** — `created`/`modified` (author + timestamp), `verified` with derived trust tiers, structured `sources`, and the actor convention `<kind>:<producer>/<version>`.
 - **Type extensions** — Type Definitions in `_types/`, the field-type vocabulary, field `field_presence` (`required`/`recommended`/`optional`/`deprecated`), single/add-only inheritance, vendored resolution, and validation as a *suggested framework — not a contract*.
 
-[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.20...HEAD
+[Unreleased]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.21...HEAD
+[0.0.21]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.19...v0.0.20
 [0.0.19]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.18...v0.0.19
 [0.0.18]: https://github.com/LumaStack/luma-knowledge-format/compare/v0.0.17...v0.0.18
