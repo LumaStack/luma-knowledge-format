@@ -1,5 +1,6 @@
 ---
 type: luma/idea
+type_version: "0.1.0"
 title: Should each specification version get its own folder?
 created: { by: human:benlinton, at: 2026-08-30T00:00:00Z }
 contributors: [human:benlinton, agent:claude-opus-5]
